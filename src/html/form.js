@@ -66,7 +66,18 @@ __extend__(HTMLFormElement.prototype,{
         var alist = [];
         var i;
         for (i = 0; i < nodes.length; ++i) {
-            if (HTMLFormElement.prototype._isFormNamedElement(nodes[i])) {
+            nodename = nodes[i].nodeName;
+            // would like to replace switch with something else
+            //  since it's redundant with the SetAttribute callbacks
+            switch (nodes[i].nodeName) {
+            case 'BUTTON':
+            case 'FIELDSET':
+            case 'INPUT':
+            case 'KEYGEN':
+            case 'OBJECT':
+            case 'OUTPUT':
+            case 'SELECT':
+            case 'TEXTAREA':
                 alist.push(nodes[i]);
                 this[i] = nodes[i];
                 if ('name' in nodes[i]) {

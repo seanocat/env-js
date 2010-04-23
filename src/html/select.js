@@ -108,3 +108,7 @@ __extend__(HTMLSelectElement.prototype, {
         return '[object HTMLSelectElement]';
     }
 });
+
+// Named Element Support
+HTMLElement.registerSetAttribute('SELECT', 'name',
+                                 __updateFormForNamedElement__);

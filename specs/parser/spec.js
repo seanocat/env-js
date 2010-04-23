@@ -358,3 +358,52 @@ test('Link Loading', function(){
     doc.close();
     stop();
 });
+
+test('Form Named Element Lookup', function(){
+    expect(10);
+    if ((typeof Envjs == 'undefined') || !Envjs) {
+        Envjs = {};
+    }
+    var iframe = document.createElement("iframe");
+    document.body.appendChild(iframe);
+
+    iframe.addEventListener('load', function(){
+        var doc = iframe.contentDocument;
+        ok(true, 'frame loaded');
+        var form = doc.foo;
+        var elements = form.elements;
+        ok(elements instanceof HTMLCollection, "form.elements is an HTMLCollection");
+        equals(elements.length, 0, "form.elements does not include non-form elements");
+        equals(form.length, 0, "form.length is 0");
+
+        // ok now let's try to use innerHTML
+        var str = '<form name="bar"><input name="input1"/></form>';
+        doc.body.innerHTML = str;
+        form = doc.bar;
+        elements = doc.bar.elements;
+        equals(elements.length, 1, 'elements length is 1');
+        equals(form.length, 1, 'form length is 1');
+        //print('element is : ' + elements.input1);
+        ok(elements.input1 instanceof HTMLInputElement, 'is HTMLInputElement');
+        ok(form.input1 instanceof HTMLInputElement, 'is HTMLInputElement');
+
+        // let's change the name
+        var node = form.input1;
+        node.name = 'input2';
+        ok(elements.input1 instanceof HTMLInputElement, 'is HTMLInputElement');
+        ok(form.input1 instanceof HTMLInputElement, 'is HTMLInputElement');
+
+        /*
+        // the other one should be zapped
+        node2 = doc.foo;
+        ok(! node2, 'old named element is gone');
+        */
+        document.body.removeChild(iframe);
+        start();
+    }, false);
+
+    var doc = iframe.contentDocument;
+    doc.write('<html><head></head><body><form name="foo"><div></div></form></body></html>');
+    doc.close();
+    stop();
+});

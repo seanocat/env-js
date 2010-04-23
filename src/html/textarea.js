@@ -10,13 +10,13 @@ HTMLTextAreaElement = function(ownerDocument) {
 HTMLTextAreaElement.prototype = new HTMLInputAreaCommon();
 __extend__(HTMLTextAreaElement.prototype, {
     get cols(){
-        return this.getAttribute('cols');
+        return Number(this.getAttribute('cols')||'-1');
     },
     set cols(value){
         this.setAttribute('cols', value);
     },
     get rows(){
-        return this.getAttribute('rows');
+        return Number(this.getAttribute('rows')||'-1');
     },
     set rows(value){
         this.setAttribute('rows', value);
@@ -38,3 +38,7 @@ HTMLElement.registerSetAttribute('TEXTAREA', 'value', function(node, value) {
     // complicated.  For now, do nothing
 });
 */
+
+// Named Element Support
+HTMLElement.registerSetAttribute('TEXTAREA', 'name',
+                                 __updateFormForNamedElement__);

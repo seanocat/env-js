@@ -421,6 +421,72 @@ test('HTMLHtmlElement', function() {
     equals(a.toString(), '[object HTMLHtmlElement]');
 });
 
+test('HTMLInputElement', function() {
+    var a = document.createElement('input');
+    ok(a, 'element created');
+    equals(a.toString(), '[object HTMLInputElement]');
+    equals(a.alt, '', 'empty alt is string');
+    a.alt = 'foo';
+    equals(a.alt, 'foo', 'set alt');
+
+    equals(a.src, '', 'empty src is string');
+    a.src = 'http://envjs.com/';
+    equals(a.src, 'http://envjs.com/', 'set src');
+    // TODO, src should make absolute any relative links
+
+    /**
+     * Checked is a virtual state, NOT an attribute
+     *
+     */
+    equals(a.defaultChecked, false, 'defaultChecked value is false');
+    equals(a.checked, false, 'default checked value is false');
+    equals(a.getAttribute('checked'), null, 'getAttribte(checked) is null');
+    equals(a.hasAttribute('checked'), false, 'hasAttribute(checked) is false');
+
+    equals(typeof a.checked, 'boolean', 'default checked value is boolean');
+    a.checked = true;
+    equals(a.checked, true, 'set checked value is true');
+    equals(a.getAttribute('checked'), null, 'getAttribte(checked) is null');
+    equals(a.hasAttribute('checked'), false, 'hasAttribute(checked) is false');
+
+    a.checked = false;
+    equals(a.defaultChecked, false, 'defaultChecked value is still false');
+    a.defaultChecked = true;
+    equals(a.defaultChecked, true, 'set defaultChecked value is true');
+    equals(a.checked, false, 'set checked is still false');
+    equals(a.getAttribute('checked'), '', 'getAttribte(checked) is null');
+    equals(a.hasAttribute('checked'), true, 'hasAttribute(checked) is false');
+    a.defaultChecked = false
+    equals(a.defaultChecked, false, 'set defaultChecked value is false');
+    equals(a.hasAttribute('checked'), false, 'hasAttribute(checked) is false');
+
+    equals(a.useMap, '', 'useMap is false');
+    equals(typeof a.useMap, 'string', 'default useMap value is boolean');
+
+    /**
+     * Numeric-like things
+     */
+    equals(a.maxLength, -1, 'default maxLength');
+    equals(typeof a.maxLength, 'number', 'default maxLegth is number');
+
+    // FF says it's undefined!
+    //equals(typeof a.height, 'undefined', 'default height is undefined');
+    //equals(typeof a.width,'undefined', 'default width is undefined');
+
+    a.maxLength = '10';
+    equals(a.maxLength, 10, 'set maxLength');
+    equals(typeof a.maxLength, 'number', 'maxLength is number');
+
+    a.width = '10';
+    equals(a.width, 10, 'set width');
+    equals(typeof a.width, 'string', 'width is number');
+
+    a.height = '10';
+    equals(a.height, 10, 'set height');
+    equals(typeof a.height, 'string', 'height is number');
+
+});
+
 test('HTMLLabelElement', function() {
     var element;
 
@@ -564,6 +630,24 @@ test('HTMLTableSectionElement', function() {
     element = document.createElement('thead');
     ok(element, 'element created');
     equals(element.toString(), '[object HTMLTableSectionElement]', 'toString');
+});
+
+test('HTMLTextArea', function() {
+    var e;
+    e = document.createElement('textarea');
+    ok(e, 'element created');
+    equals(e.toString(), '[object HTMLTextAreaElement]', 'toString');
+
+    equals(e.cols, -1, 'default cols is -1');
+    e.cols = '10';
+    equals(e.cols, 10, 'set cols');
+    equals(typeof e.cols, 'number', 'cols is a number');
+
+    equals(e.rows, -1, 'default rows is -1');
+    e.rows = '11';
+    equals(e.rows, 11, 'set row');
+    equals(typeof e.rows, 'number', 'rows is a number');
+
 });
 
 test('HTMLTitleElement', function() {

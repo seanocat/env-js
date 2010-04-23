@@ -10,12 +10,12 @@
  *     * legent (no value attr)
  *     * fieldset (no value attr)
  *     * label (no value attr)
- *     * option (custom)
+ *     * option (custom value)
  *  HTMLTypeValueInputs (extends InputCommon)
- *     * select  (custom)
+ *     * select  (custom value)
  *     * button (just sets value)
  *  HTMLInputAreaCommon (extends TypeValueIput)
- *     * input  (X)
+ *     * input  (custom)
  *     * textarea (just sets value)
  *
  * -----------------------
@@ -264,3 +264,12 @@ __extend__(HTMLInputAreaCommon.prototype, {
 
     }
 });
+
+
+var __updateFormForNamedElement__ = function(node, value) {
+    if (node.form) {
+        // to check for ID or NAME attribute too
+        // not, then nothing to do
+        node.form._updateElements();
+    }
+};

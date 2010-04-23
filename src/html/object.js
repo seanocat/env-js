@@ -89,3 +89,6 @@ __extend__(HTMLObjectElement.prototype, {
     }
 });
 
+// Named Element Support
+HTMLElement.registerSetAttribute('OBJECT', 'name',
+                                 __updateFormForNamedElement__);
