@@ -68,12 +68,18 @@ __extend__(HTMLInputElement.prototype, {
     set maxLength(value){
         this.setAttribute('maxlength', value);
     },
+
+    /**
+     * Src is a URL string
+     */
     get src(){
         return this.getAttribute('src') || '';
     },
     set src(value){
+        // TODO: make absolute any relative URLS
         this.setAttribute('src', value);
     },
+
     get useMap(){
         return this.getAttribute('map') || '';
     },

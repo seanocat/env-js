@@ -430,8 +430,9 @@ test('HTMLInputElement', function() {
     equals(a.alt, 'foo', 'set alt');
 
     equals(a.src, '', 'empty src is string');
-    a.src = 'foo';
-    equals(a.src, 'foo', 'set src');
+    a.src = 'http://envjs.com/';
+    equals(a.src, 'http://envjs.com/', 'set src');
+    // TODO, src should make absolute any relative links
 
     /**
      * Checked is a virtual state, NOT an attribute
