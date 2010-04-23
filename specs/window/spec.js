@@ -11,7 +11,6 @@ function giveAHoot(){
     var def = 456;
 }
 
-
 test('Window Interfaces Available', function(){
 
     ok(Window,      'Window available');
@@ -580,38 +579,3 @@ test('Document Named Element Lookup', function(){
         ok(!doc.foo, 'old named element not found via named lookup');
 });
 
-test('Form Named Element Lookup', function(){
-    expect(7);
-    var iframe = document.createElement("iframe");
-    var doc;
-
-    document.body.appendChild(iframe);
-    doc = iframe.contentDocument;
-    doc.open();
-    doc.write('<html><head></head><body><form name="foo"><div></div></form></body></html>');
-    doc.close();
-
-    var form = doc.foo;
-    var elements = form.elements;
-    ok(elements instanceof HTMLCollection, "form.elements is an HTMLCollection");
-    equals(elements.length, 0, "form.elements does not include non-form elements");
-    equals(form.length, 0, "form.length is 0");
-
-
-    // ok now let's try to use innerHTML
-    var str = '<form name="bar"><input name="input1"/></form>';
-    doc.body.innerHTML = str;
-    form = doc.bar;
-    elements = doc.bar.elements;
-    equals(elements.length, 1);
-    equals(form.length, 1);
-    //print('element is : ' + elements.input1);
-    ok(elements.input1 instanceof HTMLInputElement);
-    ok(form.input1 instanceof HTMLInputElement);
-
-    /*
-    // the other one should be zapped
-    node2 = doc.foo;
-    ok(! node2, 'old named element is gone');
-    */
-});
