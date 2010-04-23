@@ -632,6 +632,24 @@ test('HTMLTableSectionElement', function() {
     equals(element.toString(), '[object HTMLTableSectionElement]', 'toString');
 });
 
+test('HTMLTextArea', function() {
+    var e;
+    e = document.createElement('textarea');
+    ok(e, 'element created');
+    equals(e.toString(), '[object HTMLTextAreaElement]', 'toString');
+
+    equals(e.cols, -1, 'default cols is -1');
+    e.cols = '10';
+    equals(e.cols, 10, 'set cols');
+    equals(typeof e.cols, 'number', 'cols is a number');
+
+    equals(e.rows, -1, 'default rows is -1');
+    e.rows = '11';
+    equals(e.rows, 11, 'set row');
+    equals(typeof e.rows, 'number', 'rows is a number');
+
+});
+
 test('HTMLTitleElement', function() {
     var element;
     element = document.createElement('title');
