@@ -360,7 +360,7 @@ test('Link Loading', function(){
 });
 
 test('Form Named Element Lookup', function(){
-    expect(8);
+    expect(10);
     if ((typeof Envjs == 'undefined') || !Envjs) {
         Envjs = {};
     }
@@ -384,6 +384,12 @@ test('Form Named Element Lookup', function(){
         equals(elements.length, 1, 'elements length is 1');
         equals(form.length, 1, 'form length is 1');
         //print('element is : ' + elements.input1);
+        ok(elements.input1 instanceof HTMLInputElement, 'is HTMLInputElement');
+        ok(form.input1 instanceof HTMLInputElement, 'is HTMLInputElement');
+
+        // let's change the name
+        var node = form.input1;
+        node.name = 'input2';
         ok(elements.input1 instanceof HTMLInputElement, 'is HTMLInputElement');
         ok(form.input1 instanceof HTMLInputElement, 'is HTMLInputElement');
 
