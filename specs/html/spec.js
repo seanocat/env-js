@@ -421,6 +421,66 @@ test('HTMLHtmlElement', function() {
     equals(a.toString(), '[object HTMLHtmlElement]');
 });
 
+test('HTMLInputElement', function() {
+    var a = document.createElement('input');
+    ok(a, 'element created');
+    equals(a.toString(), '[object HTMLInputElement]');
+    equals(a.alt, '', 'empty alt is string');
+    a.alt = 'foo';
+    equals(a.alt, 'foo', 'set alt');
+
+    equals(a.src, '', 'empty src is string');
+
+    /**
+     * Checked is a virtual state, NOT an attribute
+     *
+     */
+    equals(a.defaultChecked, false, 'defaultChecked value is false');
+    equals(a.checked, false, 'default checked value is false');
+    equals(a.getAttribute('checked'), null, 'getAttribte(checked) is null');
+    equals(a.hasAttribute('checked'), false, 'hasAttribute(checked) is false');
+
+    equals(typeof a.checked, 'boolean', 'default checked value is boolean');
+    a.checked = true;
+    equals(a.checked, true, 'set checked value is true');
+    equals(a.getAttribute('checked'), null, 'getAttribte(checked) is null');
+    equals(a.hasAttribute('checked'), false, 'hasAttribute(checked) is false');
+
+    a.checked = false;
+    equals(a.defaultChecked, false, 'defaultChecked value is still false');
+    a.defaultChecked = true;
+    equals(a.defaultChecked, true, 'set defaultChecked value is true');
+    equals(a.checked, false, 'set checked is still false');
+    equals(a.getAttribute('checked'), '', 'getAttribte(checked) is null');
+    equals(a.hasAttribute('checked'), true, 'hasAttribute(checked) is false');
+
+    equals(a.useMap, '', 'useMap is false');
+    equals(typeof a.useMap, 'string', 'default useMap value is boolean');
+
+    /**
+     * Numeric-like things
+     */
+    equals(a.maxLength, -1, 'default maxLength');
+    equals(typeof a.maxLength, 'number', 'default maxLegth is number');
+
+    // FF says it's undefined!
+    //equals(typeof a.height, 'undefined', 'default height is undefined');
+    //equals(typeof a.width,'undefined', 'default width is undefined');
+
+    a.maxLength = '10';
+    equals(a.maxLength, 10, 'set maxLength');
+    equals(typeof a.maxLength, 'number', 'maxLength is number');
+
+    a.width = '10';
+    equals(a.width, 10, 'set width');
+    equals(typeof a.width, 'string', 'width is number');
+
+    a.height = '10';
+    equals(a.height, 10, 'set height');
+    equals(typeof a.height, 'string', 'height is number');
+
+});
+
 test('HTMLLabelElement', function() {
     var element;
 
