@@ -430,6 +430,8 @@ test('HTMLInputElement', function() {
     equals(a.alt, 'foo', 'set alt');
 
     equals(a.src, '', 'empty src is string');
+    a.src = 'foo';
+    equals(a.src, 'foo', 'set src');
 
     /**
      * Checked is a virtual state, NOT an attribute
