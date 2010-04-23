@@ -17,6 +17,12 @@ __extend__(HTMLButtonElement.prototype, {
     set dataFormatAs(value){
         this.setAttribute('dataFormatAs',value);
     },
+    get value() {
+        this.getAttribute('value') || '';
+    },
+    set value(value) {
+        this.setAttribute('value', value);
+    },
     toString: function() {
         return '[object HTMLButtonElement]';
     }

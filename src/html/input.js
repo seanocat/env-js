@@ -60,3 +60,12 @@ __extend__(HTMLInputElement.prototype, {
 });
 
 
+//http://dev.w3.org/html5/spec/Overview.html#dom-input-value
+// TODO: needs work, not even clear this is needed and can be moved
+// up into the object
+HTMLElement.registerSetAttribute('INPUT', 'value', function(node, value) {
+    //console.log('setting defaultValue (NS)');
+    if(!node.defaultValue){
+        node.defaultValue = value;
+    }
+});

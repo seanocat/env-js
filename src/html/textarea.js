@@ -21,8 +21,20 @@ __extend__(HTMLTextAreaElement.prototype, {
     set rows(value){
         this.setAttribute('rows', value);
     },
+    get value() {
+        this.getAttribute('value') || '';
+    },
+    set value(value) {
+        this.setAttribute('value', value);
+    },
     toString: function() {
         return '[object HTMLTextAreaElement]';
     }
 });
 
+/*
+// http://dev.w3.org/html5/spec/Overview.html#dom-textarea-value
+HTMLElement.registerSetAttribute('TEXTAREA', 'value', function(node, value) {
+    // complicated.  For now, do nothing
+});
+*/

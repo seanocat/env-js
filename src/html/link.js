@@ -106,37 +106,15 @@ __loadLink__ = function(node, value) {
     node.dispatchEvent(event, false);
 };
 
+
+HTMLElement.registerSetAttribute('LINK', 'href', function(node, value) {
+    __loadLink__(node, value);
+});
+
+/**
+ * Event stuff, not sure where it goes
+ */
 __extend__(HTMLLinkElement.prototype, {
-    setAttribute: function(name, value) {
-        var result = HTMLElement.prototype.setAttribute.apply(this, arguments);
-        if (name === 'href') {
-            __loadLink__(this, value);
-        }
-        return result;
-    },
-    setAttributeNS: function(namespaceURI, name, value) {
-        var result = HTMLElement.prototype.setAttributeNS.apply(this, arguments);
-        if (name === 'href') {
-            __loadLink__(this, value);
-        }
-        return result;
-    },
-    setAttributeNode: function(newnode) {
-        var result = HTMLElement.prototype.setAttributeNode.apply(this, arguments);
-        var src = this.getAttribute('href');
-        if (src) {
-            __loadLink__(this, src);
-        }
-        return result;
-    },
-    setAttributeNodeNS: function(newnode) {
-        var result = HTMLElement.prototype.setAttributeNodeNS.apply(this, arguments);
-        var src = this.getAttribute('href');
-        if (src) {
-            __loadLink__(this, src);
-        }
-        return result;
-    },
     onload: function(event){
         __eval__(this.getAttribute('onload')||'', this);
     },
