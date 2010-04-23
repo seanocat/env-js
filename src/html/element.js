@@ -235,7 +235,6 @@ __extend__(HTMLElement.prototype, {
     importNode: function(othernode, deep) {
         var newnode = Element.prototype.importNode.apply(this, arguments);
         this.ownerDocument._addNamedMap(newnode);
-        this._updateFormForNamedElement(newnode);
         return newnode;
     },
 
@@ -244,7 +243,6 @@ __extend__(HTMLElement.prototype, {
         var newnode = Element.prototype.replaceNode.apply(this, arguments);
         this.ownerDocument._removeNamedMap(oldchild);
         this.ownerDocument._addNamedMap(newnode);
-        this._updateFormForNamedElement(newnode);
         return newnode;
     }
 });
