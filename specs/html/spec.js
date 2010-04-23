@@ -584,6 +584,8 @@ test('HTMLTitleElement', function() {
 test("Image", function() {
     var x = new Image();
     equals(x, '[object HTMLImageElement]', 'toString');
+    equals(x.nodeName, 'IMG', 'constructor sets nodeName');
+    equals(x.tagName, 'IMG', 'contructor sets tagName');
     equals(x.src, '', 'new image has src as empty string');
 
     // determined experimentally
@@ -620,6 +622,8 @@ test("Image", function() {
 test("Option", function() {
     var x = new Option();
     equals(x.toString(), '[object HTMLOptionElement]', 'toString');
+    equals(x.nodeName, 'OPTION', 'constructor sets nodeName');
+    equals(x.tagName, 'OPTION', 'constructor sets tagName');
     equals(x.form, null, 'get form is null');
     equals(x.selected, false, 'selected is false');
 
