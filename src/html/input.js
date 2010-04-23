@@ -69,3 +69,7 @@ HTMLElement.registerSetAttribute('INPUT', 'value', function(node, value) {
         node.defaultValue = value;
     }
 });
+
+// Named Element Support
+HTMLElement.registerSetAttribute('INPUT', 'name',
+                                 __updateFormForNamedElement__);

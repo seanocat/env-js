@@ -28,3 +28,6 @@ __extend__(HTMLButtonElement.prototype, {
     }
 });
 
+// Named Element Support
+HTMLElement.registerSetAttribute('BUTTON', 'name',
+                                 __updateFormForNamedElement__);

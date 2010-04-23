@@ -166,41 +166,6 @@ __extend__(HTMLElement.prototype, {
     },
 
     /**
-     * Named Element Support
-     */
-
-    /**
-     * Not all children of a form are named elements
-     * returns the parent form element or null if
-     * there is no parent form or if not a named element
-     */
-    _isFormNamedElement: function(node) {
-        if (node.nodeType === Node.ELEMENT_NODE) {
-            switch (node.nodeName.toLowerCase()) {
-            case 'button':
-            case 'fieldset':
-            case 'input':
-            case 'keygen':
-            case 'select':
-            case 'output':
-            case 'select':
-            case 'textarea':
-                return true;
-            }
-        }
-        return false;
-    },
-    _updateFormForNamedElement: function() {
-        if (this._isFormNamedElement(this)) {
-            if (this.form) {
-                // to check for ID or NAME attribute too
-                // not, then nothing to do
-                this.form._updateElements();
-            }
-        }
-    },
-
-    /**
      * setAttribute use a dispatch table that other tags can set to
      *  "listen" to various values being set.  The dispatch table
      * and registration functions are at the end of the file.
@@ -211,8 +176,6 @@ __extend__(HTMLElement.prototype, {
     setAttribute: function(name, value) {
         var result = Element.prototype.setAttribute.apply(this, arguments);
         this.ownerDocument._addNamedMap(this);
-        this._updateFormForNamedElement();
-
         var tagname = this.tagName;
         var callback = HTMLElement.getAttributeCallback('set', tagname, name);
         if (callback) {
@@ -222,7 +185,6 @@ __extend__(HTMLElement.prototype, {
     setAttributeNS: function(namespaceURI, name, value) {
         var result = Element.prototype.setAttributeNS.apply(this, arguments);
         this.ownerDocument._addNamedMap(this);
-        this._updateFormForNamedElement();
 
         var tagname = this.tagName;
         var callback = HTMLElement.getAttributeCallback('set', tagname, name);
@@ -235,7 +197,6 @@ __extend__(HTMLElement.prototype, {
     setAttributeNode: function(newnode) {
         var result = Element.prototype.setAttributeNode.apply(this, arguments);
         this.ownerDocument._addNamedMap(this);
-        this._updateFormForNamedElement();
 
         var tagname = this.tagName;
         var callback = HTMLElement.getAttributeCallback('set', tagname, newnode.name);
@@ -247,7 +208,7 @@ __extend__(HTMLElement.prototype, {
     setAttributeNodeNS: function(newnode) {
         var result = Element.prototype.setAttributeNodeNS.apply(this, arguments);
         this.ownerDocument._addNamedMap(this);
-        this._updateFormForNamedElement();
+
         var tagname = this.tagName;
         var callback = HTMLElement.getAttributeCallback('set', tagname, newnode.name);
         if (callback) {

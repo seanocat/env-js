@@ -38,3 +38,7 @@ HTMLElement.registerSetAttribute('TEXTAREA', 'value', function(node, value) {
     // complicated.  For now, do nothing
 });
 */
+
+// Named Element Support
+HTMLElement.registerSetAttribute('TEXTAREA', 'name',
+                                 __updateFormForNamedElement__);
