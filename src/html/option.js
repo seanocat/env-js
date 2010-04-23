@@ -127,6 +127,7 @@ Option = function(text, value, defaultSelected, selected) {
     // browsing context of the Window object on which the interface
     // object of the invoked constructor is found.
     HTMLOptionElement.apply(this, [document]);
+    this.nodeName = 'OPTION';
 
     if (arguments.length >= 1) {
         this.appendChild(document.createTextNode('' + text));

@@ -71,6 +71,7 @@ Image = function(width, height) {
     //   is not an integer.  Safari just converts to 0 on error.
     this.width = parseInt(width, 10) || 0;
     this.height = parseInt(height, 10) || 0;
+    this.nodeName = 'IMG';
 };
 Image.prototype = new HTMLImageElement();
 
@@ -116,80 +117,47 @@ __loadImage__ = function(node, value) {
 };
 
 __extend__(HTMLImageElement.prototype, {
-    /*
-     * Image Loading
-     *
-     * The difference between "owner.parsing" and "owner.fragment"
-     *
-     * If owner.parsing === true, then during the html5 parsing then,
-     *  __elementPopped__ is called when a compete tag (with attrs and
-     *  children) is full parsed and added the DOM.
-     *
-     *   For images, __elementPopped__ is called with everything the tag has.
-     *    which in turn looks for a "src" attr and calls __loadImage__
-     *
-     * If owner.parser === false (or non-existant), then we are not in a parsing step.
-     * For images,  perhaps someone directly modified a 'src' attribute of an
-     * existing image.
-     *
-     * 'innerHTML' is tricky since we first create a "fake document", parse it, then
-     *  import the right parts.   This may call img.setAttributeNS twice.  once during the
-     *  parse and once during the clone of the node.  We want event to trigger on the later
-     *  and not during th fake doco.  "owner.fragment" is set by the fake doco parser to
-     * indicate that events should not be triggered on this.
-     *
-     * We coud make 'owner.parser' == [ 'none', 'full', 'fragment']
-     * and just use one variable That was not done since the patch is
-     * quite large as is.
-     *
-     * This same problem occurs with scripts.  innerHTML oddly does
-     * not eval any <script> tags inside.
-     */
-
-    setAttribute: function(name, value) {
-        var result = HTMLElement.prototype.setAttribute.apply(this, arguments);
-        var owner = this.ownerDocument;
-        if (name === 'src' && !owner.parsing && !owner.fragment) {
-            __loadImage__(this, value);
-        }
-        return result;
-    },
-    setAttributeNS: function(namespaceURI, name, value) {
-        var result = HTMLElement.prototype.setAttributeNS.apply(this, arguments);
-        var owner = this.ownerDocument;
-        if (name === 'src' && !owner.parsing && !owner.fragment) {
-            __loadImage__(this, value);
-        }
-        return result;
-    },
-    setAttributeNode: function(newnode) {
-        var src;
-        var result = HTMLElement.prototype.setAttributeNode.apply(this, arguments);
-        var owner = this.ownerDocument;
-        if (!owner.parsing && !owner.fragment) {
-            src = this.getAttribute('src');
-            if (src) {
-                __loadImage__(this, src);
-            }
-        }
-        return result;
-    },
-    setAttributeNodeNS: function(newnode) {
-        var result = HTMLElement.prototype.setAttributeNodeNS.apply(this, arguments);
-        var owner = this.ownerDocument;
-        if (!owner.parsing && !owner.fragment) {
-            var src = this.getAttribute('src');
-            if (src) {
-                __loadImage__(this, src);
-            }
-        }
-        return result;
-    },
     onload: function(event){
         __eval__(this.getAttribute('onload') || '', this);
     }
 });
 
 
-
-
+/*
+ * Image Loading
+ *
+ * The difference between "owner.parsing" and "owner.fragment"
+ *
+ * If owner.parsing === true, then during the html5 parsing then,
+ *  __elementPopped__ is called when a compete tag (with attrs and
+ *  children) is full parsed and added the DOM.
+ *
+ *   For images, __elementPopped__ is called with everything the
+ *    tag has.  which in turn looks for a "src" attr and calls
+ *    __loadImage__
+ *
+ * If owner.parser === false (or non-existant), then we are not in
+ * a parsing step.  For images, perhaps someone directly modified
+ * a 'src' attribute of an existing image.
+ *
+ * 'innerHTML' is tricky since we first create a "fake document",
+ *  parse it, then import the right parts.  This may call
+ *  img.setAttributeNS twice.  once during the parse and once
+ *  during the clone of the node.  We want event to trigger on the
+ *  later and not during th fake doco.  "owner.fragment" is set by
+ *  the fake doco parser to indicate that events should not be
+ *  triggered on this.
+ *
+ * We coud make 'owner.parser' == [ 'none', 'full', 'fragment']
+ * and just use one variable That was not done since the patch is
+ * quite large as is.
+ *
+ * This same problem occurs with scripts.  innerHTML oddly does
+ * not eval any <script> tags inside.
+ */
+HTMLElement.registerSetAttribute('IMG', 'src', function(node, value) {
+    var owner = node.ownerDocument;
+    if (!owner.parsing && !owner.fragment) {
+        __loadImage__(node, value);
+    }
+});

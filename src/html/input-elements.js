@@ -4,7 +4,21 @@
  *
  *  the hierarchy of related HTML elements and their members is as follows:
  *
+ * Condensed Version
  *
+ *  HTMLInputCommon
+ *     * legent (no value attr)
+ *     * fieldset (no value attr)
+ *     * label (no value attr)
+ *     * option (custom)
+ *  HTMLTypeValueInputs (extends InputCommon)
+ *     * select  (custom)
+ *     * button (just sets value)
+ *  HTMLInputAreaCommon (extends TypeValueIput)
+ *     * input  (X)
+ *     * textarea (just sets value)
+ *
+ * -----------------------
  *    HTMLInputCommon:  common to all elements
  *       .form
  *
@@ -226,26 +240,6 @@ __extend__(HTMLTypeValueInputs.prototype, {
     set type(type){
         return this.setAttribute('type', type);
     },
-    get value(){
-        return this.getAttribute('value')||'';
-    },
-    set value(newValue){
-        this.setAttribute('value',newValue);
-    },
-    setAttribute: function(name, value){
-        //console.log('setting defaultValue (NS)');
-        if(name == 'value' && !this.defaultValue){
-            this.defaultValue = value;
-        }
-        HTMLElement.prototype.setAttribute.apply(this, [name, value]);
-    },
-    setAttributeNS: function(uri, name, value){
-        //console.log('setting defaultValue (NS)');
-        if(name == 'value' && !this.defaultValue){
-            this.defaultValue = value;
-        }
-        HTMLElement.prototype.setAttributeNS.apply(this, [uri, name, value]);
-    }
 });
 
 
