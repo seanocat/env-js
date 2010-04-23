@@ -453,6 +453,9 @@ test('HTMLInputElement', function() {
     equals(a.checked, false, 'set checked is still false');
     equals(a.getAttribute('checked'), '', 'getAttribte(checked) is null');
     equals(a.hasAttribute('checked'), true, 'hasAttribute(checked) is false');
+    a.defaultChecked = false
+    equals(a.defaultChecked, false, 'set defaultChecked value is false');
+    equals(a.hasAttribute('checked'), false, 'hasAttribute(checked) is false');
 
     equals(a.useMap, '', 'useMap is false');
     equals(typeof a.useMap, 'string', 'default useMap value is boolean');
