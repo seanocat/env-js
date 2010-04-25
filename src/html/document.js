@@ -32,6 +32,8 @@ __extend__(HTMLDocument.prototype, {
             node = new HTMLBaseElement(this);break;
         case "BLOCKQUOTE":
             node = new HTMLQuoteElement(this);break;
+        case "CANVAS":
+            node = new HTMLCanvasElement(this);break;
         case "Q":
             node = new HTMLQuoteElement(this);break;
         case "BODY":

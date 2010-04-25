@@ -408,6 +408,27 @@ test('HTMLButtonElement', function() {
     e.value = 'foo';
     equals(e.value, 'foo', 'set value');
 });
+test('HTMLCanvasElement', function() {
+    var element;
+
+    element = document.createElement('canvas');
+    ok(element, 'element created');
+    equals(element.toString(), '[object HTMLCanvasElement]', 'toString');
+
+    equals(element.height, 150, 'default height');
+    equals(element.width, 300, 'default width');
+    var ctx = element.getContext('2d');
+    ok(ctx, "context created");
+    equals(ctx.toString(), '[object CanvasRenderingContext2D]',
+           'context toString');
+
+    try {
+        element.getContext('foo');
+        fail('bad context did not throw error');
+    } catch (e) {
+        ok('bad context threw exception');
+    }
+});
 
 test('HTMLDivElement', function() {
     var a = document.createElement('div');
