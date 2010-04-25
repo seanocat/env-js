@@ -17,7 +17,7 @@ __extend__(HTMLAreaElement.prototype, {
         this.setAttribute('accesskey',value);
     },
     get alt(){
-        return this.getAttribute('alt');
+        return this.getAttribute('alt') || '';
     },
     set alt(value){
         this.setAttribute('alt',value);

@@ -222,23 +222,11 @@ __extend__(HTMLTypeValueInputs.prototype, inputElements_size);
 __extend__(HTMLTypeValueInputs.prototype, inputElements_status);
 __extend__(HTMLTypeValueInputs.prototype, inputElements_dataProperties);
 __extend__(HTMLTypeValueInputs.prototype, {
-    get defaultValue(){
-        return this.getAttribute('defaultValue');
-    },
-    set defaultValue(value){
-        this.setAttribute('defaultValue', value);
-    },
     get name(){
         return this.getAttribute('name')||'';
     },
     set name(value){
         this.setAttribute('name',value);
-    },
-    get type(){
-        return this.getAttribute('type');
-    },
-    set type(type){
-        return this.setAttribute('type', type);
     },
 });
 

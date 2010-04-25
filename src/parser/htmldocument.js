@@ -137,6 +137,9 @@ var __elementPopped__ = function(ns, name, node){
                                         __loadLink__(node, node.href);
                                     }
                                     break;
+                                case 'option':
+                                    node._updateoptions();
+                                    break;
                                 case 'img':
                                     if (node.src){
                                         __loadImage__(node, node.src);

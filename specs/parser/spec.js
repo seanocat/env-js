@@ -1,5 +1,12 @@
 QUnit.module('parser');
 
+var isenvjs;
+try {
+    isenvjs = runningUnderEnvjs();
+} catch (e) {
+    isenvjs= false;
+}
+
 test('Parser Interfaces Available', function(){
 
     expect(1);
@@ -390,7 +397,7 @@ test('Form Named Element Lookup', function(){
         // let's change the name
         var node = form.input1;
         node.name = 'input2';
-        ok(elements.input1 instanceof HTMLInputElement, 'is HTMLInputElement');
+        ok(form.input2 instanceof HTMLInputElement, 'is HTMLInputElement');
         ok(form.input1 instanceof HTMLInputElement, 'is HTMLInputElement');
 
         /*
@@ -404,6 +411,250 @@ test('Form Named Element Lookup', function(){
 
     var doc = iframe.contentDocument;
     doc.write('<html><head></head><body><form name="foo"><div></div></form></body></html>');
+    doc.close();
+    stop();
+});
+
+
+function testForm(doc, isenvjs) {
+    var form = doc.foo;
+    var elements = form.elements;
+    ok(elements instanceof HTMLCollection,
+       "form.elements is an HTMLCollection");
+    equals(elements.length, 6, "form.elements.length");
+    equals(form.length, 6, "form.length");
+
+
+    // not yet supported by FF 3.6
+    //equals(form.namedItem('e1').value, 'v1', 'form.namedItem(e1).value');
+    //equals(form.item(0).value, 'v1', 'form.item(0).value');
+
+    equals(form.e1.value, 'v1', 'form.e1.value');
+    equals(form.e2.value, 'v2', 'form.e2.value');
+    equals(form.e3.value, 'v3', 'form.e3.value');
+    equals(form.e4.value, 'v4', 'form.e4.value');
+    equals(form.e5.value, 'v5', 'form.e5.value');
+    equals(form.e6.value, 'v6', 'form.e6.value');
+
+    // quick tests of HTMLCollection
+    equals(form.elements.toString(), '[object HTMLCollection]',
+           'form.elements.toString()');
+    equals(form.elements[1234], null, 'form.elements[12340]');
+    equals(form.elements.item(1234), null, 'form.elements.item(12340)');
+    equals(form.elements.namedItem('foo'), null, 'form.elements.namedItem(foo)');
+
+    equals(form.elements.e1.value, 'v1', 'form.elements.e1.value');
+    equals(form.elements.e2.value, 'v2', 'form.elements.e2.value');
+    equals(form.elements.e3.value, 'v3', 'form.elements.e3.value');
+    equals(form.elements.e4.value, 'v4', 'form.elements.e4.value');
+    equals(form.elements.e5.value, 'v5', 'form.elements.e5.value');
+    equals(form.elements.e6.value, 'v6', 'form.elements.e6.value');
+
+    // direct array lookup
+    equals(form.elements[0].value, 'v1', 'form.elements[0].value');
+    equals(form.elements[1].value, 'v2', 'form.elements[1].value');
+    equals(form.elements[2].value, 'v3', 'form.elements[2].value');
+    equals(form.elements[3].value, 'v4', 'form.elements[3].value');
+    equals(form.elements[4].value, 'v5', 'form.elements[4].value');
+    equals(form.elements[5].value, 'v6', 'form.elements[5].value');
+
+    // namedItems
+    equals(form.elements.namedItem('e1').value, 'v1',
+           'form.elements.namedItem(e1).value');
+    equals(form.elements.namedItem('e2').value, 'v2',
+           'form.elements.namedItem(e2).value');
+    equals(form.elements.namedItem('e3').value, 'v3',
+           'form.elements.namedItem(e3).value');
+    equals(form.elements.namedItem('e4').value, 'v4',
+           'form.elements.namedItem(e4).value');
+    equals(form.elements.namedItem('e5').value, 'v5',
+           'form.elements.namedItem(e5).value');
+    equals(form.elements.namedItem('e6').value, 'v6',
+           'form.elements.namedItem(e6).value');
+
+
+    // items
+    equals(form.elements.item(0).value, 'v1',
+           'form.elements.item(e1).value');
+    equals(form.elements.item(1).value, 'v2',
+           'form.elements.item(e2).value');
+    equals(form.elements.item(2).value, 'v3',
+           'form.elements.item(e3).value');
+    equals(form.elements.item(3).value, 'v4',
+           'form.elements.item(e4).value');
+    equals(form.elements.item(4).value, 'v5',
+           'form.elements.item(e5).value');
+    equals(form.elements.item(5).value, 'v6',
+           'form.elements.item(e6).value');
+
+    // Options
+    equals(form.e5[0].value, 'v5', 'form.e5[0]');
+    equals(form.e5[1].value, 'opt2', 'form.e5[1]');
+
+
+    equals(form.e5.item(0).value, 'v5', 'form.e5.item(0)');
+    equals(form.e5.item(1).value, 'opt2', 'form.e5.item(1)');
+
+
+    equals(form.e5.options.length, 2, 'form.e5.options.length');
+    equals(form.e5.options[0].value, 'v5', 'form.e5.options[0].value');
+    equals(form.e5.options[1].value, 'opt2', 'form.e5.options[1].value');
+    equals(form.e5.options.item(0).value, 'v5', 'form.e5.options[0].value');
+    equals(form.e5.options.item(1).value, 'opt2', 'form.e5.options[1].value');
+
+    // firefox bugs or incomplete behavior
+    // some of these run under the doc and innerHTML tests, but
+    // don't work under the DOMAPI test
+    if (isenvjs) {
+        equals(form.e5.options.namedItem('o1').value, 'v5', 'form.e5.options[0].value');
+        equals(form.e5.options.namedItem('o2').value, 'opt2', 'form.e5.options[1].value');
+        equals(form.e5['o1'].value, 'v5', 'form.e5[0]');
+        equals(form.e5['o2'].value, 'opt2', 'form.e5[1]');
+
+        equals(form.e5.namedItem('o1').value, 'v5', 'form.e5.namedItem(o1)');
+        equals(form.e5.namedItem('o2').value, 'opt2', 'form.e5.namedItem(o2)');
+    }
+
+
+}
+
+
+
+test('Form Named Elements via parser', function() {
+    if ((typeof Envjs == 'undefined') || !Envjs) {
+        Envjs = {};
+    }
+
+    // need to do this at top level since under FF,
+    //  frames have different scope and this function isn't defined.
+    var iframe = document.createElement("iframe");
+    document.body.appendChild(iframe);
+
+    iframe.addEventListener('load', function() {
+        var doc = iframe.contentDocument;
+        ok(true, 'frame loaded');
+        testForm(doc, isenvjs);
+        document.body.removeChild(iframe);
+        start();
+    }, false);
+
+    var doc = iframe.contentDocument;
+    doc.write('<html><head></head><body><form name="foo">' +
+              '<div></div>' + // non-form element
+              '<input name="e1" value="v1" />'  + // input element
+              '<input id="e2" value="v2" />'    + // input element
+              '<textarea name="e3">v3</textarea>' + // text area
+              '<textarea id="e4">v4</textarea>' + // text area
+              '<select name="e5">' + //
+              '<option name="o1" selected>v5</option>' +
+              '<option id="o2">opt2</option>' +
+              '</select>' +
+              '<button name="e6" value="v6" />' +
+              '</form></body></html>');
+    doc.close();
+    stop();
+});
+
+test('Form Named Elements via innerHTML', function() {
+    if ((typeof Envjs == 'undefined') || !Envjs) {
+        Envjs = {};
+    }
+    var iframe = document.createElement("iframe");
+    document.body.appendChild(iframe);
+
+    iframe.addEventListener('load', function() {
+        var doc = iframe.contentDocument;
+        ok(true, 'frame loaded');
+        var div = doc.getElementById('container');
+        div.innerHTML = '' +
+            '<form name="foo">' +
+            '<div></div>' + // non-form element
+            '<input name="e1" value="v1" />'  + // input element
+            '<input id="e2" value="v2" />'    + // input element
+            '<textarea name="e3">v3</textarea>' + // text area
+            '<textarea id="e4">v4</textarea>' + // text area
+            '<select name="e5">' + //
+            '<option name="o1" selected>v5</option>' +
+            '<option id="o2">opt2</option>' +
+            '</select>' +
+            '<button name="e6" value="v6" />' +
+            '</form>';
+        testForm(doc, isenvjs);
+        document.body.removeChild(iframe);
+        start();
+    }, false);
+
+    var doc = iframe.contentDocument;
+    doc.write('<html><head></head><body><div id="container">' +
+              '</div</body></html>');
+    doc.close();
+    stop();
+});
+
+test('Form Named Elements via DOMAPI', function() {
+    if ((typeof Envjs == 'undefined') || !Envjs) {
+        Envjs = {};
+    }
+    var iframe = document.createElement("iframe");
+    document.body.appendChild(iframe);
+
+    iframe.addEventListener('load', function() {
+        var doc = iframe.contentDocument;
+        ok(true, 'frame loaded');
+        var div = doc.getElementById('container');
+        var form = doc.createElement('form');
+        var n;
+        form.name = 'foo';
+        div.appendChild(form);
+
+        n = doc.createElement('input');
+        n.name = 'e1';
+        n.value = 'v1';
+        form.appendChild(n);
+
+        n = doc.createElement('input');
+        n.id = 'e2';
+        n.value = 'v2';
+        form.appendChild(n);
+
+        n = doc.createElement('textarea');
+        n.name = 'e3';
+        n.value = 'v3';
+        form.appendChild(n);
+
+        n = doc.createElement('textarea');
+        n.id = 'e4';
+        n.value = 'v4';
+        form.appendChild(n);
+        lastn = n;
+
+        var select = doc.createElement('select');
+        select.name = 'e5';
+        form.appendChild(select);
+
+        var opt = new Option('v5', 'v5', true, true);
+        opt.name ='o1';
+        select.add(opt, null);
+	//       select.appendChild(opt);
+
+        opt = new Option('opt2', 'opt2');
+        opt.id = 'o2';
+        select.add(opt, null);
+        //select.appendChild(opt);
+
+        n = doc.createElement('button');
+        n.name = 'e6';
+        n.value = 'v6';
+        form.appendChild(n);
+
+        testForm(doc, isenvjs);
+        document.body.removeChild(iframe);
+        start();
+    }, false);
+
+    var doc = iframe.contentDocument;
+    doc.write('<html><head></head><body><div id="container">' +
+              '</div</body></html>');
     doc.close();
     stop();
 });
