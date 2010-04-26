@@ -257,8 +257,6 @@
             <fileset dir="${SRC_DIR}" includes="dom/document.js" />
             <fileset dir="${SRC_DIR}" includes="dom/domparser.js" />
             <fileset dir="${SRC_DIR}" includes="dom/xmlserializer.js" />
-            <fileset dir="${SRC_DIR}" includes="dom/xmlparser.js" />
-            <fileset dir="${SRC_DIR}" includes="dom/location.js" />
             <fileset dir="${SRC_DIR}" includes="common/outro.js" />
         </concat>
         <echo message="Finished Building ${DOM_DIST}"/>
@@ -392,7 +390,6 @@
             <fileset dir="${SRC_DIR}" includes="html/input-elements.js" />
             <!-- in alpha order, EXCEPT for dependencies -->
             <fileset dir="${SRC_DIR}" includes="html/a.js" />
-            <fileset dir="${SRC_DIR}" includes="html/anchor.js" />
             <fileset dir="${SRC_DIR}" includes="html/area.js" />
             <fileset dir="${SRC_DIR}" includes="html/base.js" />
             <fileset dir="${SRC_DIR}" includes="html/blockquote-q.js" />
@@ -414,7 +411,6 @@
             <fileset dir="${SRC_DIR}" includes="html/hr.js" />
             <fileset dir="${SRC_DIR}" includes="html/html.js" />
             <fileset dir="${SRC_DIR}" includes="html/iframe.js" />
-            <fileset dir="${SRC_DIR}" includes="html/image.js" />
             <fileset dir="${SRC_DIR}" includes="html/img.js" />
             <fileset dir="${SRC_DIR}" includes="html/input.js" />
             <fileset dir="${SRC_DIR}" includes="html/label.js" />
@@ -612,7 +608,6 @@
             <fileset dir="${SRC_DIR}" includes="window/__global__.js" />
             <fileset dir="${SRC_DIR}" includes="common/intro.js" />
             <fileset dir="${SRC_DIR}" includes="common/__extend__.js" />
-            <fileset dir="${SRC_DIR}" includes="common/__toArray__.js" />
             <fileset dir="${SRC_DIR}" includes="window/frame.js" />
             <fileset dir="${SRC_DIR}" includes="window/history.js" />
             <fileset dir="${SRC_DIR}" includes="window/navigator.js" />
