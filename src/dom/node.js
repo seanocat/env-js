@@ -473,8 +473,8 @@ __extend__(Node.prototype, {
         var nodelist = new NodeList(__ownerDocument__(this));
         for (var i = 0; i < this.childNodes.length; i++) {
             __getElementsByTagNameRecursive__(this.childNodes.item(i),
-					      tagname,
-					      nodelist);
+                                              tagname,
+                                              nodelist);
         }
         return nodelist;
     },
