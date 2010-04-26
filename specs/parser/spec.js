@@ -502,6 +502,10 @@ function testForm(doc, isenvjs) {
     equals(form.e5.options.item(0).value, 'v5', 'form.e5.options[0].value');
     equals(form.e5.options.item(1).value, 'opt2', 'form.e5.options[1].value');
 
+    // test the option.index
+    equals(form.e5.options[0].index, 0, 'form.e5.options[0].index');
+    equals(form.e5.options[1].index, 1, 'form.e5.options[1].index');
+
     // firefox bugs or incomplete behavior
     // some of these run under the doc and innerHTML tests, but
     // don't work under the DOMAPI test
@@ -635,7 +639,7 @@ test('Form Named Elements via DOMAPI', function() {
         var opt = new Option('v5', 'v5', true, true);
         opt.name ='o1';
         select.add(opt, null);
-	//       select.appendChild(opt);
+        //       select.appendChild(opt);
 
         opt = new Option('opt2', 'opt2');
         opt.id = 'o2';
