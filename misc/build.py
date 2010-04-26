@@ -69,5 +69,5 @@ if __name__ == '__main__':
 
     concat(os.path.expanduser(options.top),
            os.path.expanduser(options.src),
-           os.path.expanduser(outfile), atline=True)
+           os.path.expanduser(outfile), atline=True, platform=options.platform)
 
