@@ -43,5 +43,11 @@ java \
 #    -draftCompile \
 cp war/nu.validator.htmlparser.HtmlParser/nu.validator.htmlparser.HtmlParser.nocache.js ../../src/parser/htmlparser.js
 
+#
+# On innerhtml and some document-writes,some problems occurs when the
+# parser being invoked with the wrong state.  This patch just prevents
+# the parser from dying and throwing an exception.
+#
+patch ../../src/parser/htmlparser.js patch1.diff
 echo "DONE"
 
