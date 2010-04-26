@@ -47,7 +47,7 @@ test('HTML Interfaces Available', function(){
     ok(HTMLParamElement,        'HTMLParamElement defined');
     ok(HTMLScriptElement,       'HTMLScriptElement defined');
     ok(HTMLSelectElement,       'HTMLSelectElement defined');
-    ok(HTMLSpanElement,       'HTMLSpanElement defined');
+    ok(HTMLSpanElement,         'HTMLSpanElement defined');
     ok(HTMLStyleElement,        'HTMLStyleElement defined');
     ok(HTMLTableElement,        'HTMLTableElement defined');
     ok(HTMLTableSectionElement, 'HTMLTableSectionElement defined');
@@ -157,18 +157,6 @@ test('HTMLDocument.createAttributeNS', function(){
     ok(attribute.prefix = 'y', 'set prefix');
     equals(attribute.prefix, 'y', '.prefix');
     equals(attribute.name, 'y:envjs', '.name');
-    try{
-        attribute.name = 'env';
-        ok(false, 'name property is only a getter');
-    }catch(e){
-        ok(true, 'name property is only a getter');
-    }
-    try{
-        attribute.localName = 'env';
-        ok(false, 'localName property is only a getter');
-    }catch(e){
-        ok(true, 'localName property is only a getter');
-    }
     equals(attribute.toString(), '[object Attr]', '.toString');
     equals(xmlserializer.serializeToString(attribute), 'abc123', 'xmlserializer');
 
@@ -267,17 +255,14 @@ test('HTMLAnchorElement', function(){
     a.name = 'abc';
     a.rel = 'abc';
 
-    var absoluteHref = document.location.toString();
-    absoluteHref = absoluteHref.substring(0, absoluteHref.lastIndexOf('/')+1) + 'somewhere';
-
     equals(a.accessKey, 'abc', '.accessKey has expected value');
     equals(a.charset, 'abc', '.charset has expected value');
     equals(a.coords, 'abc', '.coords has expected value');
-    equals(a.href, absoluteHref, '.href has expected value');
     equals(a.hreflang, 'abc', '.hreflang has expected value');
     equals(a.name, 'abc', '.name has expected value');
     equals(a.rel, 'abc', '.rel has expected value');
 
+    ok(a.href.match('^[a-z]+://.+/somewhere$'), 'href is absolute url');
 });
 
 test('HTMLAreaElement', function(){
@@ -299,6 +284,9 @@ test('HTMLAreaElement', function(){
     equals(element.parentNode, null, '.parentNode');
     equals(element.prefix, null, '.prefix');
     equals(xmlserializer.serializeToString(element), '<AREA/>', 'xmlserializer');
+    equals(element.alt, '', 'alt');
+    element.alt = 'foo';
+    equals(element.alt, 'foo', 'set alt');
 
     equals(element.toString(), '', 'toString returns href');
     element.href = 'http://envjs.com/';
@@ -332,6 +320,7 @@ test('HTMLDocument.createElement(frame)', function(){
     equals(element.scrolling, "", '.scrolling');
     equals(element.src, "", '.src');
     equals(element.tagName, 'FRAME', '.name');
+    equals(element.toString(), '[object HTMLFrameElement]', 'toString');
     equals(xmlserializer.serializeToString(element), '<FRAME/>', 'xmlserializer');
 
 });
@@ -391,6 +380,41 @@ test('HTMLBRElement', function() {
     equals(a.toString(), '[object HTMLBRElement]');
 });
 
+test('HTMLButtonElement', function() {
+    var e;
+    e = document.createElement('button');
+    ok(e, 'element created');
+    equals(e.toString(), '[object HTMLButtonElement]', 'toString');
+
+    equals(e.type, 'submit', 'type');
+    equals(e.value, '', 'empty button value');
+    equals(typeof e.value, 'string', 'empty button value is string');
+
+    e.value = 'foo';
+    equals(e.value, 'foo', 'set value');
+});
+test('HTMLCanvasElement', function() {
+    var element;
+
+    element = document.createElement('canvas');
+    ok(element, 'element created');
+    equals(element.toString(), '[object HTMLCanvasElement]', 'toString');
+
+    equals(element.height, 150, 'default height');
+    equals(element.width, 300, 'default width');
+    var ctx = element.getContext('2d');
+    ok(ctx, "context created");
+    equals(ctx.toString(), '[object CanvasRenderingContext2D]',
+           'context toString');
+
+    try {
+        element.getContext('foo');
+        fail('bad context did not throw error');
+    } catch (e) {
+        ok('bad context threw exception');
+    }
+});
+
 test('HTMLDivElement', function() {
     var a = document.createElement('div');
     ok(a, 'element created');
@@ -428,11 +452,36 @@ test('HTMLInputElement', function() {
     equals(a.alt, '', 'empty alt is string');
     a.alt = 'foo';
     equals(a.alt, 'foo', 'set alt');
-
+    equals(a.type, 'text', 'type');
     equals(a.src, '', 'empty src is string');
     a.src = 'http://envjs.com/';
     equals(a.src, 'http://envjs.com/', 'set src');
     // TODO, src should make absolute any relative links
+
+    /**
+     * 'value' is a virtual state, NOT an attribute
+     *
+     */
+    // relationship between defaultValue and Value
+    equals(a.value, '', 'default value');
+    equals(a.defaultValue, '', 'default defaultValue');
+
+    a.defaultValue = 'bar';
+    equals(a.defaultValue, 'bar', 'set defaultValue');
+    equals(a.value, 'bar', 'value is initially set by defaultValue');
+
+    a.value = 'foo';
+    equals(a.value, 'foo', 'set value');
+    equals(a.defaultValue, 'bar', 'defaultValue is unchanged');
+
+    a.defaultValue = 'dingbat';
+    equals(a.defaultValue, 'dingbat', 'set defaultValue');
+    equals(a.value, 'foo', 'value is unchanged');
+
+    // test with DOMAPI
+    a.setAttribute('value', 'foobar');
+    equals(a.defaultValue, 'foobar', 'set defaultValue via DOMAPI');
+    equals(a.value, 'foo', 'value is unchanged');
 
     /**
      * Checked is a virtual state, NOT an attribute
@@ -462,6 +511,7 @@ test('HTMLInputElement', function() {
 
     equals(a.useMap, '', 'useMap is false');
     equals(typeof a.useMap, 'string', 'default useMap value is boolean');
+
 
     /**
      * Numeric-like things
@@ -542,6 +592,22 @@ test('HTMLMetaElement', function() {
     equals(element.getAttribute('content'), 'foo', 'get content via attribute');
 });
 
+test('HTMLModElement', function() {
+    var a = document.createElement('del');
+    ok(a, 'element created');
+    //equals(a.toString(), '[object HTMLModElement]');
+
+    a = document.createElement('ins');
+    ok(a, 'element created');
+    //equals(a.toString(), '[object HTMLModElement]');
+});
+
+test('HTMLObjectElement', function() {
+    var a = document.createElement('object');
+    ok(a, 'element created');
+    equals(a.toString(), '[object HTMLObjectElement]');
+});
+
 test('HTMLOListElement', function() {
     var a = document.createElement('ol');
     ok(a, 'element created');
@@ -578,6 +644,26 @@ test('HTMLQuoteElement', function() {
     // See http://dev.w3.org/html5/spec/Overview.html#dom-quote-cite
 });
 
+test('HTMLSelectElement', function() {
+    var a = document.createElement('select');
+    ok(a, 'element created');
+    equals(a.toString(), '[object HTMLSelectElement]');
+
+    equals(a.value, '', 'value');
+    equals(a.length, 0, 'length');
+    equals(a.selectedIndex, -1, 'selectedIndex');
+    equals(a.type, 'select-one', 'type');
+
+    equals(a.multiple, false, 'multiple');
+    a.multiple = true;
+    equals(a.multiple, true, 'set multiple');
+    equals(a.hasAttribute('multiple'), true, 'set multiple has  attribute');
+    equals(a.getAttribute('multiple'), '', 'set multiple set attribute');
+    a.multiple = false;
+    equals(a.hasAttribute('multiple'), false,
+           'set multiple removes attribute');
+});
+
 test('HTMLSpanElement', function() {
     var a = document.createElement('span');
     ok(a, 'element created');
@@ -604,8 +690,8 @@ test('HTMLTableDataCellElement', function() {
     ok(element, 'element created');
     if (runningUnderEnvjs())
         equals(element.toString(), '[object HTMLTableDataCellElement]',
-            'toString');
-        // don't run in-browser, FF uses HTMLTableCellElement
+               'toString');
+    // don't run in-browser, FF uses HTMLTableCellElement
 });
 
 test('HTMLTableHeaderCellElement', function() {
@@ -614,8 +700,8 @@ test('HTMLTableHeaderCellElement', function() {
     ok(element, 'element created');
     if (runningUnderEnvjs())
         equals(element.toString(), '[object HTMLTableHeaderCellElement]',
-            'toString');
-        // don't run in-browser, FF uses HTMLTableCellElement
+               'toString');
+    // don't run in-browser, FF uses HTMLTableCellElement
 });
 
 test('HTMLTableRowElement', function() {
@@ -638,6 +724,7 @@ test('HTMLTextArea', function() {
     ok(e, 'element created');
     equals(e.toString(), '[object HTMLTextAreaElement]', 'toString');
 
+    equals(e.type, 'textarea', 'type');
     equals(e.cols, -1, 'default cols is -1');
     e.cols = '10';
     equals(e.cols, 10, 'set cols');
@@ -647,6 +734,41 @@ test('HTMLTextArea', function() {
     e.rows = '11';
     equals(e.rows, 11, 'set row');
     equals(typeof e.rows, 'number', 'rows is a number');
+
+    // relationship between defaultValue and Value
+    equals(e.value, '', 'default value');
+    equals(e.defaultValue, '', 'default defaultValue');
+
+    e.defaultValue = 'bar';
+    equals(e.defaultValue, 'bar', 'set defaultValue');
+    equals(e.value, 'bar', 'value is initially set by defaultValue');
+
+    e.value = 'foo';
+    equals(e.value, 'foo', 'set value');
+    equals(e.defaultValue, 'bar', 'defaultValue is unchanged');
+
+    e.defaultValue = 'dingbat';
+    equals(e.defaultValue, 'dingbat', 'set defaultValue');
+    equals(e.value, 'foo', 'value is unchanged');
+
+    // change 'value' via DOMAPI setAttribute
+    e.value = 'foo';
+    e.defaultValue = 'bar';
+
+    // "setAttribute(value)" does nothing since the value of textarea is
+    //  really in it's textContent child
+    e.setAttribute('value', 'dingbat');
+    equals(e.value, 'foo', 'value is NOT set via DOMAPI');
+    equals(e.defaultValue, 'bar', 'defaultValue is NOT set via setattr');
+    equals(e.textContent, 'bar', 'textContent is NOT set via setattr');
+
+    e.textContent = 'dingbat';
+    equals(e.textContent, 'dingbat', 'set textContent');
+    equals(e.value, 'foo', 'value is NOT set via textContent');
+    equals(e.defaultValue, 'dingbat', 'defaultValue is set via textContent');
+
+
+    // TODO: normalization of rawvalue
 
 });
 
@@ -710,6 +832,7 @@ test("Option", function() {
     equals(x.tagName, 'OPTION', 'constructor sets tagName');
     equals(x.form, null, 'get form is null');
     equals(x.selected, false, 'selected is false');
+    equals(typeof x.type, 'undefined', 'type is undefined');
 
     x = new Option('text');
     equals(x.text, 'text', 'text content');
@@ -719,11 +842,19 @@ test("Option", function() {
     x = new Option('text', 'value');
     equals(x.text, 'text', 'text content');
     equals(x.value, 'value', 'value attribute');
+    equals(x.index, -1, 'index');
+    equals(x.form, null, 'form');
+
     equals(x.selected, false, 'selected is false');
+    x.selected = true;
+    equals(x.selected, true, 'set selected');
 
-    // TODO: defaultSelect, and selected arguments
-    // Missing since logic to compute 'selectedness' is busted.
-    x = new Option('text', 'value', true);
-    x = new Option('text', 'value', true, true);
+    equals(x.defaultSelected, false, 'defaultselected');
+    x.defaultSelected = true;
+    equals(x.defaultSelected, true, 'set defaultselected');
+    x.defaultSelected = false;
+    equals(x.defaultSelected, false, 'set defaultselected');
 
+    x = new Option('text1', 'value1');
+    x = new Option('text2', 'value2', true, true);
 });

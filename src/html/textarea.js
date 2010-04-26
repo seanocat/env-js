@@ -6,6 +6,7 @@
  */
 HTMLTextAreaElement = function(ownerDocument) {
     HTMLInputAreaCommon.apply(this, arguments);
+    this._rawvalue = null;
 };
 HTMLTextAreaElement.prototype = new HTMLInputAreaCommon();
 __extend__(HTMLTextAreaElement.prototype, {
@@ -21,23 +22,37 @@ __extend__(HTMLTextAreaElement.prototype, {
     set rows(value){
         this.setAttribute('rows', value);
     },
+
+    /*
+     * read-only
+     */
+    get type() {
+        return this.getAttribute('type') || 'textarea';
+    },
+
+    /**
+     * This modifies the text node under the widget
+     */
+    get defaultValue() {
+        return this.textContent;
+    },
+    set defaultValue(value) {
+        this.textContent = value;
+    },
+
+    /**
+     * http://dev.w3.org/html5/spec/Overview.html#concept-textarea-raw-value
+     */
     get value() {
-        this.getAttribute('value') || '';
+        return (this._rawvalue === null) ? this.defaultValue : this._rawvalue;
     },
     set value(value) {
-        this.setAttribute('value', value);
+        this._rawvalue = value;
     },
     toString: function() {
         return '[object HTMLTextAreaElement]';
     }
 });
-
-/*
-// http://dev.w3.org/html5/spec/Overview.html#dom-textarea-value
-HTMLElement.registerSetAttribute('TEXTAREA', 'value', function(node, value) {
-    // complicated.  For now, do nothing
-});
-*/
 
 // Named Element Support
 HTMLElement.registerSetAttribute('TEXTAREA', 'name',

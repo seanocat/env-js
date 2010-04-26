@@ -64,7 +64,7 @@ __extend__(HTMLFormElement.prototype,{
     get elements() {
         var nodes = this.getElementsByTagName('*');
         var alist = [];
-        var i;
+        var i, tmp;
         for (i = 0; i < nodes.length; ++i) {
             nodename = nodes[i].nodeName;
             // would like to replace switch with something else
@@ -80,8 +80,13 @@ __extend__(HTMLFormElement.prototype,{
             case 'TEXTAREA':
                 alist.push(nodes[i]);
                 this[i] = nodes[i];
-                if ('name' in nodes[i]) {
-                    this[nodes[i].name] = nodes[i];
+                tmp = nodes[i].name;
+                if (tmp) {
+                    this[tmp] = nodes[i];
+                }
+                tmp = nodes[i].id;
+                if (tmp) {
+                    this[tmp] = nodes[i];
                 }
             }
         }
@@ -97,7 +102,7 @@ __extend__(HTMLFormElement.prototype,{
         return this.elements[idx];
     },
     namedItem: function(aname) {
-        return this.elements[aname];
+        return this.elements.namedItem(aname);
     },
     toString: function() {
         return '[object HTMLFormElement]';

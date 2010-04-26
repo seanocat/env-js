@@ -257,8 +257,6 @@
             <fileset dir="${SRC_DIR}" includes="dom/document.js" />
             <fileset dir="${SRC_DIR}" includes="dom/domparser.js" />
             <fileset dir="${SRC_DIR}" includes="dom/xmlserializer.js" />
-            <fileset dir="${SRC_DIR}" includes="dom/xmlparser.js" />
-            <fileset dir="${SRC_DIR}" includes="dom/location.js" />
             <fileset dir="${SRC_DIR}" includes="common/outro.js" />
         </concat>
         <echo message="Finished Building ${DOM_DIST}"/>
@@ -392,7 +390,6 @@
             <fileset dir="${SRC_DIR}" includes="html/input-elements.js" />
             <!-- in alpha order, EXCEPT for dependencies -->
             <fileset dir="${SRC_DIR}" includes="html/a.js" />
-            <fileset dir="${SRC_DIR}" includes="html/anchor.js" />
             <fileset dir="${SRC_DIR}" includes="html/area.js" />
             <fileset dir="${SRC_DIR}" includes="html/base.js" />
             <fileset dir="${SRC_DIR}" includes="html/blockquote-q.js" />
@@ -414,7 +411,6 @@
             <fileset dir="${SRC_DIR}" includes="html/hr.js" />
             <fileset dir="${SRC_DIR}" includes="html/html.js" />
             <fileset dir="${SRC_DIR}" includes="html/iframe.js" />
-            <fileset dir="${SRC_DIR}" includes="html/image.js" />
             <fileset dir="${SRC_DIR}" includes="html/img.js" />
             <fileset dir="${SRC_DIR}" includes="html/input.js" />
             <fileset dir="${SRC_DIR}" includes="html/label.js" />
@@ -462,6 +458,49 @@
         <echo message=""/>
     </target>
 
+    <!-- BUILD CSS IMPLEMENTATIOM -->
+    <target name="css" depends="env-platforms">
+        <mkdir dir="${DIST_DIR}" />
+        <echo message=""/>
+        <echo message="Building ${CSS_DIST}" />
+        <concat destfile="${CSS_DIST}">
+            <filterchain>
+                <replacetokens>
+                    <token key="VERSION" value="css.${BUILD_VERSION}"/>
+                    <token key="BUILD_VERSION" value="${BUILD_VERSION}"/>
+                </replacetokens>
+            </filterchain>
+            <fileset dir="${SRC_DIR}" includes="css/__global__.js" />
+            <fileset dir="${SRC_DIR}" includes="common/intro.js" />
+            <fileset dir="${SRC_DIR}" includes="common/__extend__.js" />
+            <fileset dir="${SRC_DIR}" includes="common/__setArray__.js" />
+            <fileset dir="${SRC_DIR}" includes="common/__trim__.js" />
+            <fileset dir="${SRC_DIR}" includes="css/document.js" />
+            <fileset dir="${SRC_DIR}" includes="css/properties.js" />
+            <fileset dir="${SRC_DIR}" includes="css/rule.js" />
+            <fileset dir="${SRC_DIR}" includes="css/stylesheet.js" />
+            <fileset dir="${SRC_DIR}" includes="css/htmlelement.js" />
+            <fileset dir="${SRC_DIR}" includes="common/outro.js" />
+        </concat>
+        <echo message="Finished Building ${CSS_DIST}"/>
+        <echo message=""/>
+    </target>
+
+    <!-- TEST CSS SPECIFICATION -->
+    <target name='css-spec'
+            depends='css'
+            description='Test CSS Specs'>
+        <echo message=""/>
+        <echo message="Executing CSS Spec"/>
+        <java fork="true"
+              jar="${RHINO_JAR}"
+              failonerror="true">
+            <arg value="${TEST_DIR}/css/boot.js"/>
+            <jvmarg value="-Dfile.encoding=utf-8"/>
+            <jvmarg value="-Xmx256m"/>
+        </java>
+        <echo message=""/>
+    </target>
 
     <!-- BUILD PARSER IMPLEMENTATIOM -->
     <target name="parser" depends="env-platforms">
@@ -552,51 +591,6 @@
         <echo message=""/>
     </target>
 
-    <!-- BUILD CSS IMPLEMENTATIOM -->
-    <target name="css" depends="env-platforms">
-        <mkdir dir="${DIST_DIR}" />
-        <echo message=""/>
-        <echo message="Building ${CSS_DIST}" />
-        <concat destfile="${CSS_DIST}">
-            <filterchain>
-                <replacetokens>
-                    <token key="VERSION" value="css.${BUILD_VERSION}"/>
-                    <token key="BUILD_VERSION" value="${BUILD_VERSION}"/>
-                </replacetokens>
-            </filterchain>
-            <fileset dir="${SRC_DIR}" includes="css/__global__.js" />
-            <fileset dir="${SRC_DIR}" includes="common/intro.js" />
-            <fileset dir="${SRC_DIR}" includes="common/__extend__.js" />
-            <fileset dir="${SRC_DIR}" includes="common/__setArray__.js" />
-            <fileset dir="${SRC_DIR}" includes="common/__trim__.js" />
-            <fileset dir="${SRC_DIR}" includes="css/document.js" />
-            <fileset dir="${SRC_DIR}" includes="css/properties.js" />
-            <fileset dir="${SRC_DIR}" includes="css/rule.js" />
-            <fileset dir="${SRC_DIR}" includes="css/stylesheet.js" />
-            <fileset dir="${SRC_DIR}" includes="css/htmlelement.js" />
-            <fileset dir="${SRC_DIR}" includes="common/outro.js" />
-        </concat>
-        <echo message="Finished Building ${CSS_DIST}"/>
-        <echo message=""/>
-    </target>
-
-    <!-- TEST CSS SPECIFICATION -->
-    <target name='css-spec'
-            depends='css'
-            description='Test CSS Specs'>
-        <echo message=""/>
-        <echo message="Executing CSS Spec"/>
-        <java fork="true"
-              jar="${RHINO_JAR}"
-              failonerror="true">
-            <arg value="${TEST_DIR}/css/boot.js"/>
-            <jvmarg value="-Dfile.encoding=utf-8"/>
-            <jvmarg value="-Xmx256m"/>
-        </java>
-        <echo message=""/>
-    </target>
-
-
     <!-- BUILD WINDOW IMPLEMENTATIOM -->
     <target name="window" depends="env-platforms">
         <mkdir dir="${DIST_DIR}" />
@@ -612,7 +606,6 @@
             <fileset dir="${SRC_DIR}" includes="window/__global__.js" />
             <fileset dir="${SRC_DIR}" includes="common/intro.js" />
             <fileset dir="${SRC_DIR}" includes="common/__extend__.js" />
-            <fileset dir="${SRC_DIR}" includes="common/__toArray__.js" />
             <fileset dir="${SRC_DIR}" includes="window/frame.js" />
             <fileset dir="${SRC_DIR}" includes="window/history.js" />
             <fileset dir="${SRC_DIR}" includes="window/navigator.js" />

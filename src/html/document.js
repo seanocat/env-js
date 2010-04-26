@@ -32,6 +32,8 @@ __extend__(HTMLDocument.prototype, {
             node = new HTMLBaseElement(this);break;
         case "BLOCKQUOTE":
             node = new HTMLQuoteElement(this);break;
+        case "CANVAS":
+            node = new HTMLCanvasElement(this);break;
         case "Q":
             node = new HTMLQuoteElement(this);break;
         case "BODY":
@@ -514,16 +516,19 @@ Aspect.around({
                     __loadLink__(node, node.href);
                 }
                 break;
-/*
-            case 'img':
-                if (node.src && node.src.length > 0){
-                    // don't actually load anything, so we're "done" immediately:
-                    event = doc.createEvent('HTMLEvents');
-                    event.initEvent("load", false, false);
-                    node.dispatchEvent( event, false );
-                }
-                break;
+                /*
+                  case 'img':
+                  if (node.src && node.src.length > 0){
+                  // don't actually load anything, so we're "done" immediately:
+                  event = doc.createEvent('HTMLEvents');
+                  event.initEvent("load", false, false);
+                  node.dispatchEvent( event, false );
+                  }
+                  break;
                 */
+            case 'option':
+                node._updateoptions();
+                break;
             default:
                 if(node.getAttribute('onload')){
                     console.log('calling attribute onload %s | %s', node.onload, node.tagName);

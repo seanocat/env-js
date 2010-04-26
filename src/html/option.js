@@ -6,20 +6,26 @@
  */
 HTMLOptionElement = function(ownerDocument) {
     HTMLInputCommon.apply(this, arguments);
-    this._selected = false;
+    this._selected = null;
 };
 HTMLOptionElement.prototype = new HTMLInputCommon();
 __extend__(HTMLOptionElement.prototype, {
 
     /**
-     * defaultSelected actually reflects the 'selected' attribute
-     * leaving for now as is.
+     * defaultSelected actually reflects the presence of the
+     * 'selected' attribute.
      */
     get defaultSelected() {
-        return this.getAttribute('defaultSelected');
+        return this.hasAttribute('selected');
     },
     set defaultSelected(value) {
-        this.setAttribute('defaultSelected',value);
+        if (value) {
+            this.setAttribute('selected','');
+        } else {
+            if (this.hasAttribute('selected')) {
+                this.removeAttribute('selected');
+            }
+        }
     },
 
     /*
@@ -31,37 +37,46 @@ __extend__(HTMLOptionElement.prototype, {
      * value as the form IDL attribute on that select
      * element. Otherwise, it must return null.
      */
-    get form() {
+    _selectparent: function() {
         var parent = this.parentNode;
         if (!parent) {
             return null;
         }
+
         if (parent.tagName === 'SELECT') {
-            return parent.form;
+            return parent;
         }
         if (parent.tagName === 'COLGROUP') {
             parent = parent.parentNode;
             if (parent && parent.tagName === 'SELECT') {
-                return parent.form;
+                return parent;
             }
         }
-        return null;
+    },
+    _updateoptions: function() {
+        var parent = this._selectparent();
+        if (parent) {
+            // has side effects and updates owner select's options
+            parent.options;
+        }
+    },
+    get form() {
+        var parent = this._selectparent();
+        return parent ? parent.form : null;
     },
     get index() {
-        var options = this.parentNode.childNodes,
-            index = 0,
-            i, opt;
+        var options, i;
 
-        for (i=0; i < options.length; i++) {
-            opt = options[i];
-            if (opt.nodeType === Node.ELEMENT_NODE && opt.tagName === "OPTION") {
-                index++;
-            }
-            if (this == opt) {
-                return index;
+        if (! this.parentNode) {
+            return -1;
+        }
+        options = this.parentNode.options;
+        for (i=0; i < options.length; ++i) {
+            if (this === options[i]) {
+                return i;
             }
         }
-        return -1;
+        return 0;
     },
     get label() {
         return this.getAttribute('label');
@@ -70,48 +85,48 @@ __extend__(HTMLOptionElement.prototype, {
         this.setAttribute('label', value);
     },
 
+    /*
+     * This is not in the spec, but safari and firefox both
+     * use this
+     */
+    get name() {
+        return this.getAttribute('name');
+    },
+    set name(value) {
+        this.setAttribute('name', value);
+    },
+
     /**
-     * TODO: the getters/setters for 'selected' aren't quite right.
-     *  lots of special cases.
      *
-     * selected returns an internal state, partially based on the 'selected' attribute
-     *  but not entirely.
      */
     get selected() {
-        // if disabled, return false
+        // if disabled, return false, no matter what
+        if (this.disabled) {
+            return false;
+        }
+        if (this._selected === null) {
+            return this.defaultSelected;
+        }
 
-        return (this.getAttribute('selected') === 'selected');
+        return this._selected;
     },
     set selected(value) {
-        // if disabled, ignore? or error?
-
-        //console.log('option set selected %s', value);
-        if(this.defaultSelected===null && this.selected!==null) {
-            this.defaultSelected = this.selected+'';
-        }
-        var selectedValue = (value ? 'selected' : '');
-        if (this.getAttribute('selected') == selectedValue) {
-            // prevent inifinite loops (option's selected modifies
-            // select's value which modifies option's selected)
-            return;
-        }
-        //console.log('option setAttribute selected %s', selectedValue);
-        this.setAttribute('selected', selectedValue);
+        this._selected = (value) ? true : false;
     },
 
     get text() {
-        return ((this.nodeValue === null) ||  (this.nodeValue ===undefined)) ?
+        var val = this.nodeValue;
+        return (val === null || this.value === undefined) ?
             this.innerHTML :
-            this.nodeValue;
+            val;
     },
     get value() {
-        //console.log('getting value on option %s %s', this.text, this.getAttribute('value'));
-        return ((this.getAttribute('value') === undefined) || (this.getAttribute('value') === null)) ?
-            this.text :
-            this.getAttribute('value');
+        var val = this.getAttribute('value');
+        return (val === null || val === undefined) ?
+            this.textContent :
+            val;
     },
     set value(value) {
-        //console.log('setting value on option');
         this.setAttribute('value', value);
     },
     toString: function() {
@@ -141,8 +156,16 @@ Option = function(text, value, defaultSelected, selected) {
         }
     }
     if (arguments.length >= 4) {
-        this._selected = (selected) ? true : false;
+        this.selected = (selected) ? true : false;
     }
 };
 
 Option.prototype = new HTMLOptionElement();
+
+// Named Element Support
+
+function updater(node, value) {
+    node._updateoptions();
+}
+HTMLElement.registerSetAttribute('OPTION', 'name', updater);
+HTMLElement.registerSetAttribute('OPTION', 'id', updater);

@@ -6,7 +6,9 @@
  */
 HTMLInputElement = function(ownerDocument) {
     HTMLInputAreaCommon.apply(this, arguments);
+    this._dirty = false;
     this._checked = null;
+    this._value = null;
 };
 HTMLInputElement.prototype = new HTMLInputAreaCommon();
 __extend__(HTMLInputElement.prototype, {
@@ -47,7 +49,19 @@ __extend__(HTMLInputElement.prototype, {
             }
         }
     },
-
+    get defaultValue() {
+        return this.getAttribute('value') || '';
+    },
+    set defaultValue(value) {
+        this._dirty = true;
+        this.setAttribute('value', value);
+    },
+    get value() {
+        return (this._value === null) ? this.defaultValue : this._value;
+    },
+    set value(newvalue) {
+        this._value = newvalue;
+    },
     /**
      * Height is a string
      */
@@ -80,6 +94,13 @@ __extend__(HTMLInputElement.prototype, {
         this.setAttribute('src', value);
     },
 
+    get type() {
+        return this.getAttribute('type') || 'text';
+    },
+    set type(value) {
+        this.setAttribute('type', value);
+    },
+
     get useMap(){
         return this.getAttribute('map') || '';
     },
@@ -101,17 +122,25 @@ __extend__(HTMLInputElement.prototype, {
     }
 });
 
-
 //http://dev.w3.org/html5/spec/Overview.html#dom-input-value
-// TODO: needs work, not even clear this is needed and can be moved
-// up into the object
+// if someone directly modifies the value attribute, then the input's value
+// also directly changes.
 HTMLElement.registerSetAttribute('INPUT', 'value', function(node, value) {
-    //console.log('setting defaultValue (NS)');
-    if(!node.defaultValue){
-        node.defaultValue = value;
+    if (!node._dirty) {
+        node._value = value;
+        node._dirty = true;
     }
 });
 
+/*
+ *The checked content attribute is a boolean attribute that gives the
+ *default checkedness of the input element. When the checked content
+ *attribute is added, if the control does not have dirty checkedness,
+ *the user agent must set the checkedness of the element to true; when
+ *the checked content attribute is removed, if the control does not
+ *have dirty checkedness, the user agent must set the checkedness of
+ *the element to false.
+ */
 // Named Element Support
 HTMLElement.registerSetAttribute('INPUT', 'name',
                                  __updateFormForNamedElement__);

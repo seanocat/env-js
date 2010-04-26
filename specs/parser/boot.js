@@ -5,6 +5,7 @@
 
 load('specs/qunit.js');
 load('specs/env.qunit.js');
+load('specs/helpers.js');
 QUnit.init();
 
 load('dist/platform/core.js');
