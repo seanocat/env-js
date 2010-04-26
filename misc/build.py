@@ -42,9 +42,11 @@ def concat(base, src, outfile, atline=True, platform=None):
     for f in files:
         fname = os.path.join(base, src, f)
         data = open(fname, 'r')
-        if atline:
+        if atline and f != 'common/outro.js' and f != 'common/intro.js':
             outfile.write('\n//@line 1 "' + f + '"\n')
-        outfile.write(data.read())
+            outfile.write(data.read())
+        else:
+            outfile.write(data.read())
         data.close()
 
 if __name__ == '__main__':
@@ -59,6 +61,8 @@ if __name__ == '__main__':
                       help="Destination directory, default 'dist'")
     parser.add_option('-p', '--platform', dest='platform', default='',
                       help="platform type, optional. Defaults to core platform. 'rhino' is the only value supported")
+    parser.add_option('-a', '--atline', dest='atline', action="store_true",
+                      help="platform type, optional. Defaults to core platform. 'rhino' is the only value supported")
     (options, args) = parser.parse_args()
 
     outname = 'env.js'
@@ -69,5 +73,7 @@ if __name__ == '__main__':
 
     concat(os.path.expanduser(options.top),
            os.path.expanduser(options.src),
-           os.path.expanduser(outfile), atline=True, platform=options.platform)
+           os.path.expanduser(outfile),
+           atline=options.atline,
+           platform=options.platform)
 
