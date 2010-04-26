@@ -458,6 +458,49 @@
         <echo message=""/>
     </target>
 
+    <!-- BUILD CSS IMPLEMENTATIOM -->
+    <target name="css" depends="env-platforms">
+        <mkdir dir="${DIST_DIR}" />
+        <echo message=""/>
+        <echo message="Building ${CSS_DIST}" />
+        <concat destfile="${CSS_DIST}">
+            <filterchain>
+                <replacetokens>
+                    <token key="VERSION" value="css.${BUILD_VERSION}"/>
+                    <token key="BUILD_VERSION" value="${BUILD_VERSION}"/>
+                </replacetokens>
+            </filterchain>
+            <fileset dir="${SRC_DIR}" includes="css/__global__.js" />
+            <fileset dir="${SRC_DIR}" includes="common/intro.js" />
+            <fileset dir="${SRC_DIR}" includes="common/__extend__.js" />
+            <fileset dir="${SRC_DIR}" includes="common/__setArray__.js" />
+            <fileset dir="${SRC_DIR}" includes="common/__trim__.js" />
+            <fileset dir="${SRC_DIR}" includes="css/document.js" />
+            <fileset dir="${SRC_DIR}" includes="css/properties.js" />
+            <fileset dir="${SRC_DIR}" includes="css/rule.js" />
+            <fileset dir="${SRC_DIR}" includes="css/stylesheet.js" />
+            <fileset dir="${SRC_DIR}" includes="css/htmlelement.js" />
+            <fileset dir="${SRC_DIR}" includes="common/outro.js" />
+        </concat>
+        <echo message="Finished Building ${CSS_DIST}"/>
+        <echo message=""/>
+    </target>
+
+    <!-- TEST CSS SPECIFICATION -->
+    <target name='css-spec'
+            depends='css'
+            description='Test CSS Specs'>
+        <echo message=""/>
+        <echo message="Executing CSS Spec"/>
+        <java fork="true"
+              jar="${RHINO_JAR}"
+              failonerror="true">
+            <arg value="${TEST_DIR}/css/boot.js"/>
+            <jvmarg value="-Dfile.encoding=utf-8"/>
+            <jvmarg value="-Xmx256m"/>
+        </java>
+        <echo message=""/>
+    </target>
 
     <!-- BUILD PARSER IMPLEMENTATIOM -->
     <target name="parser" depends="env-platforms">
@@ -547,51 +590,6 @@
         </java>
         <echo message=""/>
     </target>
-
-    <!-- BUILD CSS IMPLEMENTATIOM -->
-    <target name="css" depends="env-platforms">
-        <mkdir dir="${DIST_DIR}" />
-        <echo message=""/>
-        <echo message="Building ${CSS_DIST}" />
-        <concat destfile="${CSS_DIST}">
-            <filterchain>
-                <replacetokens>
-                    <token key="VERSION" value="css.${BUILD_VERSION}"/>
-                    <token key="BUILD_VERSION" value="${BUILD_VERSION}"/>
-                </replacetokens>
-            </filterchain>
-            <fileset dir="${SRC_DIR}" includes="css/__global__.js" />
-            <fileset dir="${SRC_DIR}" includes="common/intro.js" />
-            <fileset dir="${SRC_DIR}" includes="common/__extend__.js" />
-            <fileset dir="${SRC_DIR}" includes="common/__setArray__.js" />
-            <fileset dir="${SRC_DIR}" includes="common/__trim__.js" />
-            <fileset dir="${SRC_DIR}" includes="css/document.js" />
-            <fileset dir="${SRC_DIR}" includes="css/properties.js" />
-            <fileset dir="${SRC_DIR}" includes="css/rule.js" />
-            <fileset dir="${SRC_DIR}" includes="css/stylesheet.js" />
-            <fileset dir="${SRC_DIR}" includes="css/htmlelement.js" />
-            <fileset dir="${SRC_DIR}" includes="common/outro.js" />
-        </concat>
-        <echo message="Finished Building ${CSS_DIST}"/>
-        <echo message=""/>
-    </target>
-
-    <!-- TEST CSS SPECIFICATION -->
-    <target name='css-spec'
-            depends='css'
-            description='Test CSS Specs'>
-        <echo message=""/>
-        <echo message="Executing CSS Spec"/>
-        <java fork="true"
-              jar="${RHINO_JAR}"
-              failonerror="true">
-            <arg value="${TEST_DIR}/css/boot.js"/>
-            <jvmarg value="-Dfile.encoding=utf-8"/>
-            <jvmarg value="-Xmx256m"/>
-        </java>
-        <echo message=""/>
-    </target>
-
 
     <!-- BUILD WINDOW IMPLEMENTATIOM -->
     <target name="window" depends="env-platforms">
