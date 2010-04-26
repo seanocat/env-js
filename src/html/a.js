@@ -29,12 +29,15 @@ __extend__(HTMLAnchorElement.prototype, {
         return this.setAttribute("coords",val);
     },
     get href() {
-        var location = this.ownerDocument.location+'';
-        return (location?location.substring(0, location.lastIndexOf('/')):'')+
-            (this.getAttribute("href")||'');
+        var link = this.getAttribute('href');
+        if (!link) {
+            return '';
+        }
+        return Envjs.uri(link,
+                         this.ownerDocument.location.toString());
     },
     set href(val) {
-        return this.setAttribute("href",val);
+        return this.setAttribute("href", val);
     },
     get hreflang() {
         return this.getAttribute("hreflang")||'';
