@@ -42,9 +42,10 @@ def concat(base, src, outfile, atline=True, platform=None):
     for f in files:
         fname = os.path.join(base, src, f)
         data = open(fname, 'r')
-        if atline and f != 'common/outro.js' and f != 'common/intro.js':
-            outfile.write('\n//@line 1 "' + f + '"\n')
-            outfile.write(data.read())
+        if atline:
+            if  f != 'common/outro.js' and f != 'common/intro.js':
+                outfile.write('\n//@line 1 "' + f + '"\n')
+                outfile.write(data.read())
         else:
             outfile.write(data.read())
         data.close()
@@ -62,6 +63,7 @@ if __name__ == '__main__':
     parser.add_option('-p', '--platform', dest='platform', default='',
                       help="platform type, optional. Defaults to core platform. 'rhino' is the only value supported")
     parser.add_option('-a', '--atline', dest='atline', action="store_true",
+                      default=False,
                       help="platform type, optional. Defaults to core platform. 'rhino' is the only value supported")
     (options, args) = parser.parse_args()
 
@@ -70,7 +72,6 @@ if __name__ == '__main__':
         outname = 'env.rhino.js'
 
     outfile = os.path.join(options.top, options.dist, outname)
-
     concat(os.path.expanduser(options.top),
            os.path.expanduser(options.src),
            os.path.expanduser(outfile),
