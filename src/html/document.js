@@ -527,7 +527,6 @@ Aspect.around({
                   break;
                 */
             case 'option':
-		console.log("ADD CHILD");
                 node._updateoptions();
                 break;
             default:
