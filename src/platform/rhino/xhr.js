@@ -68,7 +68,7 @@ Envjs.writeToTempFile = function(text, suffix){
  * Used to read the contents of a local file
  * @param {Object} url
  */
-Envjs.readFromFile = function(url){
+Envjs.readFromFile = function( url ){
     var fileReader = new java.io.FileReader(
         new java.io.File( 
             new java.net.URI( url )));
@@ -183,7 +183,7 @@ Envjs.connection = function(xhr, responseHandler, data){
             }else if(data.length&&data.length>0){
                 if ( xhr.method == "PUT" || xhr.method == "POST" ) {
                     connection.setDoOutput(true);
-                    voutstream = connection.getOutputStream();
+                    outstream = connection.getOutputStream();
                     buffer = new java.lang.String(data).getBytes('UTF-8');
                     outstream.write(buffer, 0, buffer.length);
                     outstream.close();
