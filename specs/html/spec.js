@@ -157,18 +157,6 @@ test('HTMLDocument.createAttributeNS', function(){
     ok(attribute.prefix = 'y', 'set prefix');
     equals(attribute.prefix, 'y', '.prefix');
     equals(attribute.name, 'y:envjs', '.name');
-    try{
-        attribute.name = 'env';
-        ok(false, 'name property is only a getter');
-    }catch(e){
-        ok(true, 'name property is only a getter');
-    }
-    try{
-        attribute.localName = 'env';
-        ok(false, 'localName property is only a getter');
-    }catch(e){
-        ok(true, 'localName property is only a getter');
-    }
     equals(attribute.toString(), '[object Attr]', '.toString');
     equals(xmlserializer.serializeToString(attribute), 'abc123', 'xmlserializer');
 
@@ -267,17 +255,14 @@ test('HTMLAnchorElement', function(){
     a.name = 'abc';
     a.rel = 'abc';
 
-    var absoluteHref = document.location.toString();
-    absoluteHref = absoluteHref.substring(0, absoluteHref.lastIndexOf('/')+1) + 'somewhere';
-
     equals(a.accessKey, 'abc', '.accessKey has expected value');
     equals(a.charset, 'abc', '.charset has expected value');
     equals(a.coords, 'abc', '.coords has expected value');
-    equals(a.href, absoluteHref, '.href has expected value');
     equals(a.hreflang, 'abc', '.hreflang has expected value');
     equals(a.name, 'abc', '.name has expected value');
     equals(a.rel, 'abc', '.rel has expected value');
 
+    ok(a.href.match('^[a-z]+://.+/somewhere$'), 'href is absolute url');
 });
 
 test('HTMLAreaElement', function(){

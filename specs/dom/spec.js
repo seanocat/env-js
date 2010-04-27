@@ -201,12 +201,6 @@ test('createAttribute', function(){
     equals(attribute.value, 'abc123', '.value');
     equals(attribute.name, 'envjs', '.name');
     equals(attribute.toString(), '[object Attr]', '.toString');
-    try{
-        attribute.name = 'env';
-        ok(false, 'name property is only a getter');
-    }catch(e){
-        ok(true, 'name property is only a getter');
-    }
     equals(xmlserializer.serializeToString(attribute), 'abc123', 'xmlserializer');
 
 });
@@ -244,18 +238,6 @@ test('createAttributeNS', function(){
     ok(attribute.prefix = 'y', 'set prefix');
     equals(attribute.prefix, 'y', '.prefix');
     equals(attribute.name, 'y:envjs', '.name');
-    try{
-        attribute.name = 'env';
-        ok(false, 'name property is only a getter');
-    }catch(e){
-        ok(true, 'name property is only a getter');
-    }
-    try{
-        attribute.localName = 'env';
-        ok(false, 'localName property is only a getter');
-    }catch(e){
-        ok(true, 'localName property is only a getter');
-    }
     equals(attribute.toString(), '[object Attr]', '.toString');
     equals(xmlserializer.serializeToString(attribute), 'abc123', 'xmlserializer');
 

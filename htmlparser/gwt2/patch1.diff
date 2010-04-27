@@ -1,0 +1,9 @@
+2884a2885
+>   if (current) {
+2885a2887
+>   }
+10214c10216
+< gwtOnLoad();})();
+\ No newline at end of file
+---
+> gwtOnLoad();})();
