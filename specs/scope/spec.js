@@ -131,16 +131,26 @@ function ok_accessToIFrame1x(iframe, contentOf, message){
 
 asyncTest("Iframe nesting", function(){
     var startingDepth = 3;
+    // if you change 'endingDepth', you'll have to adjust the set of
+    // iframe#.html symbolic links in specs/fixtures/scope and will
+    // probably want to change the frame-height constant in
+    // recursivelyInsertIFrames() in the style="" attribute.
     var endingDepth   = 7;
 
-    expect(4);
-// + (10*((endingDepth - startingDepth)+1)));
+    expect(
+        // firstOnloadHandlerContainingTests
+        4
+        // secondOnloadHandlerContainingTests
+        + 2 + (6*((endingDepth - startingDepth)+1))
+    );
 
-    window.numberNestedIframeLoads = 2;
-    window.windowLoadCount = 0;
+    window.top.numberNestedIframeLoads = 2;
+    window.top.windowLoadCount = 0;
+
 
     var topNestingIFrame = document.getElementById('nesting-iframe');
-    topNestingIFrame.onload = function(){
+    var secondOnloadHandlerContainingTests;
+    var firstOnloadHandlerContainingTests = function(){
 // iframe1.html contains a static <iframe> element that loads iframe2.html,
 // now we should have both loaded, with the structure that
 //     index.html --contains--> iframe1.html --contains--> iframe2.html
@@ -155,21 +165,75 @@ asyncTest("Iframe nesting", function(){
             "can access content of one IFRAME nested in another" );
         equals( iframeNested1.contentWindow.parent.parent, window,
             "can follow 'parent' path from nested IFRAME to root window");
-        equals( iframeNested1.contentWindow.top, window,
-            "nested IFRAME has correct .top");
 
-        // now, we'll programatically extend the nesting depth from 2 to many
-        recursivelyInsertIFrames(startingDepth, endingDepth, iframeNested1);
+        if (top.allTestsAreBeingRunWithinAnExtraIFrame)
+            equals( iframeNested1.contentWindow.top, window.parent,
+                "nested IFRAME has correct .top");
+        else
+            equals( iframeNested1.contentWindow.top, window,
+                "nested IFRAME has correct .top");
+
+
+	// now, we'll programatically extend the nesting depth from 2 to many
+	recursivelyInsertIFrames( startingDepth, endingDepth, iframeNested1,
+            secondOnloadHandlerContainingTests );
     };
+
+    secondOnloadHandlerContainingTests = function(){
+        var iframe = document.getElementById('nesting-iframe');
+        iframe = iframe.contentDocument.getElementById('nested1Level');
+
+        for (var c = startingDepth; c <= endingDepth; c++){
+	    iframe = iframe.contentDocument.
+		getElementById("iframe_of_depth_" + c);
+
+            var doc = iframe.contentDocument;
+            var matchResult = doc.getElementById('nestingLevel').
+                innerHTML.match(/[0-9]+/);
+            ok( matchResult, "can access content " + c + " levels deep" );
+            equals( parseInt(matchResult[0]), c,
+                "content " + c + " levels deep is correct" );
+
+            matchResult = doc.getElementById("pCreatedIframeOnload" + c).
+                innerHTML.match(/para window onload ([0-9]+)/);
+            ok( matchResult,
+                "found paragraph created by level " + c + " window load" );
+            equals( parseInt(matchResult[1]), c, "paragraph count is correct" );
+
+            var aWindow = iframe.contentWindow;
+            if (window.top.allTestsAreBeingRunWithinAnExtraIFrame)
+		equals( aWindow.top, window.top,
+		    "window " + c + " levels down has correct '.top'" );
+            else
+		equals( aWindow.top, window,
+		    "window " + c + " levels down has correct '.top'" );
+            for (var cn = c; cn > 0; cn--)
+                aWindow = aWindow.parent;
+            equals( aWindow, window,
+                "can follow parent pointers " + c + " levels to root" );
+        }
+
+        equals( window.top.numberNestedIframeLoads, endingDepth,
+            "all window onload events counted" );
+        equals( window.top.windowLoadCount,
+                (endingDepth - startingDepth)+2,
+            "all iframe onload events counted" );
+    };
+
+
+    // trigger testing to start
+    topNestingIFrame.onload = firstOnloadHandlerContainingTests;
     topNestingIFrame.src = "../fixtures/scope/iframe1.html";
 
+    // restart QUnit framework once all frames loaded/asserts called
     setTimeout(function(){
         start();
     }, 1000);
 });
 
 
-function recursivelyInsertIFrames(depth, finalDepth, existingIframe){
+function recursivelyInsertIFrames(
+        depth, finalDepth, existingIframe, finalOnloadHandler ){
     var newIframe;
     newIframe = existingIframe.contentDocument.createElement("iframe");
     newIframe.setAttribute("id", "iframe_of_depth_" + depth);
@@ -179,8 +243,11 @@ function recursivelyInsertIFrames(depth, finalDepth, existingIframe){
 
     if (depth < finalDepth)
         newIframe.onload = function(){
-            recursivelyInsertIFrames(depth+1, finalDepth, newIframe);
+            recursivelyInsertIFrames( depth+1, finalDepth, newIframe,
+                finalOnloadHandler );
         };
+    else
+        newIframe.onload = finalOnloadHandler;
 
     existingIframe.contentDocument.getElementsByTagName('body')[0].
         appendChild(newIframe);
