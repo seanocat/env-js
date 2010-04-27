@@ -37,6 +37,38 @@ Envjs.loadInlineScript = function(script){
  */
 Envjs.eval = function(context, source, name){};
 
+/**
+ * Specifies the location of the cookie file
+ */
+Envjs.cookieFile = function(){
+    return 'file://'+Envjs.tmpdir+'/.cookies';
+};
+
+/**
+ * saves cookies to a local file
+ * @param {Object} htmldoc
+ */
+Envjs.saveCookies = function(cookies){
+    var cookiejson = JSON.stringify(cookies,null,'\t');
+    //console.log('persisting cookies %s', cookiejson);
+    Envjs.writeToFile(cookiejson, Envjs.cookieFile());
+};
+
+/**
+ * loads cookies from a local file
+ * @param {Object} htmldoc
+ */
+Envjs.loadCookies = function(){
+    var cookiejson = Envjs.readFromFile(Envjs.cookieFile())
+    //console.log('loaded cookies : %s', cookiejson);
+    var js;
+    try{
+        js = JSON.parse(cookiejson, null, '\t');
+    }catch(e){
+        console.log('failed to load cookies %s', e);
+    }
+    return js;
+};
 
 /**
  * Executes a script tag

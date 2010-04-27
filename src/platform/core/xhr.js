@@ -82,6 +82,12 @@ Envjs.writeToFile = function(text, url){};
 Envjs.writeToTempFile = function(text, suffix){};
 
 /**
+ * Used to read the contents of a local file
+ * @param {Object} url
+ */
+Envjs.readFromFile = function(url){};
+
+/**
  * Used to delete a local file
  * @param {Object} url
  */
