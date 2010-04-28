@@ -173,6 +173,16 @@ __extend__(HTMLDocument.prototype, {
     get applets(){
         return new HTMLCollection(this.getElementsByTagName('applet'));
     },
+    get documentElement(){
+        var html = Document.prototype.__lookupGetter__('documentElement').apply(this,[]);
+        if( html === null){
+            html = this.createElement('html');
+            this.appendChild(html);
+            html.appendChild(this.createElement('head'));
+            html.appendChild(this.createElement('body'));
+        }
+        return html;
+    },
     //document.head is non-standard
     get head(){
         //console.log('get head');
@@ -359,68 +369,10 @@ __extend__(HTMLDocument.prototype, {
     },
     get innerHTML(){
         return this.documentElement.outerHTML;
-    },
-
-
-    /**
-     * Named Element Support
-     *
-     *
-     */
-
-    /*
-     *
-     * @returns 'name' if the node has a appropriate name
-     *          null if node does not have a name
-     */
-
-    _isNamedElement: function(node) {
-        if (node.nodeType !== Node.ELEMENT_NODE) {
-            return null;
-        }
-        var tf = node.tagName.toLowerCase();
-        var nodename = null;
-
-        switch (tf) {
-        case 'embed':
-        case 'form':
-        case 'iframe':
-            nodename = node.getAttribute('name');
-            break;
-        case 'applet':
-            nodename = node.id;
-            break;
-        case 'object':
-            // TODO: object needs to be 'fallback free'
-            nodename = node.id;
-            break;
-        case 'img':
-            nodename = node.id;
-            if (!nodename || ! node.getAttribute('name')) {
-                nodename = null;
-            }
-            break;
-        }
-        return (nodename) ? nodename : null;
-    },
-    _addNamedMap: function(node) {
-        var nodename = this._isNamedElement(node);
-        if (nodename) {
-            this.__defineGetter__(nodename, function() {
-                return node;
-            });
-        }
-    },
-    _removeNamedMap: function(node) {
-        if (!node) {
-            return;
-        }
-        var nodename = this._isNamedElement(node);
-        if (nodename) {
-            delete this[nodename];
-        }
     }
 });
+
+
 
 Aspect.around({
     target: Node,
@@ -441,107 +393,107 @@ Aspect.around({
     //console.log('appended html element %s %s %s',
     //             node.namespaceURI, node.nodeName, node);
     switch(doc.parsing){
-    case true:
-        //handled by parser if included
-        //console.log('html document in parse mode');
-        break;
-    case false:
-        switch(node.namespaceURI){
-        case null:
-            //fall through
-        case "":
-            //fall through
-        case "http://www.w3.org/1999/xhtml":
-            switch(node.tagName.toLowerCase()){
-            case 'style':
-                document.styleSheets.push(CSSStyleSheet(node));
-                break;
-            case 'script':
-                if((this.nodeName.toLowerCase() === 'head')){
-                    try{
-                        okay = Envjs.loadLocalScript(node, null);
-                        //console.log('loaded script? %s %s', node.uuid, okay);
-                        // only fire event if we actually had something to load
-                        if (node.src && node.src.length > 0){
-                            event = doc.createEvent('HTMLEvents');
-                            event.initEvent( okay ? "load" : "error", false, false );
-                            node.dispatchEvent( event, false );
+        case true:
+            //handled by parser if included
+            //console.log('html document in parse mode');
+            break;
+        case false:
+            switch(node.namespaceURI){
+                case null:
+                    //fall through
+                case "":
+                    //fall through
+                case "http://www.w3.org/1999/xhtml":
+                    switch(node.tagName.toLowerCase()){
+                    case 'style':
+                        document.styleSheets.push(CSSStyleSheet(node));
+                        break;
+                    case 'script':
+                        if((this.nodeName.toLowerCase() === 'head')){
+                            try{
+                                okay = Envjs.loadLocalScript(node, null);
+                                //console.log('loaded script? %s %s', node.uuid, okay);
+                                // only fire event if we actually had something to load
+                                if (node.src && node.src.length > 0){
+                                    event = doc.createEvent('HTMLEvents');
+                                    event.initEvent( okay ? "load" : "error", false, false );
+                                    node.dispatchEvent( event, false );
+                                }
+                            }catch(e){
+                                console.log('error loading html element %s %e', node, e.toString());
+                            }
                         }
-                    }catch(e){
-                        console.log('error loading html element %s %e', node, e.toString());
-                    }
-                }
-                break;
-            case 'frame':
-            case 'iframe':
-                node.contentWindow = { };
-                node.contentDocument = new HTMLDocument(new DOMImplementation(), node.contentWindow);
-                node.contentWindow.document = node.contentDocument;
-                try{
-                    Window;
-                }catch(e){
-                    node.contentDocument.addEventListener('DOMContentLoaded', function(){
-                        event = node.contentDocument.createEvent('HTMLEvents');
-                        event.initEvent("load", false, false);
-                        node.dispatchEvent( event, false );
-                    });
-                }
-                try{
-                    if (node.src && node.src.length > 0){
-                        //console.log("getting content document for (i)frame from %s", node.src);
-                        Envjs.loadFrame(node, Envjs.uri(node.src));
-                        event = node.contentDocument.createEvent('HTMLEvents');
-                        event.initEvent("load", false, false);
-                        node.dispatchEvent( event, false );
-                    }else{
-                        //I dont like this being here:
-                        //TODO: better  mix-in strategy so the try/catch isnt required
+                        break;
+                    case 'frame':
+                    case 'iframe':
+                        node.contentWindow = { };
+                        node.contentDocument = new HTMLDocument(new DOMImplementation(), node.contentWindow);
+                        node.contentWindow.document = node.contentDocument;
                         try{
-                            if(Window){
-                                Envjs.loadFrame(node);
-                                //console.log('src/html/document.js: triggering frame load');
+                            Window;
+                        }catch(e){
+                            node.contentDocument.addEventListener('DOMContentLoaded', function(){
                                 event = node.contentDocument.createEvent('HTMLEvents');
                                 event.initEvent("load", false, false);
                                 node.dispatchEvent( event, false );
+                            });
+                        }
+                        try{
+                            if (node.src && node.src.length > 0){
+                                //console.log("getting content document for (i)frame from %s", node.src);
+                                Envjs.loadFrame(node, Envjs.uri(node.src));
+                                event = node.contentDocument.createEvent('HTMLEvents');
+                                event.initEvent("load", false, false);
+                                node.dispatchEvent( event, false );
+                            }else{
+                                //I dont like this being here:
+                                //TODO: better  mix-in strategy so the try/catch isnt required
+                                try{
+                                    if(Window){
+                                        Envjs.loadFrame(node);
+                                        //console.log('src/html/document.js: triggering frame load');
+                                        event = node.contentDocument.createEvent('HTMLEvents');
+                                        event.initEvent("load", false, false);
+                                        node.dispatchEvent( event, false );
+                                    }
+                                }catch(e){}
                             }
-                        }catch(e){}
-                    }
-                }catch(e){
-                    console.log('error loading html element %s %e', node, e.toString());
-                }
-                break;
-
-            case 'link':
-                if (node.href && node.href.length > 0) {
-                    __loadLink__(node, node.href);
-                }
-                break;
-                /*
-                  case 'img':
-                  if (node.src && node.src.length > 0){
-                  // don't actually load anything, so we're "done" immediately:
-                  event = doc.createEvent('HTMLEvents');
-                  event.initEvent("load", false, false);
-                  node.dispatchEvent( event, false );
-                  }
-                  break;
-                */
-            case 'option':
-                node._updateoptions();
-                break;
-            default:
-                if(node.getAttribute('onload')){
-                    console.log('calling attribute onload %s | %s', node.onload, node.tagName);
-                    node.onload();
-                }
-                break;
-            }//switch on name
-        default:
+                        }catch(e){
+                            console.log('error loading html element %s %e', node, e.toString());
+                        }
+                        break;
+        
+                    case 'link':
+                        if (node.href && node.href.length > 0) {
+                            __loadLink__(node, node.href);
+                        }
+                        break;
+                        /*
+                          case 'img':
+                          if (node.src && node.src.length > 0){
+                          // don't actually load anything, so we're "done" immediately:
+                          event = doc.createEvent('HTMLEvents');
+                          event.initEvent("load", false, false);
+                          node.dispatchEvent( event, false );
+                          }
+                          break;
+                        */
+                    case 'option':
+                        node._updateoptions();
+                        break;
+                    default:
+                        if(node.getAttribute('onload')){
+                            console.log('calling attribute onload %s | %s', node.onload, node.tagName);
+                            node.onload();
+                        }
+                        break;
+                    }//switch on name
+                default:
+                    break;
+            }//switch on ns
             break;
-        }//switch on ns
-        break;
-    default:
-        // console.log('element appended: %s %s', node+'', node.namespaceURI);
+        default:
+            // console.log('element appended: %s %s', node+'', node.namespaceURI);
     }//switch on doc.parsing
     return node;
 
@@ -568,50 +520,114 @@ Aspect.around({
     //console.log('appended html element %s %s %s', node.namespaceURI, node.nodeName, node);
 
     switch(doc.parsing){
-    case true:
-        //handled by parser if included
-        break;
-    case false:
-        switch(node.namespaceURI){
-        case null:
-            //fall through
-        case "":
-            //fall through
-        case "http://www.w3.org/1999/xhtml":
-            //this is interesting dillema since our event engine is
-            //storing the registered events in an array accessed
-            //by the uuid property of the node.  unforunately this
-            //means listeners hang out way after(forever ;)) the node
-            //has been removed and gone out of scope.
-            //console.log('removing event listeners, %s', node, node.uuid);
-            node.removeEventListener('*', null, null);
-            switch(node.tagName.toLowerCase()){
-            case 'frame':
-            case 'iframe':
-                try{
-                    //console.log('removing iframe document');
+        case true:
+            //handled by parser if included
+            break;
+        case false:
+            switch(node.namespaceURI){
+            case null:
+                //fall through
+            case "":
+                //fall through
+            case "http://www.w3.org/1999/xhtml":
+                //this is interesting dillema since our event engine is
+                //storing the registered events in an array accessed
+                //by the uuid property of the node.  unforunately this
+                //means listeners hang out way after(forever ;)) the node
+                //has been removed and gone out of scope.
+                //console.log('removing event listeners, %s', node, node.uuid);
+                node.removeEventListener('*', null, null);
+                switch(node.tagName.toLowerCase()){
+                case 'frame':
+                case 'iframe':
                     try{
-                        Envjs.unloadFrame(node);
+                        //console.log('removing iframe document');
+                        try{
+                            Envjs.unloadFrame(node);
+                        }catch(e){
+                            console.log('error freeing resources from frame %s', e);
+                        }
+                        node.contentWindow = null;
+                        node.contentDocument = null;
                     }catch(e){
-                        console.log('error freeing resources from frame %s', e);
+                        console.log('error unloading html element %s %e', node, e.toString());
                     }
-                    node.contentWindow = null;
-                    node.contentDocument = null;
-                }catch(e){
-                    console.log('error unloading html element %s %e', node, e.toString());
-                }
-                break;
+                    break;
+                default:
+                    break;
+                }//switch on name
             default:
                 break;
-            }//switch on name
-        default:
+            }//switch on ns
             break;
-        }//switch on ns
-        break;
-    default:
-        console.log('element appended: %s %s', node+'', node.namespaceURI);
+        default:
+            console.log('element appended: %s %s', node+'', node.namespaceURI);
     }//switch on doc.parsing
     return node;
 
 });
 
+
+
+/**
+ * Named Element Support
+ *
+ *
+ */
+
+/*
+ *
+ * @returns 'name' if the node has a appropriate name
+ *          null if node does not have a name
+ */
+
+var __isNamedElement__ = function(node) {
+    if (node.nodeType !== Node.ELEMENT_NODE) {
+        return null;
+    }
+    var tagName = node.tagName.toLowerCase();
+    var nodename = null;
+
+    switch (tagName) {
+        case 'embed':
+        case 'form':
+        case 'iframe':
+            nodename = node.getAttribute('name');
+            break;
+        case 'applet':
+            nodename = node.id;
+            break;
+        case 'object':
+            // TODO: object needs to be 'fallback free'
+            nodename = node.id;
+            break;
+        case 'img':
+            nodename = node.id;
+            if (!nodename || ! node.getAttribute('name')) {
+                nodename = null;
+            }
+            break;
+    }
+    return (nodename) ? nodename : null;
+};
+
+
+var __addNamedMap__ = function(target, node) {
+    var nodename = __isNamedElement__(node);
+    if (nodename) {
+        target.__defineGetter__(nodename, function() {
+            return node;
+        });
+    }
+};
+
+var __removeNamedMap__ = function(target, node) {
+    if (!node) {
+        return;
+    }
+    var nodename = __isNamedElement__(node);
+    if (nodename) {
+        delete target[nodename];
+    }
+};
+    

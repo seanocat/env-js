@@ -175,7 +175,7 @@ __extend__(HTMLElement.prototype, {
 
     setAttribute: function(name, value) {
         var result = Element.prototype.setAttribute.apply(this, arguments);
-        this.ownerDocument._addNamedMap(this);
+        __addNamedMap__(this.ownerDocument, this);
         var tagname = this.tagName;
         var callback = HTMLElement.getAttributeCallback('set', tagname, name);
         if (callback) {
@@ -184,7 +184,7 @@ __extend__(HTMLElement.prototype, {
     },
     setAttributeNS: function(namespaceURI, name, value) {
         var result = Element.prototype.setAttributeNS.apply(this, arguments);
-        this.ownerDocument._addNamedMap(this);
+        __addNamedMap__(this.ownerDocument, this);
 
         var tagname = this.tagName;
         var callback = HTMLElement.getAttributeCallback('set', tagname, name);
@@ -196,7 +196,7 @@ __extend__(HTMLElement.prototype, {
     },
     setAttributeNode: function(newnode) {
         var result = Element.prototype.setAttributeNode.apply(this, arguments);
-        this.ownerDocument._addNamedMap(this);
+        __addNamedMap__(this.ownerDocument, this);
 
         var tagname = this.tagName;
         var callback = HTMLElement.getAttributeCallback('set', tagname, newnode.name);
@@ -207,7 +207,7 @@ __extend__(HTMLElement.prototype, {
     },
     setAttributeNodeNS: function(newnode) {
         var result = Element.prototype.setAttributeNodeNS.apply(this, arguments);
-        this.ownerDocument._addNamedMap(this);
+        __addNamedMap__(this.ownerDocument, this);
 
         var tagname = this.tagName;
         var callback = HTMLElement.getAttributeCallback('set', tagname, newnode.name);
@@ -217,32 +217,32 @@ __extend__(HTMLElement.prototype, {
         return result;
     },
     removeAttribute: function(name) {
-        this.ownerDocument._removeNamedMap(this);
+        __removeNamedMap__(this.ownerDocument, this);
         return Element.prototype.removeAttribute.apply(this, arguments);
     },
     removeAttributeNS: function(namespace, localname) {
-        this.ownerDocument._removeNamedMap(this);
+        __removeNamedMap__(this.ownerDocument, this);
         return Element.prototype.removeAttributeNS.apply(this, arguments);
     },
     removeAttributeNode: function(name) {
-        this.ownerDocument._removeNamedMap(this);
+        __removeNamedMap__(this.ownerDocument, this);
         return Element.prototype.removeAttribute.apply(this, arguments);
     },
     removeChild: function(oldChild) {
-        this.ownerDocument._removeNamedMap(oldChild);
+        __removeNamedMap__(this.ownerDocument, oldChild);
         return Element.prototype.removeChild.apply(this, arguments);
     },
     importNode: function(othernode, deep) {
         var newnode = Element.prototype.importNode.apply(this, arguments);
-        this.ownerDocument._addNamedMap(newnode);
+        __addNamedMap__(this.ownerDocument, newnode);
         return newnode;
     },
 
     // not actually sure if this is needed or not
     replaceNode: function(newchild, oldchild) {
         var newnode = Element.prototype.replaceNode.apply(this, arguments);
-        this.ownerDocument._removeNamedMap(oldchild);
-        this.ownerDocument._addNamedMap(newnode);
+        __removeNamedMap__(this.ownerDocument, oldchild);
+        __addNamedMap__(this.ownerDocument, newnode);
         return newnode;
     }
 });

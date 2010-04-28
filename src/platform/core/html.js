@@ -59,13 +59,14 @@ Envjs.saveCookies = function(cookies){
  * @param {Object} htmldoc
  */
 Envjs.loadCookies = function(){
-    var cookiejson = Envjs.readFromFile(Envjs.cookieFile())
-    //console.log('loaded cookies : %s', cookiejson);
-    var js;
+    var cookiejson,
+        js;
     try{
+        cookiejson = Envjs.readFromFile(Envjs.cookieFile())
         js = JSON.parse(cookiejson, null, '\t');
     }catch(e){
         console.log('failed to load cookies %s', e);
+        js = {};
     }
     return js;
 };
