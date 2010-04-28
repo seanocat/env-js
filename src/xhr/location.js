@@ -26,7 +26,7 @@ Location = function(url, doc, history) {
     $document = doc ? doc : null,
     $history = history ? history : null;
 
-    var parts = urlparse.urlsplit($url);
+    var parts = Envjs.urlsplit($url);
 
     return {
         get hash() {
@@ -38,7 +38,7 @@ Location = function(url, doc, history) {
             } else {
                 parts.fragment = s;
             }
-            $url = urlparse.urlunsplit(parts);
+            $url = Envjs.urlunsplit(parts);
             if ($history) {
                 $history.add($url, 'hash');
             }
@@ -53,10 +53,10 @@ Location = function(url, doc, history) {
             }
 
             parts.netloc = s;
-            $url = urlparse.urlunsplit(parts);
+            $url = Envjs.urlunsplit(parts);
 
             // this regenerates hostname & port
-            parts = urlparse.urlsplit($url);
+            parts = Envjs.urlsplit($url);
 
             if ($history) {
                 $history.add( $url, 'host');
@@ -77,7 +77,7 @@ Location = function(url, doc, history) {
                 parts.netloc += ':' + parts.port;
             }
             parts.hostname = s;
-            $url = urlparse.urlunsplit(parts);
+            $url = Envjs.urlunsplit(parts);
             if ($history) {
                 $history.add( $url, 'hostname');
             }
@@ -104,7 +104,7 @@ Location = function(url, doc, history) {
             } else {
                 parts.path = '/' + s;
             }
-            $url = urlparse.urlunsplit(parts);
+            $url = Envjs.urlunsplit(parts);
 
             if ($history) {
                 $history.add($url, 'pathname');
@@ -121,7 +121,7 @@ Location = function(url, doc, history) {
             var s = '' + p;
             parts.port = s;
             parts.netloc = parts.hostname + ':' + parts.port;
-            $url = urlparse.urlunsplit(parts);
+            $url = Envjs.urlunsplit(parts);
             if ($history) {
                 $history.add( $url, 'port');
             }
@@ -137,7 +137,7 @@ Location = function(url, doc, history) {
                 s = s.substr(0,i);
             }
             parts.scheme = s;
-            $url = urlparse.urlunsplit(parts);
+            $url = Envjs.urlunsplit(parts);
             if ($history) {
                 $history.add($url, 'protocol');
             }
@@ -152,7 +152,7 @@ Location = function(url, doc, history) {
                 s = s.substr(1);
             }
             parts.query = s;
-            $url = urlparse.urlunsplit(parts);
+            $url = Envjs.urlunsplit(parts);
             if ($history) {
                 $history.add($url, 'search');
             }
@@ -164,15 +164,16 @@ Location = function(url, doc, history) {
         },
 
         assign: function(url) {
-            var _this = this;
-            var xhr;
-            var event;
+            var _this = this,
+                xhr,
+                event,
+                cookie;
 
             //console.log('assigning %s',url);
 
             // update closure upvars
             $url = url;
-            parts = urlparse.urlsplit($url);
+            parts = Envjs.urlsplit($url);
 
             //we can only assign if this Location is associated with a document
             if ($document) {
@@ -191,6 +192,14 @@ Location = function(url, doc, history) {
                         if (xhr.readyState === 4) {
                             $document.baseURI = new Location(url, $document);
                             //console.log('new document baseURI %s', $document.baseURI);
+                            cookie = xhr.getResponseHeader('cookie');
+                            if(cookie){
+                                try{
+                                    $document.cookie = cookie;
+                                }catch(e){
+                                    console.log("Failed to set cookie %s", cookie);
+                                }
+                            }
                             __exchangeHTMLDocument__($document, xhr.responseText, url);
                         }
                     };

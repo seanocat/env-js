@@ -14,7 +14,7 @@ Envjs.getcwd = function() {
 Envjs.runAsync = function(fn, onInterupt){
     ////Envjs.debug("running async");
     var running = true,
-    run;
+        run;
 
     try{
         run = Envjs.sync(function(){
@@ -65,6 +65,28 @@ Envjs.writeToTempFile = function(text, suffix){
 
 
 /**
+ * Used to read the contents of a local file
+ * @param {Object} url
+ */
+Envjs.readFromFile = function( url ){
+    var fileReader = new java.io.FileReader(
+        new java.io.File( 
+            new java.net.URI( url )));
+            
+    var stringwriter = new java.io.StringWriter(),
+        buffer = java.lang.reflect.Array.newInstance(java.lang.Character.TYPE, 1024),
+        length;
+
+    while ((length = fileReader.read(buffer, 0, 1024)) != -1) {
+        stringwriter.write(buffer, 0, length);
+    }
+
+    stringwriter.close();
+    return stringwriter.toString()+"";
+};
+    
+
+/**
  * Used to delete a local file
  * @param {Object} url
  */
@@ -81,14 +103,32 @@ Envjs.deleteFile = function(url){
  */
 Envjs.connection = function(xhr, responseHandler, data){
     var url = java.net.URL(xhr.url),
-    connection;
+        connection,
+        header,
+        outstream,
+        buffer,
+        length,
+        binary = false,
+        name, value,
+        contentEncoding,
+        instream,
+        responseXML,
+        i;
     if ( /^file\:/.test(url) ) {
         try{
-            if ( xhr.method == "PUT" ) {
-                var text =  data || "" ;
-                Envjs.writeToFile(text, url);
+            if ( "PUT" == xhr.method || "POST" == xhr.method ) {
+                data =  data || "" ;
+                Envjs.writeToFile(data, url);
+                xhr.readyState = 4;
+                //could be improved, I just cant recall the correct http codes
+                xhr.status = 200;
+                xhr.statusText = "";
             } else if ( xhr.method == "DELETE" ) {
                 Envjs.deleteFile(url);
+                xhr.readyState = 4;
+                //could be improved, I just cant recall the correct http codes
+                xhr.status = 200;
+                xhr.statusText = "";
             } else {
                 connection = url.openConnection();
                 connection.connect();
@@ -125,7 +165,7 @@ Envjs.connection = function(xhr, responseHandler, data){
         connection.setRequestMethod( xhr.method );
 
         // Add headers to Java connection
-        for (var header in xhr.headers){
+        for (header in xhr.headers){
             connection.addRequestProperty(header+'', xhr.headers[header]+'');
         }
 
@@ -134,18 +174,18 @@ Envjs.connection = function(xhr, responseHandler, data){
             if(data instanceof Document){
                 if ( xhr.method == "PUT" || xhr.method == "POST" ) {
                     connection.setDoOutput(true);
-                    var outstream = connection.getOutputStream(),
-                    xml = (new XMLSerializer()).serializeToString(data),
-                    outbuffer = new java.lang.String(xml).getBytes('UTF-8');
-                    outstream.write(outbuffer, 0, outbuffer.length);
+                    outstream = connection.getOutputStream(),
+                    xml = (new XMLSerializer()).serializeToString(data);
+                    buffer = new java.lang.String(xml).getBytes('UTF-8');
+                    outstream.write(buffer, 0, buffer.length);
                     outstream.close();
                 }
             }else if(data.length&&data.length>0){
                 if ( xhr.method == "PUT" || xhr.method == "POST" ) {
                     connection.setDoOutput(true);
-                    var outstream = connection.getOutputStream(),
-                    outbuffer = new java.lang.String(data).getBytes('UTF-8');
-                    outstream.write(outbuffer, 0, outbuffer.length);
+                    outstream = connection.getOutputStream();
+                    buffer = new java.lang.String(data).getBytes('UTF-8');
+                    outstream.write(buffer, 0, buffer.length);
                     outstream.close();
                 }
             }
@@ -157,13 +197,13 @@ Envjs.connection = function(xhr, responseHandler, data){
 
     if(connection){
         try{
-            var respheadlength = connection.getHeaderFields().size();
+            length = connection.getHeaderFields().size();
             // Stick the response headers into responseHeaders
-            for (var i = 0; i < respheadlength; i++) {
-                var headerName = connection.getHeaderFieldKey(i);
-                var headerValue = connection.getHeaderField(i);
-                if (headerName)
-                    xhr.responseHeaders[headerName+''] = headerValue+'';
+            for (i = 0; i < length; i++) {
+                name = connection.getHeaderFieldKey(i);
+                value = connection.getHeaderField(i);
+                if (name)
+                    xhr.responseHeaders[name+''] = value+'';
             }
         }catch(e){
             console.log('failed to load response headers \n%s',e);
@@ -173,18 +213,25 @@ Envjs.connection = function(xhr, responseHandler, data){
         xhr.status = parseInt(connection.responseCode,10) || undefined;
         xhr.statusText = connection.responseMessage || "";
 
-        var contentEncoding = connection.getContentEncoding() || "utf-8",
-        baos = new java.io.ByteArrayOutputStream(),
-        buffer = java.lang.reflect.Array.newInstance(java.lang.Byte.TYPE, 1024),
-        length,
-        stream = null,
+        contentEncoding = connection.getContentEncoding() || "utf-8";
+        instream = null;
         responseXML = null;
-
+        
         try{
-            stream = (contentEncoding.equalsIgnoreCase("gzip") ||
-                      contentEncoding.equalsIgnoreCase("decompress") )?
-                new java.util.zip.GZIPInputStream(connection.getInputStream()) :
-                connection.getInputStream();
+            //console.log('contentEncoding %s', contentEncoding);
+            if( contentEncoding.equalsIgnoreCase("gzip") ||
+                contentEncoding.equalsIgnoreCase("decompress")){
+                //zipped content
+                binary = true;
+                outstream = new java.io.ByteArrayOutputStream();
+                buffer = java.lang.reflect.Array.newInstance(java.lang.Byte.TYPE, 1024);
+                instream = new java.util.zip.GZIPInputStream(connection.getInputStream())
+            }else{
+                //this is a text file
+                outstream = new java.io.StringWriter();
+                buffer = java.lang.reflect.Array.newInstance(java.lang.Character.TYPE, 1024);
+                instream = new java.io.InputStreamReader(connection.getInputStream());
+            }
         }catch(e){
             if (connection.getResponseCode() == 404){
                 console.log('failed to open connection stream \n %s %s',
@@ -193,18 +240,21 @@ Envjs.connection = function(xhr, responseHandler, data){
                 console.log('failed to open connection stream \n %s %s',
                             e.toString(), e);
             }
-            stream = connection.getErrorStream();
+            instream = connection.getErrorStream();
         }
 
-        while ((length = stream.read(buffer)) != -1) {
-            baos.write(buffer, 0, length);
+        while ((length = instream.read(buffer, 0, 1024)) != -1) {
+            outstream.write(buffer, 0, length);
         }
 
-        baos.close();
-        stream.close();
-
-        xhr.responseText = java.nio.charset.Charset.forName("UTF-8").
-            decode(java.nio.ByteBuffer.wrap(baos.toByteArray())).toString()+"";
+        outstream.close();
+        instream.close();
+        
+        if(binary){
+            xhr.responseText = new String(outstream.toByteArray(), 'UTF-8')+'';
+        }else{
+            xhr.responseText = outstream.toString()+'';
+        }
 
     }
     if(responseHandler){

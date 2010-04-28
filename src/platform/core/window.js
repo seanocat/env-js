@@ -13,7 +13,7 @@ Envjs.os_name        = '';
 Envjs.os_arch        = '';
 Envjs.os_version     = '';
 Envjs.lang           = '';
-Envjs.platform       = '';//how do we get the version
+Envjs.platform       = '';
 
 /**
  *

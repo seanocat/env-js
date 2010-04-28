@@ -58,6 +58,7 @@ Envjs.uri = function(path, base) {
 };
 
 
+
 /**
  * Used in the XMLHttpRquest implementation to run a
  * request in a seperate thread
@@ -82,6 +83,12 @@ Envjs.writeToFile = function(text, url){};
 Envjs.writeToTempFile = function(text, suffix){};
 
 /**
+ * Used to read the contents of a local file
+ * @param {Object} url
+ */
+Envjs.readFromFile = function(url){};
+
+/**
  * Used to delete a local file
  * @param {Object} url
  */
@@ -94,3 +101,6 @@ Envjs.deleteFile = function(url){};
  * @param {Object} data
  */
 Envjs.connection = function(xhr, responseHandler, data){};
+
+
+__extend__(Envjs, urlparse);

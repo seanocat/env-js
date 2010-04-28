@@ -51,10 +51,10 @@ test('Location', function(){
         '.href'
     );
     ok(
-        location.pathname === '/env-js/'+expected_path_a ||
-            location.pathname === '/env-js/'+expected_path_b ||
+        location.pathname === SETTINGS.APP_CONTEXT+expected_path_a ||
+            location.pathname === SETTINGS.APP_CONTEXT+expected_path_b ||
             //this test may run in xhr or env so we allow for both paths
-            location.pathname === ('/env-js/'+expected_path).
+            location.pathname === (SETTINGS.APP_CONTEXT+expected_path_b).
                                       replace('xhr','env'),
         '.href'
     );

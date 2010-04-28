@@ -9,5 +9,6 @@
 var SETTINGS = { 
     BASE_URI : 'file:///mnt/repos/thatcher/env-js/',
     AJAX_BASE: 'http://github.com/thatcher/env-js/raw/master/',
-    LOCAL_PORT: '8080'
+    LOCAL_PORT: '8080',
+    APP_CONTEXT: '/env-js/'
 }; 
