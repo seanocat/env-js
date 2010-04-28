@@ -127,6 +127,7 @@
             <fileset dir="${SRC_DIR}" includes="platform/core/dom.js" />
             <fileset dir="${SRC_DIR}" includes="platform/core/event.js" />
             <fileset dir="${SRC_DIR}" includes="platform/core/html.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/core/json.js" />
             <fileset dir="${SRC_DIR}" includes="platform/core/timer.js" />
             <fileset dir="${SRC_DIR}" includes="platform/core/urlparse.js" />
             <fileset dir="${SRC_DIR}" includes="platform/core/xhr.js" />

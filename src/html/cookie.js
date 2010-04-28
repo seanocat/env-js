@@ -67,7 +67,7 @@ Cookies.set = function(doc, cookie){
             name = __trim__(attrs[i].slice(0,index));
             value = __trim__(attrs[i].slice(index+1));
             if(name=='max-age'){
-               //we'll have to set a timer to check these
+                //we'll have to when to check these
                 //and garbage collect expired cookies
                 cookie[name] = parseInt(value, 10);
             } else if(name=='domain'){
@@ -90,11 +90,8 @@ Cookies.set = function(doc, cookie){
     }
     if(!cookie['max-age']){
         //it's a transient cookie so it only lasts as long as 
-        //the window.location remains the same
+        //the window.location remains the same (ie in-memory cookie)
         __mergeCookie__(Cookies.temporary, cookie, properties);
-    }else if(cookie['max-age']===0){
-        //delete the cookies
-        //TODO
     }else{
         //the cookie is persistent
         __mergeCookie__(Cookies.persistent, cookie, properties);
@@ -118,7 +115,7 @@ Cookies.get = function(doc){
             }
             //console.log('set cookies for doc %s', doc.baseURI);
         }catch(e){
-            console.log('error loading cookies %s', e)
+            console.log('cookies not loaded %s', e)
         };
     }
     var temporary = __cookieString__(Cookies.temporary, doc),
@@ -164,11 +161,13 @@ function __mergeCookie__(target, cookie, properties){
     for(name in properties){
         now = new Date().getTime();
         target[cookie.domain][cookie.path][name] = {
-            value:properties[name],
-            "@env:secure":cookie.secure,
-            "@env:max-age":cookie['max-age'],
-            "@env:date-created":now,
-            "@env:expiration":now + cookie['max-age']
+            "value":properties[name],
+            "secure":cookie.secure,
+            "max-age":cookie['max-age'],
+            "date-created":now,
+            "expiration":(cookie['max-age']===0) ? 
+                0 :
+                now + cookie['max-age']
         };
         //console.log('cookie is %o',target[cookie.domain][cookie.path][name]);
     }

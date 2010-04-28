@@ -16,7 +16,7 @@ load('dist/event.js');
 load('dist/html.js');
 
 // if the html code has forward references, then
-//  we have a different problem.
+// we have a different problem.
 
 //load('dist/timer.js');
 //load('dist/parser.js');
@@ -25,5 +25,6 @@ load('dist/html.js');
 
 load('specs/html/spec.js');
 
-location =  'specs/html/index.html';
+location = 'specs/html/index.html';
+    
 start();

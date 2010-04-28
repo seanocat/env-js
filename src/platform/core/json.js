@@ -15,6 +15,7 @@
     USE YOUR OWN COPY. IT IS EXTREMELY UNWISE TO LOAD CODE FROM SERVERS YOU DO
     NOT CONTROL.
 */
+try{ JSON; }catch(e){ 
 JSON = function () {
 
     function f(n) {
@@ -228,3 +229,5 @@ replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
         }
     };
 }();
+
+}
