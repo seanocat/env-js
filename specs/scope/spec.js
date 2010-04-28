@@ -174,8 +174,8 @@ asyncTest("Iframe nesting", function(){
                 "nested IFRAME has correct .top");
 
 
-	// now, we'll programatically extend the nesting depth from 2 to many
-	recursivelyInsertIFrames( startingDepth, endingDepth, iframeNested1,
+        // now, we'll programatically extend the nesting depth from 2 to many
+        recursivelyInsertIFrames( startingDepth, endingDepth, iframeNested1,
             secondOnloadHandlerContainingTests );
     };
 
@@ -184,8 +184,8 @@ asyncTest("Iframe nesting", function(){
         iframe = iframe.contentDocument.getElementById('nested1Level');
 
         for (var c = startingDepth; c <= endingDepth; c++){
-	    iframe = iframe.contentDocument.
-		getElementById("iframe_of_depth_" + c);
+            iframe = iframe.contentDocument.
+                getElementById("iframe_of_depth_" + c);
 
             var doc = iframe.contentDocument;
             var matchResult = doc.getElementById('nestingLevel').
@@ -202,11 +202,11 @@ asyncTest("Iframe nesting", function(){
 
             var aWindow = iframe.contentWindow;
             if (window.top.allTestsAreBeingRunWithinAnExtraIFrame)
-		equals( aWindow.top, window.top,
-		    "window " + c + " levels down has correct '.top'" );
+                equals( aWindow.top, window.top,
+                    "window " + c + " levels down has correct '.top'" );
             else
-		equals( aWindow.top, window,
-		    "window " + c + " levels down has correct '.top'" );
+                equals( aWindow.top, window,
+                    "window " + c + " levels down has correct '.top'" );
             for (var cn = c; cn > 0; cn--)
                 aWindow = aWindow.parent;
             equals( aWindow, window,
@@ -252,3 +252,119 @@ function recursivelyInsertIFrames(
     existingIframe.contentDocument.getElementsByTagName('body')[0].
         appendChild(newIframe);
 }
+
+
+test("Scoping of JS inline in HTML", function(){
+    expect(3);
+
+    var idoc = document.getElementById('scope-iframe').contentDocument;
+    ok( idoc.getElementById('js_generated_p').innerHTML.match(/Dynamic/),
+        "Can get content from dynamically-generate p element" );
+
+    ok( idoc.getElementById('internalDocRefResult').innerHTML.
+            match(/exists-found/),
+        "Got confirmation of access to 'document' object in iframe" );
+
+    ok( idoc.getElementById('appended').innerHTML.match(/appended para/),
+        "Got confirmation of body-onload execution in iframe" );
+});
+
+
+// the following tests depend on '../fixtures/scope/attribute.html'
+//   being loaded into the iframe 'attribute-iframe' in
+//   scope/index.html'.  Each test must only execute once.  Otherwise,
+//   there are no test order dependencies except those noted on
+//   individual tests.
+
+test("Event handler attributes have access to correct scopes", function(){
+    expect(3+3+3+3+2+2);
+
+    // test:  img1.onclick creates p1
+    var idoc = document.getElementById('attribute-iframe').contentDocument;
+    ok( !(idoc.getElementById('p1')),
+        "img1 event handler didn't execute early" );
+
+    var img1 = idoc.getElementById('img1');
+    ok( img1, "can find 'img1' in iframe" );
+    dispatchClick(img1);
+    ok( idoc.getElementById('p1').innerHTML.match(/img1 click/),
+        "img1 event handler executed correctly" );
+
+
+    // test:  div1.onclick creates p2
+    ok( !(idoc.getElementById('p2')),
+        "div1 event handler didn't execute early" );
+    var div1 = idoc.getElementById('div1');
+    ok( div1, "can find 'div1' in iframe" );
+    dispatchClick(div1);
+    ok( idoc.getElementById('p2').innerHTML.match(/div1 click/),
+        "div1 event handler executed correctly" );
+
+
+    // test:  text1.onchange creates p3 containing values from several elements
+    ok( !(idoc.getElementById('p3')),
+        "text1 event handler didn't execute early" );
+    var text1 = idoc.getElementById('text1');
+    ok( text1, "can find 'text1' in iframe" );
+
+    text1.value = "a New Input Value";
+    dispatchChange(text1);
+
+    var goodRE = /components:\s+--text1--\s+--a New Input Value--\s+--text--\s+--42--\s+--.*post-url--\s+--post--\s+--0--\s+----/;
+    // other DOM object members:
+    //--Table Caption--\s+--all--\s+
+    ok( idoc.getElementById('p3').innerHTML.match(goodRE),
+        "text1 event handler executed correctly" );
+
+
+    // test:  div2.onclick creates paragraph 'lex' at end of div2
+    aVar = "very bad"; // handler must *not* pick up this version of 'aVar'
+
+    ok( !(idoc.getElementById('lex')),
+        "div2 event handler didn't execute early" );
+    var div2 = idoc.getElementById('div2');
+    dispatchClick(div2);
+    var lex = idoc.getElementById('lex');
+    ok( lex.innerHTML.match(/Lexical scoping is Overridden/),
+        "div2 click handler generated correct content" );
+    equals( div2, lex.parentNode,
+        "div2 click handler generated p in correct location" );
+
+
+    // test:  div3.onclick creates a p with values from iframe's global scope
+    var p4 = idoc.getElementById('p4');
+    ok( !(p4.innerHTML.match(/Third sentence/)),
+        "div3 event handler didn't execute early");
+
+    bVar = 13; // handler should *not* pick up this version of 'bVar'
+    dispatchClick(p4);  // should bubble to div3 and its handler
+    ok( p4.innerHTML.match(/number 42/),
+        "div3 event handler executed correctly" );
+
+    // test:  create an onclick fn in this scope, attach/execute in iframe
+    var p4 = idoc.getElementById('p4');
+    var div3 = idoc.getElementById('div3');
+    var checkValue = "contains good text";
+    div3.onclick = function(){ p4.appendChild(idoc.createTextNode(
+        "  Fourth sentence " + checkValue + "."));
+    }
+
+    ok( !(p4.innerHTML.match(/Fourth sentence/)),
+        "new div3 event handler didn't execute early" );
+    dispatchClick(div3);
+    ok( p4.innerHTML.match(/contains good text/),
+        "new div3 event handler executed correctly" );
+});
+
+function dispatchClick(element){
+    var event = element.ownerDocument.createEvent("MouseEvents");
+    event.initEvent("click", true, true);
+    element.dispatchEvent(event);
+}
+
+function dispatchChange(element){
+    var event = element.ownerDocument.createEvent("HTMLEvents");
+    event.initEvent("change", true, true);
+    element.dispatchEvent(event);
+}
+

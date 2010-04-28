@@ -8,6 +8,9 @@
  *     http://www.opensource.org/licenses/mit-license.php
   -->
 
+
+<!-- elements and scripting here match test cases in ../../scope/spec.js -->
+
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
       lang="en" dir="ltr" id="html">
   <head>
@@ -18,13 +21,6 @@
       This is the text content of a paragraph element.
     </p>
 
-<!------------
-  in process of porting tests from 'obsolete-tests'; content below this
-  comment not yet referenced by a specs/*/spec.js file
-  ------------>
-
-
-    <!-- elements and scripting here match test cases in ../../scope/spec.js -->
     <script>//ensure that we can execute JS inline while loading
       document.write(
         '\x3cp id="js_generated_p"\x3eDynamically-generated\x3c/p\x3e');

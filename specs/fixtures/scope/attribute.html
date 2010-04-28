@@ -2,9 +2,9 @@
 
 <!--
  * This file is a component of env.js,
- *     http://github.com/gleneivey/env-js/commits/master/README
+ *     http://github.com/thatcher/env-js/
  * a Pure JavaScript Browser Environment
- * Copyright 2009 John Resig, licensed under the MIT License
+ * Copyright 2010 John Resig, licensed under the MIT License
  *     http://www.opensource.org/licenses/mit-license.php
   -->
 
@@ -27,10 +27,21 @@
       function makeAPara(){
         var paraText =
 "This is a paragraph, made dynamically, with the following components: ";
-        for (var i=1; (i) != arguments.length; i++)
+        for (var i=2; i < arguments.length; i++)
           paraText += "--" + arguments[i] + "--    ";
         appendAPara(document, document.getElementById('div1'),
                     arguments[0], paraText);
+
+        // the paragraph this generates isn't currently used in any asserts,
+        // but has proven very helpful for debug
+        paraText = "";
+        var scopeObj = arguments[1];
+        while (scopeObj && (scopeObj != scopeObj.__parent__)){
+          paraText += scopeObj + " ";
+          scopeObj = scopeObj.__parent__;
+        }
+        appendAPara(document, document.getElementById('div1'), "debug",
+          paraText);
       }
 
       aVar = "Strict";
@@ -53,13 +64,20 @@
       with a 'p' element.
     </div>
 
-    <div id="div2" align="center"
-         onclick="aVar='Overridden!'; checkLexicalScoping(this);">
-      <form id="form1" action="post-url" method="post">
-        <input id="text1" type="text" size="42"
-          onchange="makeAPara('p3', value, type, size, action, align);"
-        />
-      </form>
+    <div id="div2" onclick="aVar='Overridden!'; checkLexicalScoping(this);">
+      <table id="tab1" rules="all" align="center">
+        <caption>Table Caption</caption><tr><td>
+          <form id="form1" action="post-url" method="post">
+            <div><span>
+              <input id="text1" type="text" size="42" onchange="makeAPara('p3', this, id, value, type, size, action, method, anchors.length, align);"
+              />
+<!-- other DOM object members:
+, caption.innerHTML, rules
+  -->
+            </span></div>
+          </form>
+        </td></tr>
+      </table>
     </div>
 
     <div id="div3">
