@@ -2,14 +2,44 @@
 /**
  * HTMLElement - DOM Level 2
  */
+
+
+/* Hack for http://www.prototypejs.org/
+ *
+ * Prototype 1.6 (the library) creates a new global Element, which causes
+ * envjs to use the wrong Element.
+ *
+ * http://envjs.lighthouseapp.com/projects/21590/tickets/108-prototypejs-wont-load-due-it-clobbering-element
+ *
+ * Options:
+ *  (1) Rename the dom/element to something else
+ *       rejected: been done before. people want Element.
+ *  (2) merge dom+html and not export Element to global namespace
+ *      (meaning we would use a local var Element in a closure, so prototype
+ *      can do what ever it wants)
+ *       rejected: want dom and html separate
+ *  (3) use global namespace (put everything under Envjs = {})
+ *       rejected: massive change
+ *  (4) use commonjs modules (similar to (3) in spirit)
+ *       rejected: massive change
+ *
+ *  or
+ *
+ *  (5) take a reference to Element during initial loading ("compile
+ *      time"), and use the reference instead of "Element".  That's
+ *      what the next line does.  We use __DOMElement__ if we need to
+ *      reference the parent class.  Only this file explcity uses
+ *      Element so this should work, and is the most minimal change I
+ *      could think of with no external API changes.
+ *
+ */
+var  __DOMElement__ = Element;
+
 HTMLElement = function(ownerDocument) {
-    Element.apply(this, arguments);
+    __DOMElement__.apply(this, arguments);
 };
 
 HTMLElement.prototype = new Element();
-//TODO: Not sure where HTMLEvents belongs in the chain
-//      but putting it here satisfies a lowest common
-//      denominator.
 __extend__(HTMLElement.prototype, HTMLEvents.prototype);
 __extend__(HTMLElement.prototype, {
     get className() {
@@ -174,19 +204,18 @@ __extend__(HTMLElement.prototype, {
      */
 
     setAttribute: function(name, value) {
-        var result = Element.prototype.setAttribute.apply(this, arguments);
+		var result = __DOMElement__.prototype.setAttribute.apply(this, arguments);
         __addNamedMap__(this.ownerDocument, this);
-        var tagname = this.tagName;
+		var tagname = this.tagName;
         var callback = HTMLElement.getAttributeCallback('set', tagname, name);
         if (callback) {
             callback(this, value);
         }
     },
     setAttributeNS: function(namespaceURI, name, value) {
-        var result = Element.prototype.setAttributeNS.apply(this, arguments);
+        var result = __DOMElement__.prototype.setAttributeNS.apply(this, arguments);
         __addNamedMap__(this.ownerDocument, this);
-
-        var tagname = this.tagName;
+		var tagname = this.tagName;
         var callback = HTMLElement.getAttributeCallback('set', tagname, name);
         if (callback) {
             callback(this, value);
@@ -194,11 +223,9 @@ __extend__(HTMLElement.prototype, {
 
         return result;
     },
-    setAttributeNode: function(newnode) {
-        var result = Element.prototype.setAttributeNode.apply(this, arguments);
+    setAttributeNode: function(newnode) {var result = __DOMElement__.prototype.setAttributeNode.apply(this, arguments);
         __addNamedMap__(this.ownerDocument, this);
-
-        var tagname = this.tagName;
+		var tagname = this.tagName;
         var callback = HTMLElement.getAttributeCallback('set', tagname, newnode.name);
         if (callback) {
             callback(this, node.value);
@@ -206,10 +233,9 @@ __extend__(HTMLElement.prototype, {
         return result;
     },
     setAttributeNodeNS: function(newnode) {
-        var result = Element.prototype.setAttributeNodeNS.apply(this, arguments);
+        var result = __DOMElement__.prototype.setAttributeNodeNS.apply(this, arguments);
         __addNamedMap__(this.ownerDocument, this);
-
-        var tagname = this.tagName;
+		var tagname = this.tagName;
         var callback = HTMLElement.getAttributeCallback('set', tagname, newnode.name);
         if (callback) {
             callback(this, node.value);
@@ -218,32 +244,32 @@ __extend__(HTMLElement.prototype, {
     },
     removeAttribute: function(name) {
         __removeNamedMap__(this.ownerDocument, this);
-        return Element.prototype.removeAttribute.apply(this, arguments);
+        return __DOMElement__.prototype.removeAttribute.apply(this, arguments);
     },
     removeAttributeNS: function(namespace, localname) {
         __removeNamedMap__(this.ownerDocument, this);
-        return Element.prototype.removeAttributeNS.apply(this, arguments);
+        return __DOMElement__.prototype.removeAttributeNS.apply(this, arguments);
     },
     removeAttributeNode: function(name) {
         __removeNamedMap__(this.ownerDocument, this);
-        return Element.prototype.removeAttribute.apply(this, arguments);
+        return __DOMElement__.prototype.removeAttribute.apply(this, arguments);
     },
     removeChild: function(oldChild) {
-        __removeNamedMap__(this.ownerDocument, oldChild);
-        return Element.prototype.removeChild.apply(this, arguments);
+    	__removeNamedMap__(this.ownerDocument, oldChild);
+        return __DOMElement__.prototype.removeChild.apply(this, arguments);
     },
     importNode: function(othernode, deep) {
-        var newnode = Element.prototype.importNode.apply(this, arguments);
-        __addNamedMap__(this.ownerDocument, newnode);
-        return newnode;
+        var newnode = __DOMElement__.prototype.importNode.apply(this, arguments);
+        __removeNamedMap__(this.ownerDocument, newnode);
+		return newnode;
     },
 
     // not actually sure if this is needed or not
     replaceNode: function(newchild, oldchild) {
-        var newnode = Element.prototype.replaceNode.apply(this, arguments);
+        var newnode = __DOMElement__.prototype.replaceNode.apply(this, arguments);
         __removeNamedMap__(this.ownerDocument, oldchild);
         __addNamedMap__(this.ownerDocument, newnode);
-        return newnode;
+		return newnode;
     }
 });
 
