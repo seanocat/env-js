@@ -53,7 +53,8 @@ setTimeout = function(fn, time){
         if (typeof fn == 'string') {
             tfn = function() {
                 try {
-                    eval(fn);
+                    // eval in global scope
+                    eval(fn, null);
                 } catch (e) {
                     console.log('timer error %s %s', fn, e);
                 } finally {
