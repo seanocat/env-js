@@ -260,8 +260,8 @@ __extend__(HTMLElement.prototype, {
     },
     importNode: function(othernode, deep) {
         var newnode = __DOMElement__.prototype.importNode.apply(this, arguments);
-        __removeNamedMap__(this.ownerDocument, newnode);
-                return newnode;
+        __addNamedMap__(this.ownerDocument, newnode);
+        return newnode;
     },
 
     // not actually sure if this is needed or not
