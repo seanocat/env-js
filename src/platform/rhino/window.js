@@ -4,6 +4,7 @@
 //than I've given it here
 Envjs.javaEnabled = true;
 
+Envjs.homedir        = java.lang.System.getProperty("user.home");
 Envjs.tmpdir         = java.lang.System.getProperty("java.io.tmpdir");
 Envjs.os_name        = java.lang.System.getProperty("os.name");
 Envjs.os_arch        = java.lang.System.getProperty("os.arch");

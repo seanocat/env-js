@@ -8,6 +8,7 @@ Envjs.proxy = function(scope, parent, aliasList){};
 
 Envjs.javaEnabled = false;
 
+Envjs.homedir        = '';
 Envjs.tmpdir         = '';
 Envjs.os_name        = '';
 Envjs.os_arch        = '';

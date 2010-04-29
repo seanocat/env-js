@@ -367,7 +367,7 @@ test('Link Loading', function(){
 });
 
 test('Form Named Element Lookup', function(){
-    expect(10);
+    expect(11);
     if ((typeof Envjs == 'undefined') || !Envjs) {
         Envjs = {};
     }
@@ -387,6 +387,7 @@ test('Form Named Element Lookup', function(){
         var str = '<form name="bar"><input name="input1"/></form>';
         doc.body.innerHTML = str;
         form = doc.bar;
+        ok(form instanceof HTMLFormElement, "form is an HTMLFormElement");
         elements = doc.bar.elements;
         equals(elements.length, 1, 'elements length is 1');
         equals(form.length, 1, 'form length is 1');

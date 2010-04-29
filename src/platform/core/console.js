@@ -20,21 +20,4 @@ Envjs.NONE = 3;
  */
 Envjs.lineSource = function(e){};
 
-/**
- * @param {Object} js 
- * @param {Object} filter
- * @param {Object} indentValue
- */ 
-Envjs.js2json = function(js, filter, indentValue){
-    return JSON.stringify(js, filter, indentValue||'');
-};
-
-
-/**
- * @param {Object} json
- * @param {Object} filter
- */
-Envjs.json2js = function(json, filter){
-    return JSON.parse(json, filter);
-};
     

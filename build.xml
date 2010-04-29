@@ -99,10 +99,9 @@
     </target>
 
 
-    <target name='local-settings' unless='${HAS_LOCAL}'>
+    <target name='local-settings' unless='HAS_LOCAL'>
         <copy file="${BASEDIR}/settings.js"
-              tofile="${BASEDIR}/local_settings.js"
-              overwrite='false'/>
+              tofile="${BASEDIR}/local_settings.js" />
     </target>
 
     <!-- BUILD ENV PLATFORM BINDINGS -->
@@ -127,6 +126,7 @@
             <fileset dir="${SRC_DIR}" includes="platform/core/dom.js" />
             <fileset dir="${SRC_DIR}" includes="platform/core/event.js" />
             <fileset dir="${SRC_DIR}" includes="platform/core/html.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/core/json.js" />
             <fileset dir="${SRC_DIR}" includes="platform/core/timer.js" />
             <fileset dir="${SRC_DIR}" includes="platform/core/urlparse.js" />
             <fileset dir="${SRC_DIR}" includes="platform/core/xhr.js" />
@@ -134,6 +134,22 @@
             <fileset dir="${SRC_DIR}" includes="common/outro.js" />
         </concat>
         <echo message="Finished Building ${CORE_DIST}"/>
+        <echo message=""/>
+    </target>
+    
+    <!-- TEST CORE ENV BINDINGS -->
+    <target name='core-env-spec'
+            depends='core-env, console'
+            description='Test Core Env Specs'>
+        <echo message=""/>
+        <echo message="Executing Core Env Spec"/>
+        <java fork="true"
+              jar="${RHINO_JAR}"
+              failonerror="true">
+            <arg value="${TEST_DIR}/platform/core.js"/>
+            <jvmarg value="-Dfile.encoding=utf-8"/>
+            <jvmarg value="-Xmx256m"/>
+        </java>
         <echo message=""/>
     </target>
 
@@ -382,7 +398,6 @@
             <fileset dir="${SRC_DIR}" includes="common/__trim__.js" />
             <fileset dir="${SRC_DIR}" includes="common/__extend__.js" />
             <fileset dir="${SRC_DIR}" includes="common/__setArray__.js" />
-            <fileset dir="${SRC_DIR}" includes="html/cookie.js" />
             <fileset dir="${SRC_DIR}" includes="html/document.js" />
             <fileset dir="${SRC_DIR}" includes="html/htmlevents.js" />
             <fileset dir="${SRC_DIR}" includes="html/keyboardevents.js" />
