@@ -367,7 +367,7 @@ test('Link Loading', function(){
 });
 
 test('Form Named Element Lookup', function(){
-    expect(10);
+    expect(11);
     if ((typeof Envjs == 'undefined') || !Envjs) {
         Envjs = {};
     }
