@@ -269,7 +269,7 @@ __extend__(HTMLElement.prototype, {
         var newnode = __DOMElement__.prototype.replaceNode.apply(this, arguments);
         __removeNamedMap__(this.ownerDocument, oldchild);
         __addNamedMap__(this.ownerDocument, newnode);
-		return newnode;
+                return newnode;
     }
 });
 

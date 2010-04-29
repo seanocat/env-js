@@ -99,10 +99,9 @@
     </target>
 
 
-    <target name='local-settings' unless='${HAS_LOCAL}'>
+    <target name='local-settings' unless='HAS_LOCAL'>
         <copy file="${BASEDIR}/settings.js"
-              tofile="${BASEDIR}/local_settings.js"
-              overwrite='false'/>
+              tofile="${BASEDIR}/local_settings.js" />
     </target>
 
     <!-- BUILD ENV PLATFORM BINDINGS -->
