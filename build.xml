@@ -213,7 +213,6 @@
             <fileset dir="${SRC_DIR}" includes="console/__global__.js" />
             <fileset dir="${SRC_DIR}" includes="common/intro.js" />
             <fileset dir="${SRC_DIR}" includes="console/console.js" />
-            <fileset dir="${SRC_DIR}" includes="console/json.js" />
             <fileset dir="${SRC_DIR}" includes="common/outro.js" />
         </concat>
         <echo message="Finished Building ${CONSOLE_DIST}"/>
