@@ -137,6 +137,22 @@
         <echo message="Finished Building ${CORE_DIST}"/>
         <echo message=""/>
     </target>
+    
+    <!-- TEST CORE ENV BINDINGS -->
+    <target name='core-env-spec'
+            depends='core-env, console'
+            description='Test Core Env Specs'>
+        <echo message=""/>
+        <echo message="Executing Core Env Spec"/>
+        <java fork="true"
+              jar="${RHINO_JAR}"
+              failonerror="true">
+            <arg value="${TEST_DIR}/platform/core.js"/>
+            <jvmarg value="-Dfile.encoding=utf-8"/>
+            <jvmarg value="-Xmx256m"/>
+        </java>
+        <echo message=""/>
+    </target>
 
     <!-- BUILD RHINO ENV BINDINGS -->
     <target name="rhino-env">
@@ -383,7 +399,6 @@
             <fileset dir="${SRC_DIR}" includes="common/__trim__.js" />
             <fileset dir="${SRC_DIR}" includes="common/__extend__.js" />
             <fileset dir="${SRC_DIR}" includes="common/__setArray__.js" />
-            <fileset dir="${SRC_DIR}" includes="html/cookie.js" />
             <fileset dir="${SRC_DIR}" includes="html/document.js" />
             <fileset dir="${SRC_DIR}" includes="html/htmlevents.js" />
             <fileset dir="${SRC_DIR}" includes="html/keyboardevents.js" />

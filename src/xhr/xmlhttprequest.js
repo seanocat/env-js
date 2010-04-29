@@ -40,10 +40,15 @@ XMLHttpRequest.prototype = {
         var _this = this;
         parsedoc = (parsedoc === undefined)?true:!!parsedoc;
         function makeRequest(){
+            var cookie = Envjs.getCookies(_this.url);
+            if(cookie){
+                _this.setRequestHeader('COOKIE', cookie);
+            }
             Envjs.connection(_this, function(){
                 if (!_this.aborted){
                     var doc = null,
-                              domparser;
+                        domparser,
+                        cookie;
                     // try to parse the document if we havent explicitly set a
                     // flag saying not to and if we can assure the text at least
                     // starts with valid xml
@@ -60,6 +65,15 @@ XMLHttpRequest.prototype = {
                         }
                     }else{
                         //Envjs.warn('response XML does not appear to be xml');
+                    }
+                    
+                    try{
+                        cookie = _this.getResponseHeader('SET-COOKIE');
+                        if(cookie){
+                             Envjs.setCookie(_this.url, cookie);
+                        }
+                    }catch(e){
+                        console.warn("Failed to set cookie");
                     }
                     _this.__defineGetter__("responseXML", function(){
                         return doc;

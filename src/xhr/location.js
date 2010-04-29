@@ -192,14 +192,6 @@ Location = function(url, doc, history) {
                         if (xhr.readyState === 4) {
                             $document.baseURI = new Location(url, $document);
                             //console.log('new document baseURI %s', $document.baseURI);
-                            cookie = xhr.getResponseHeader('cookie');
-                            if(cookie){
-                                try{
-                                    $document.cookie = cookie;
-                                }catch(e){
-                                    console.log("Failed to set cookie %s", cookie);
-                                }
-                            }
                             __exchangeHTMLDocument__($document, xhr.responseText, url);
                         }
                     };

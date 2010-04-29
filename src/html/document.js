@@ -256,10 +256,10 @@ __extend__(HTMLDocument.prototype, {
     },
     set body(){console.log('set body');/**in firefox this is a benevolent do nothing*/},
     get cookie(){
-        return Cookies.get(this);
+        return Envjs.getCookies(this.location+'');
     },
     set cookie(cookie){
-        return Cookies.set(this, cookie);
+        return Envjs.setCookie(this.location+'', cookie);
     },
 
     /**
@@ -504,9 +504,9 @@ Aspect.around({
     method:"removeChild"
 }, function(invocation) {
     var event,
-    okay,
-    node = invocation.proceed(),
-    doc = node.ownerDocument;
+        okay,
+        node = invocation.proceed(),
+        doc = node.ownerDocument;
     if((node.nodeType !== Node.ELEMENT_NODE)){
         //for now we are only handling element insertions.  probably we will need
         //to handle text node changes to script tags and changes to src

@@ -150,11 +150,11 @@ __extend__(HTMLElement.prototype, {
         // lowercases tags)
 
         var ret = "",
-        ns = "",
-        name = (this.tagName+"").toLowerCase(),
-        attrs,
-        attrstring = "",
-        i;
+            ns = "",
+            name = (this.tagName+"").toLowerCase(),
+            attrs,
+            attrstring = "",
+            i;
 
         // serialize namespace declarations
         if (this.namespaceURI){
@@ -200,13 +200,12 @@ __extend__(HTMLElement.prototype, {
      *  "listen" to various values being set.  The dispatch table
      * and registration functions are at the end of the file.
      *
-     *
      */
 
     setAttribute: function(name, value) {
-		var result = __DOMElement__.prototype.setAttribute.apply(this, arguments);
+        var result = __DOMElement__.prototype.setAttribute.apply(this, arguments);
         __addNamedMap__(this.ownerDocument, this);
-		var tagname = this.tagName;
+        var tagname = this.tagName;
         var callback = HTMLElement.getAttributeCallback('set', tagname, name);
         if (callback) {
             callback(this, value);
@@ -215,7 +214,7 @@ __extend__(HTMLElement.prototype, {
     setAttributeNS: function(namespaceURI, name, value) {
         var result = __DOMElement__.prototype.setAttributeNS.apply(this, arguments);
         __addNamedMap__(this.ownerDocument, this);
-		var tagname = this.tagName;
+        var tagname = this.tagName;
         var callback = HTMLElement.getAttributeCallback('set', tagname, name);
         if (callback) {
             callback(this, value);
@@ -223,9 +222,10 @@ __extend__(HTMLElement.prototype, {
 
         return result;
     },
-    setAttributeNode: function(newnode) {var result = __DOMElement__.prototype.setAttributeNode.apply(this, arguments);
+    setAttributeNode: function(newnode) {
+        var result = __DOMElement__.prototype.setAttributeNode.apply(this, arguments);
         __addNamedMap__(this.ownerDocument, this);
-		var tagname = this.tagName;
+        var tagname = this.tagName;
         var callback = HTMLElement.getAttributeCallback('set', tagname, newnode.name);
         if (callback) {
             callback(this, node.value);
@@ -235,7 +235,7 @@ __extend__(HTMLElement.prototype, {
     setAttributeNodeNS: function(newnode) {
         var result = __DOMElement__.prototype.setAttributeNodeNS.apply(this, arguments);
         __addNamedMap__(this.ownerDocument, this);
-		var tagname = this.tagName;
+        var tagname = this.tagName;
         var callback = HTMLElement.getAttributeCallback('set', tagname, newnode.name);
         if (callback) {
             callback(this, node.value);
@@ -255,13 +255,13 @@ __extend__(HTMLElement.prototype, {
         return __DOMElement__.prototype.removeAttribute.apply(this, arguments);
     },
     removeChild: function(oldChild) {
-    	__removeNamedMap__(this.ownerDocument, oldChild);
+        __removeNamedMap__(this.ownerDocument, oldChild);
         return __DOMElement__.prototype.removeChild.apply(this, arguments);
     },
     importNode: function(othernode, deep) {
         var newnode = __DOMElement__.prototype.importNode.apply(this, arguments);
-        __removeNamedMap__(this.ownerDocument, newnode);
-		return newnode;
+        __addNamedMap__(this.ownerDocument, newnode);
+        return newnode;
     },
 
     // not actually sure if this is needed or not
