@@ -201,7 +201,7 @@ Envjs.loadCookies = function(){
         cookiejson = Envjs.readFromFile(Envjs.cookieFile())
         js = JSON.parse(cookiejson, null, '\t');
     }catch(e){
-        console.log('failed to load cookies %s', e);
+        //console.log('failed to load cookies %s', e);
         js = {};
     }
     return js;
@@ -318,7 +318,7 @@ Envjs.getCookies = function(url){
                 persisted = Envjs.loadCookies();
             }catch(e){
                 //fail gracefully
-                console.log('%s', e);
+                //console.log('%s', e);
             }   
             if(persisted){
                 __extend__(Envjs.cookies.persistent, persisted);
