@@ -136,10 +136,10 @@
         <echo message="Finished Building ${CORE_DIST}"/>
         <echo message=""/>
     </target>
-    
+
     <!-- TEST CORE ENV BINDINGS -->
     <target name='core-env-spec'
-            depends='core-env, console'
+            depends='zip'
             description='Test Core Env Specs'>
         <echo message=""/>
         <echo message="Executing Core Env Spec"/>
@@ -184,7 +184,7 @@
 
     <!-- TEST RHINO ENV BINDINGS -->
     <target name='rhino-env-spec'
-            depends='rhino-env, console'
+            depends='zip, rhino-env'
             description='Test Rhino Env Specs'>
         <echo message=""/>
         <echo message="Executing Rhino Env Spec"/>
@@ -221,7 +221,7 @@
 
     <!-- TEST CONSOLE SPECIFICATION -->
     <target name='console-spec'
-            depends='console'
+            depends='zip'
             description='Test Console Specs'>
         <echo message=""/>
         <echo message="Executing Console Spec"/>
@@ -237,7 +237,7 @@
 
 
     <!-- BUILD DOM IMPLEMENTATIOM -->
-    <target name="dom" depends="env-platforms">
+    <target name="dom">
         <mkdir dir="${DIST_DIR}" />
         <echo message=""/>
         <echo message="Building ${DOM_DIST}" />
@@ -282,7 +282,7 @@
 
     <!-- TEST DOM SPECIFICATION -->
     <target name='dom-spec'
-            depends='dom'
+            depends='zip'
             description='Test DOM Specs'>
         <echo message=""/>
         <echo message="Executing DOM Spec"/>
@@ -297,7 +297,7 @@
     </target>
 
     <!-- BUILD EVENT IMPLEMENTATIOM -->
-    <target name="event" depends="env-platforms">
+    <target name="event">
         <mkdir dir="${DIST_DIR}" />
         <echo message=""/>
         <echo message="Building ${EVENT_DIST}" />
@@ -329,7 +329,7 @@
 
     <!-- TEST EVENT SPECIFICATION -->
     <target name='event-spec'
-            depends='event'
+            depends='zip'
             description='Test Event Specs'>
         <echo message=""/>
         <echo message="Executing Event Spec"/>
@@ -344,7 +344,7 @@
     </target>
 
     <!-- BUILD TIMER IMPLEMENTATIOM -->
-    <target name="timer" depends="env-platforms">
+    <target name="timer">
         <mkdir dir="${DIST_DIR}" />
         <echo message=""/>
         <echo message="Building ${TIMER_DIST}" />
@@ -366,7 +366,7 @@
 
     <!-- TEST TIMER SPECIFICATION -->
     <target name='timer-spec'
-            depends='timer'
+            depends='zip'
             description='Test Timer Specs'>
         <echo message=""/>
         <echo message="Executing Timer Spec"/>
@@ -381,7 +381,7 @@
     </target>
 
     <!-- BUILD HTML IMPLEMENTATIOM -->
-    <target name="html" depends="env-platforms">
+    <target name="html">
         <mkdir dir="${DIST_DIR}" />
         <echo message=""/>
         <echo message="Building ${HTML_DIST}" />
@@ -460,7 +460,7 @@
 
     <!-- TEST HTML SPECIFICATION -->
     <target name='html-spec'
-            depends='html'
+            depends='zip'
             description='Test HTML Specs'>
         <echo message=""/>
         <echo message="Executing HTML Spec"/>
@@ -475,7 +475,7 @@
     </target>
 
     <!-- BUILD CSS IMPLEMENTATIOM -->
-    <target name="css" depends="env-platforms">
+    <target name="css">
         <mkdir dir="${DIST_DIR}" />
         <echo message=""/>
         <echo message="Building ${CSS_DIST}" />
@@ -504,7 +504,7 @@
 
     <!-- TEST CSS SPECIFICATION -->
     <target name='css-spec'
-            depends='css'
+            depends='zip'
             description='Test CSS Specs'>
         <echo message=""/>
         <echo message="Executing CSS Spec"/>
@@ -519,7 +519,7 @@
     </target>
 
     <!-- BUILD PARSER IMPLEMENTATIOM -->
-    <target name="parser" depends="env-platforms">
+    <target name="parser">
         <mkdir dir="${DIST_DIR}" />
         <echo message=""/>
         <echo message="Building ${PARSER_DIST}" />
@@ -547,7 +547,7 @@
 
     <!-- TEST PARSER SPECIFICATION -->
     <target name='parser-spec'
-            depends='parser'
+            depends='zip'
             description='Test Parser Specs'>
         <echo message=""/>
         <echo message="Executing Parser Spec"/>
@@ -564,7 +564,7 @@
     </target>
 
     <!-- BUILD XMLHTTPREQUEST IMPLEMENTATIOM -->
-    <target name="xhr" depends="env-platforms">
+    <target name="xhr">
         <mkdir dir="${DIST_DIR}" />
         <echo message=""/>
         <echo message="Building ${XHR_DIST}" />
@@ -592,7 +592,7 @@
 
     <!-- TEST XHR SPECIFICATION -->
     <target name='xhr-spec'
-            depends='xhr, local-settings'
+            depends='zip, local-settings'
             description='Test XMLHttpRequest Specs'>
         <echo message=""/>
         <echo message="Executing XMLHttpRequest Spec"/>
@@ -607,7 +607,7 @@
     </target>
 
     <!-- BUILD WINDOW IMPLEMENTATIOM -->
-    <target name="window" depends="env-platforms">
+    <target name="window">
         <mkdir dir="${DIST_DIR}" />
         <echo message=""/>
         <echo message="Building ${WINDOW_DIST}" />
@@ -636,7 +636,7 @@
 
     <!-- TEST WINDOW SPECIFICATION -->
     <target name='window-spec'
-            depends='window, local-settings'
+            depends='zip, local-settings'
             description='Test Window Specs'>
         <echo message=""/>
         <echo message="Executing Window Spec"/>
@@ -652,7 +652,7 @@
 
     <target description="jslint quick build - no parser!"
             name="jslint"
-            depends="dom, event, timer, html, xhr, css, window">
+            depends="zip">
         <echo message="Building ${ENV_JSLINT}" />
         <concat destfile="${ENV_JSLINT}">
             <filterchain>
@@ -691,11 +691,27 @@
         <echo message="dist/jslint-out.txt has results" />
     </target>
 
+    <!-- TODO: add back core/env-spec.  Right now it breaks -->
     <target description="Main ENV build"
             name="concat"
-            depends="dom-spec, event-spec, timer-spec,
+            depends="rhino-env-spec,
+                     dom-spec, event-spec, timer-spec,
                      html-spec, parser-spec, xhr-spec,
                      css-spec,  window-spec">
+      <!-- TODO: nice message saying all worked.  Zap /dist on error? -->
+    </target>
+
+    <target name="clean" description="Clean up">
+      <delete dir="${DIST_DIR}" verbose="true" />
+    </target>
+
+
+    <target description="Main ENV concatenator"
+            name="zip"
+            depends="core-env, rhino-env, console,
+                     dom, event, timer,
+                     html, parser, xhr,
+                     css,  window">
         <!-- CORE -->
         <echo message="Building ${ENV_DIST}" />
         <concat destfile="${ENV_DIST}">
