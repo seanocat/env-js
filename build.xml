@@ -122,6 +122,7 @@
             <fileset dir="${SRC_DIR}" includes="platform/core/__global__.js" />
             <fileset dir="${SRC_DIR}" includes="common/intro.js" />
             <fileset dir="${SRC_DIR}" includes="common/__extend__.js" />
+            <fileset dir="${SRC_DIR}" includes="common/__trim__.js" />
             <fileset dir="${SRC_DIR}" includes="platform/core/console.js" />
             <fileset dir="${SRC_DIR}" includes="platform/core/dom.js" />
             <fileset dir="${SRC_DIR}" includes="platform/core/event.js" />
