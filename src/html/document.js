@@ -301,10 +301,7 @@ __extend__(HTMLDocument.prototype, {
      * https://developer.mozilla.org/en/DOM/document.URL
      */
     get URL() {
-        return this.location;
-    },
-    set URL(url) {
-        this.location = url;
+        return this.location.href;
     },
 
     /**
