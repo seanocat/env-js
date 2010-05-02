@@ -663,34 +663,3 @@ test('Form Named Elements via DOMAPI', function() {
     doc.close();
     stop();
 });
-
-/**
- * If a script in running in <head>, then document.body === null
- *
- * Due to frame scoping rules, we have indirectly make the test.
- * What we are really doing is this:
- * <html><head><script>
- *   ok(document.body === null);
- * </script><head><body></body></html>
- */
-test('document.body is null in head', function() {
-    expect(1);
-    var iframe = document.createElement("iframe");
-    document.body.appendChild(iframe);
-
-    iframe.addEventListener('load', function() {
-        var doc = iframe.contentDocument;
-        console.log("doc.bodyinhead = " + document.body);
-        ok(doc.bodyinhead === null, 'doc.body === null');
-        document.body.removeChild( iframe );
-        start();
-    }, false);
-
-    var doc = iframe.contentDocument;
-    doc.write('<html><head><script type="text/javascript">' +
-              'document.bodyinhead = document.body;' +
-              '</script></head><body><div id="container">' +
-              '</div></body></html>');
-    doc.close();
-    stop();
-});
