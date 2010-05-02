@@ -651,6 +651,23 @@
         <echo message=""/>
     </target>
 
+    <target name='fulldoc-spec'
+            depends='zip'
+            description='Test Full Document Specs'>
+        <echo message="Starting"/>
+        <echo message="Executing FullDoc Spec"/>
+        <java fork="true"
+              jar="${RHINO_JAR}"
+              failonerror="true">
+            <arg value="-opt"/>
+            <arg value="-1"/>
+            <arg value="${TEST_DIR}/fulldoc/boot.js"/>
+            <jvmarg value="-Dfile.encoding=utf-8"/>
+            <jvmarg value="-Xmx256m"/>
+        </java>
+        <echo message="DONE."/>
+    </target>
+
     <target description="jslint quick build - no parser!"
             name="jslint"
             depends="zip">
