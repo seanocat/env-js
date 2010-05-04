@@ -18,4 +18,3 @@ load('dist/timer.js');
 load('dist/parser.js');
 load('specs/parser/spec.js');
 start();
-Envjs.wait();
