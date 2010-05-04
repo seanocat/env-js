@@ -234,27 +234,23 @@ __extend__(HTMLDocument.prototype, {
         title.textContent = titleStr;
     },
 
-    get body(){
-        //console.log('get body');
-        if (!this.documentElement) {
-            this.appendChild(this.createElement('html'));
-        }
-        var body,
-        element = this.documentElement,
-        length = element.childNodes.length,
-        i;
-        //check for the presence of the head element in this html doc
-        for(i=0;i<length;i++){
-            if(element.childNodes[i].nodeType === Node.ELEMENT_NODE){
-                if(element.childNodes[i].tagName.toLowerCase() === 'body'){
-                    return element.childNodes[i];
-                }
+    get body() {
+        var element = this.documentElement,
+            length = element.childNodes.length,
+            i;
+        for (i=0; i<length; i++) {
+            if (element.childNodes[i].nodeType === Node.ELEMENT_NODE &&
+                element.childNodes[i].tagName === 'BODY') {
+                return element.childNodes[i];
             }
         }
-        //no head?  ugh bad news html.. I guess we'll force the issue?
-        return element.appendChild(this.createElement('body'));
+        return null;
     },
-    set body(){console.log('set body');/**in firefox this is a benevolent do nothing*/},
+    set body() {
+        /* in firefox this is a benevolent do nothing*/
+        console.log('set body');
+    },
+
     get cookie(){
         return Envjs.getCookies(this.location+'');
     },
@@ -391,9 +387,22 @@ Aspect.around({
     //             node.namespaceURI, node.nodeName, node);
     switch(doc.parsing){
         case true:
-            //handled by parser if included
-            //console.log('html document in parse mode');
-            break;
+
+        /**
+         * Very special case.  While in parsing mode, in head, a
+         * script can add another script tag to the head, and it will
+         * be evaluated.  This is tested in 'ant fulldoc-spec' tests.
+         *
+         * Not quite sure if the require that the new script tag must
+         * be in the head is correct or not.  NamespaceURI == null
+         * might also need to corrected too.
+         */
+        if (node.namespaceURI === null &&
+            node.tagName === 'SCRIPT' &&
+            this.tagName == 'HEAD') {
+            okay = Envjs.loadLocalScript(node, null);
+        }
+        break;
         case false:
             switch(node.namespaceURI){
                 case null:
@@ -459,7 +468,7 @@ Aspect.around({
                             console.log('error loading html element %s %e', node, e.toString());
                         }
                         break;
-        
+
                     case 'link':
                         if (node.href && node.href.length > 0) {
                             __loadLink__(node, node.href);
@@ -627,4 +636,3 @@ var __removeNamedMap__ = function(target, node) {
         delete target[nodename];
     }
 };
-    
