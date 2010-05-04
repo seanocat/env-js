@@ -23,4 +23,3 @@ load('specs/window/spec.js');
 
 
 location =  'specs/window/index.html';
-Envjs.wait();

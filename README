@@ -113,15 +113,12 @@ Installing:
 
 3) Optionally trigger "document ready" events in one of these ways:
 
-4) Start processing of window(s)' event queue:
-     Envjs.wait();
 
 All together, the steps could be:
 
    a) simplest method:
      load('env.rhino.js');
      Envjs("some/file.html");
-     Envjs.wait();
 
    b) jQuery ready method:
      load('env.rhino.js');
@@ -129,7 +126,6 @@ All together, the steps could be:
      Envjs("some/file.html");
      load('some-code-that-sets-up-jquery-onready-behaviors.js')
      jQuery.ready();
-     Envjs.wait();
 
    c) Other JavaScript frameworks have their own methods of setup, but the general pattern is:
      // step 1: load env.js
@@ -137,7 +133,6 @@ All together, the steps could be:
      // step 2: tell env.js the base DOM to model
      // optionally: run any setup code for your framework(s0
      // step 3: tell the framework that the document is loaded
-     // step 4: Envjs.wait();
 
 Note that env.js is currently limited to loading a single HTML page
 from the original window.  If you are going to load multiple pages in

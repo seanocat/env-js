@@ -19,4 +19,3 @@ load('dist/xhr.js');
 load('local_settings.js');
 load('specs/xhr/spec.js');
 start();
-Envjs.wait();
