@@ -368,3 +368,137 @@ function dispatchChange(element){
     element.dispatchEvent(event);
 }
 
+
+asyncTest("window.open() operates correctly", function(){
+    expect(29);
+
+    top.functionToCallFromSubwindowOnload = null;
+    top.shouldntIncrementCounter = 0;
+    var shouldntExecuteHandler = function(){
+        var originalWin = opener ? opener.top : top;
+        originalWin.shouldntIncrementCounter++;
+    };
+
+
+          // setup for event handler functions containing asserts
+    var secondWindowPassCounter = 1;
+    var secondWindowFirstAsserts;
+    var secondWindowSecondAsserts;
+    var secondWindowThirdAsserts;
+    var thirdWindowFirstAsserts;
+    var thirdWindowSecondAsserts;
+
+    var anotherWin;
+    var thirdWin;
+
+
+    secondWindowFirstAsserts = function(){
+        ok( anotherWin, "'window.open' returns new object" );
+        equals( anotherWin.closed, false,
+            "2nd window knows that it isn't closed" );
+        ok( anotherWin.document.getElementById('oneP').innerHTML.
+                match(/Nearly-empty HTML/),
+            "2nd window has correct contents" );
+        equals( anotherWin.opener, window,
+            "2nd window's .opener is original window" );
+        equals( anotherWin.top, anotherWin, "2nd window's .top is itself" );
+        equals( anotherWin.parent, anotherWin,
+            "2nd window's .parent is itself" );
+        equals( anotherWin.document.referrer, location.href,
+            "2nd window's document.referrer points to this one" );
+
+        top.functionToCallFromSubwindowOnload = secondWindowSecondAsserts;
+        anotherWin.onload = shouldntExecuteHandler;
+        anotherWin.location = "with_js.html";
+    };
+
+    secondWindowSecondAsserts = function(){
+        ok( anotherWin.location, "1st explicit '.location=' completed");
+        ok( anotherWin.document.getElementById('HeaderLevel1').
+                innerHTML.match(/Hello/),
+            "location setter-loaded content is correct" );
+
+        top.functionToCallFromSubwindowOnload = secondWindowThirdAsserts;
+        anotherWin.onload = shouldntExecuteHandler;
+        anotherWin.location = "trivial.html";
+    };
+
+    secondWindowThirdAsserts = function(){
+        ok( anotherWin.document.getElementById('oneP').innerHTML.
+                match(/Nearly-empty HTML/),
+            "2nd location setter-loaded content is correct" );
+
+        top.functionToCallFromSubwindowOnload = null;
+        thirdWin = window.open("with_js.html", "thirdWin");
+        ok( thirdWin, "2nd 'window.open' returns 3rd window" );
+        thirdWin.onload = thirdWindowFirstAsserts;
+    };
+
+    thirdWindowFirstAsserts = function(){
+        ok( thirdWin.document.getElementById('HeaderLevel1').
+                innerHTML.match(/Hello/),
+            "3rd window's content is correct" );
+        ok( anotherWin.document.getElementById('oneP').innerHTML.
+                match(/Nearly-empty HTML/),
+            "after 3rd window, 2nd's content still correct" );
+        equals( document.title, "Envjs Scope Spec",
+            "after 3rd window, original's content still correct" );
+
+        equals( thirdWin.getTestVariables()[0], "hello, scope",
+            "function from open()'ed window's scope callable");
+        equals( thirdWin.getTestVariables()[1], null,
+            "dynamically-created test variable in 3rd win doesn't exist yet");
+
+        thirdWin.setTestVariable(42);
+        equals( thirdWin.getTestVariables()[1], 42,
+            "variable in other window's scope created correctly");
+        equals( thirdWin.notAlwaysPresentVariable, 42,
+            "variable in other window's scope accessible directly, too");
+
+        top.functionToCallFromSubwindowOnload = thirdWindowSecondAsserts;
+        thirdWin.onload = shouldntExecuteHandler;
+        thirdWin.location = "with_js.html"
+    };
+
+    thirdWindowSecondAsserts = function(){
+        equals( thirdWin.getTestVariables()[1], null,
+            "reloaded window has clean variable scope" );
+
+        thirdWin.notAlwaysPresentVariable = 55;
+        equals( thirdWin.getTestVariables()[1], 55,
+            "directly-set variable visible to code executing in other scope" );
+
+        equals( typeof window.notAlwaysPresentVariable, "undefined",
+"creating variable in 3rd window scope doesn't affect original window" );
+        equals( typeof anotherWin.notAlwaysPresentVariable, "undefined",
+            "creating variable in 3rd window scope doesn't affect 2nd window" );
+
+
+        anotherWin.close();
+        equals( anotherWin.closed, true,
+            "after closing 2nd window, '.closed' is true" );
+        equals( window.closed, false,
+            "closing 2nd window doesn't affect original window" );
+        equals( thirdWin.closed, false,
+            "closing 2nd window doesn't affect 3rd window");
+
+        thirdWin.close();
+        equals( thirdWin.closed, true,
+            "after closing 3rd window, '.closed' is true" );
+        equals( window.closed, false,
+            "closing 3rd window doesn't affect original window" );
+        equals( thirdWin.closed, true,
+            "3rd window still closed");
+
+
+            // do end-of-test checks
+        equals( top.shouldntIncrementCounter, 0,
+            "No events-that-shouldn't-happen counted" );
+        start();
+    };
+
+
+        // start test and first (anonymous) batch of asserts
+    anotherWin = window.open("../fixtures/scope/trivial.html", "secondWin");
+    anotherWin.onload = secondWindowFirstAsserts;
+});

@@ -2,16 +2,20 @@
 
 <!--
  * This file is a component of env.js,
- *     http://github.com/gleneivey/env-js/commits/master/README
+ *     http://github.com/thatcher/env-js/
  * a Pure JavaScript Browser Environment
- * Copyright 2009 John Resig, licensed under the MIT License
+ * Copyright 2010 John Resig, licensed under the MIT License
  *     http://www.opensource.org/licenses/mit-license.php
   -->
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
       lang="en" dir="ltr" id="html">
   <head>
-    <title>Nearly-empty HTML page</title>
+    <title>Nearly-Empty HTML Page</title>
+    <script>
+      if (opener.top.functionToCallFromSubwindowOnload != null)
+        window.onload = opener.top.functionToCallFromSubwindowOnload;
+    </script>
   </head>
   <body>
     <p id="oneP">Nearly-empty HTML page</p>
