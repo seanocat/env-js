@@ -2,15 +2,20 @@
 
 #
 # Autodownload Parser
+#  from mozilla HG.
+# TODO: specific specific releases
 #
-#
-PARSER=htmlparser-1.2.1
-PARSER_ZIP="${PARSER}.zip"
+PARSER=htmlparser
 
+#
+# Use mozilla trunk
+#
 if [ ! -d "${PARSER}" ]; then
-    wget "http://about.validator.nu/htmlparser/${PARSER_ZIP}"
-    unzip ${PARSER_ZIP}
+    hg clone http://hg.mozilla.org/projects/htmlparser
+else
+    (cd "${PARSER}"; hg pull; hg update )
 fi
+
 
 #
 # Autodownload GWT
@@ -41,6 +46,8 @@ java \
     nu.validator.htmlparser.HtmlParser;
 
 #    -draftCompile \
+
+echo "COPY to envjs src tree"
 cp war/nu.validator.htmlparser.HtmlParser/nu.validator.htmlparser.HtmlParser.nocache.js ../../src/parser/htmlparser.js
 
 #
@@ -48,6 +55,7 @@ cp war/nu.validator.htmlparser.HtmlParser/nu.validator.htmlparser.HtmlParser.noc
 # parser being invoked with the wrong state.  This patch just prevents
 # the parser from dying and throwing an exception.
 #
+echo "PATCHING"
 patch ../../src/parser/htmlparser.js patch1.diff
 echo "DONE"
 

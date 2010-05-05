@@ -26,7 +26,7 @@ package nu.validator.htmlparser.gwt;
 import java.util.LinkedList;
 
 import nu.validator.htmlparser.common.XmlViolationPolicy;
-//import nu.validator.htmlparser.impl.ErrorReportingTokenizer;
+import nu.validator.htmlparser.impl.ErrorReportingTokenizer;
 import nu.validator.htmlparser.impl.Tokenizer;
 import nu.validator.htmlparser.impl.UTF16Buffer;
 
@@ -101,7 +101,7 @@ public class HtmlParser {
         this.domTreeBuilder = new BrowserTreeBuilder(document);
 
 	// updated here
-        this.tokenizer = new Tokenizer(domTreeBuilder);
+        this.tokenizer = new ErrorReportingTokenizer(domTreeBuilder);
 	// ^
         this.domTreeBuilder.setNamePolicy(XmlViolationPolicy.ALTER_INFOSET);
         this.tokenizer.setCommentPolicy(XmlViolationPolicy.ALTER_INFOSET);
