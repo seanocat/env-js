@@ -239,7 +239,7 @@ function recursivelyInsertIFrames(
     newIframe.setAttribute("id", "iframe_of_depth_" + depth);
     newIframe.setAttribute("style", "border: 3px solid blue; padding: 1em; " +
         "width: 95%; height: " + (1100-(140*depth)) + "px;");
-    newIframe.src = "/env-js/specs/fixtures/scope/iframe" + depth + ".html";
+    newIframe.src = "iframe" + depth + ".html";
 
     if (depth < finalDepth)
         newIframe.onload = function(){
