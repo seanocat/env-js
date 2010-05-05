@@ -144,16 +144,73 @@ public class HtmlParser {
                 pump(useSetTimeouts);
     }
 
+    /**
+     * pump pushes tokens out to the parser (I believe).
+     *
+     * The default version of this (same file/directory but in the
+     * htmlparser/src-gwt directory, works file.  However this has
+     * been hacked for the "useSetTimeout" flag which corresponses to
+     * the doc.async flag (with async --> use SetTimeouts).
+     *
+     * The async version parses a token then calls SetTimeout with 1ms,
+     * to be called again inorder to get another token.  This lets other
+     * tasks in the timer run (perhaps networking) or pre-empty the parser.
+     *
+     * The Sync version just repeatably calls pumpcore
+     */
     private void pump(boolean useSetTimeouts) throws SAXException {
 
-    	
+	if (pumpcore()) {
+	    return;
+	}
+
+        if(useSetTimeouts){
+	        // schedule
+	        Timer timer = new Timer() {
+	
+	            @Override public void run() {
+	                try {
+	                    pump(true);
+	                } catch (SAXException e) {
+	                    ending = true;
+	                    if (errorHandler != null) {
+	                        try {
+	                            errorHandler.fatalError(new SAXParseException(
+	                                    e.getMessage(), null, null, -1, -1, e));
+	                        } catch (SAXException e1) {
+	                        }
+	                    }
+	                }
+	            }
+	
+	        };
+	        timer.schedule(1);
+        }else{
+	    try {
+                while (!pumpcore()) { }
+            } catch (SAXException e) {
+                ending = true;
+                if (errorHandler != null) {
+                    try {
+                        errorHandler.fatalError(new SAXParseException(
+                                e.getMessage(), null, null, -1, -1, e));
+                    } catch (SAXException e1) {
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean pumpcore() throws SAXException {
+
         if (ending) {
             tokenizer.end();
             domTreeBuilder.getDocument(); // drops the internal reference
             parseEndListener.parseComplete();
             // Don't schedule timeout
-            return;
-        }
+            return true;
+        }    	
+
 
         int docWriteLen = documentWriteBuffer.length();
         if (docWriteLen > 0) {
@@ -194,42 +251,8 @@ public class HtmlParser {
                 continue;
             }
         }
+	return false;
 
-        if(useSetTimeouts){
-	        // schedule
-	        Timer timer = new Timer() {
-	
-	            @Override public void run() {
-	                try {
-	                    pump(true);
-	                } catch (SAXException e) {
-	                    ending = true;
-	                    if (errorHandler != null) {
-	                        try {
-	                            errorHandler.fatalError(new SAXParseException(
-	                                    e.getMessage(), null, null, -1, -1, e));
-	                        } catch (SAXException e1) {
-	                        }
-	                    }
-	                }
-	            }
-	
-	        };
-	        timer.schedule(1);
-        }else{
-        	try {
-                pump(false);
-            } catch (SAXException e) {
-                ending = true;
-                if (errorHandler != null) {
-                    try {
-                        errorHandler.fatalError(new SAXParseException(
-                                e.getMessage(), null, null, -1, -1, e));
-                    } catch (SAXException e1) {
-                    }
-                }
-            }
-        }
     }
 
     private void push(UTF16Buffer buffer) {

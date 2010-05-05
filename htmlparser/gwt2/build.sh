@@ -3,19 +3,22 @@
 #
 # Autodownload Parser
 #  from mozilla HG.
-# TODO: specific specific releases
+# TODO: use specific releases
 #
 PARSER=htmlparser
 
 #
 # Use mozilla trunk
 #
+echo "HG update from http://hg.mozilla.org/projects/htmlparser"
 if [ ! -d "${PARSER}" ]; then
     hg clone http://hg.mozilla.org/projects/htmlparser
 else
     (cd "${PARSER}"; hg pull; hg update )
 fi
+echo "----"
 
+echo "Installing GWT"
 
 #
 # Autodownload GWT
@@ -28,15 +31,17 @@ if [ ! -d "${GWT}" ]; then
     wget "http://google-web-toolkit.googlecode.com/files/${GWT_ZIP}"
     unzip ${GWT_ZIP}
 fi
+echo "----"
 
-echo "Starting GWT compile..."
 CP="./src:./${PARSER}/src:./${PARSER}/super:./${GWT}/gwt-user.jar:./${GWT}/gwt-dev.jar"
 
 # Compile a new GWT linker.  Very simple to Single Script Linker but
 # removes all the "bootstrap" and client (real browser) onScriptLoad
 # events, etc.
+echo "Javac our linker"
 javac -cp ${CP} src/com/envjs/gwt/linker/ServerSingleScriptLinker.java
 
+echo "Starting GWT..."
 java \
     -Xmx256M \
     -cp "${CP}" \
@@ -46,7 +51,7 @@ java \
     nu.validator.htmlparser.HtmlParser;
 
 #    -draftCompile \
-
+echo "----"
 echo "COPY to envjs src tree"
 cp war/nu.validator.htmlparser.HtmlParser/nu.validator.htmlparser.HtmlParser.nocache.js ../../src/parser/htmlparser.js
 
