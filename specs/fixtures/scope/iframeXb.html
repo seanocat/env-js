@@ -25,12 +25,14 @@
 
 
     <!-- elements and scripting here match test cases in ../../scope/spec.js -->
-    <script>//ensure that we can execute JS inline while loading
+    <script type="text/javascript">
+      //ensure that we can execute JS inline while loading
       document.write(
         '\x3cp id="js_generated_p"\x3eDynamically-generated\x3c/p\x3e');
     </script>
 
-    <script>//verify that our "document" object actually points to this page
+    <script type="text/javascript">
+      //verify that our "document" object actually points to this page
       document.write('\x3cp id="internalDocRefResult"\x3e');
       if (document.getElementById('anElementWithText'))
         document.write("First paragraph element exists-found.");
@@ -39,7 +41,8 @@
       document.write('\x3c/p\x3e');
     </script>
 
-    <script>// append 'p id=appended "An appended paragraph"' to doc....
+    <script type="text/javascript">
+      // append 'p id=appended "An appended paragraph"' to doc....
       function checkEventsWithinIframe(){
         var t = document.createTextNode("An appended paragraph");
         var p = document.createElement("p");

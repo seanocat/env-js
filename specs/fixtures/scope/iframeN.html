@@ -15,7 +15,7 @@
     <title>Document for testing arbitrary-depth IFRAME nesting in env.js</title>
   </head>
   <body>
-    <script>
+    <script type="text/javascript">
       window.top.numberNestedIframeLoads++;
       window.onload = function(){
         var p = document.createElement('p');
@@ -37,7 +37,7 @@
       -->
 
     <p>Nesting level:
-      <script>
+      <script type="text/javascript">
         var counterAsText = window.parent.document.
           getElementById('nestingLevel').innerHTML;
         var newCount = parseInt(counterAsText) + 1;

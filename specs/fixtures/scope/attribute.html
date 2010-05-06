@@ -15,7 +15,7 @@
     </title>
   </head>
   <body>
-    <script>
+    <script type="text/javascript">
       function appendAPara(doc, target, pId, pMsg){
         var t = doc.createTextNode(pMsg);
         var p = doc.createElement("p");
@@ -86,7 +86,7 @@
         sentence to this paragraph.  
       </p>
     </div>
-    <script>
+    <script type="text/javascript">
       target = "p4"; // already defined in global, so modify not redefine
       document.getElementById('div3').onclick = function(){
         var targetElement = document.getElementById(target);
