@@ -35,7 +35,7 @@ Navigator = function(){
             return [];
         },
         get userAgent(){
-            return this.appCodeName + "/" + this.appVersion + " " + this.appName;
+            return this.appCodeName + "/" + this.appVersion + " Resig/20070309 PilotFish/@BUILD_VERSION@";
         },
         javaEnabled : function(){
             return Envjs.javaEnabled;

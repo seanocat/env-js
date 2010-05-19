@@ -38,7 +38,7 @@ __this__ = this;
 Envjs.appCodeName  = "Envjs";
 
 //eg "Gecko/20070309 Firefox/2.0.0.3"
-Envjs.appName      = "Resig/20070309 PilotFish/@BUILD_VERSION@";
+Envjs.appName      = "Netscape";
 
 Envjs.version = "1.6";//?
 Envjs.revision = '';
