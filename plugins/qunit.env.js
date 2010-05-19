@@ -92,7 +92,6 @@ Envjs({
                 q$ = _config.Test.push;
                 _config.Test.push = function(){
                     try{
-                        console.log('blah');
                         console.log("[%s] %s", arguments[0][0], arguments[0][1]);
                     }catch(e){
                         console.log("[error] %s", e);
