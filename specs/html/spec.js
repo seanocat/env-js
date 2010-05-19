@@ -178,6 +178,7 @@ test('HTMLDocument.createElement(unknown)', function(){
     equals(element.ownerDocument, document, '.ownerDocument');
     equals(element.parentNode, null, '.parentNode');
     equals(element.prefix, null, '.prefix');
+    equals(element.id, '', '.id');
     equals(element.toString(), '[object HTMLUnknownElement]', '.toString');
     equals(xmlserializer.serializeToString(element), '<ENVJS/>', 'xmlserializer');
 

@@ -55,7 +55,7 @@ __extend__(HTMLElement.prototype, {
         return this.setAttribute("dir",val);
     },
     get id(){
-        return this.getAttribute('id');
+        return this.getAttribute('id') || '';
     },
     set id(id){
         this.setAttribute('id', id);

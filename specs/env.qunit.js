@@ -35,6 +35,4 @@ QUnit.done = function( fail, pass){
 };
 QUnit.start = function(){
     _start();
-    Envjs.wait();
 }
-

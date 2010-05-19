@@ -14,4 +14,3 @@ load('dist/timer.js');
 load('specs/timer/spec.js');
 
 start();
-Envjs.wait();
