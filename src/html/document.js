@@ -489,7 +489,7 @@ Aspect.around({
                         break;
                     default:
                         if(node.getAttribute('onload')){
-                            console.log('calling attribute onload %s | %s', node.onload, node.tagName);
+                            //console.log('calling attribute onload %s | %s', node.onload, node.tagName);
                             node.onload();
                         }
                         break;

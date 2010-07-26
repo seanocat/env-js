@@ -6,7 +6,7 @@
  */
 
 var __eval__ = function(script, node){
-    if (!script == ""){
+    if (!script == "" && Envjs.scriptTypes['']){
         // don't assemble environment if no script...
         try{
             eval(script);

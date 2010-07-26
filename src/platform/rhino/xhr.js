@@ -130,10 +130,10 @@ Envjs.connection = function(xhr, responseHandler, data){
                 xhr.status = 200;
                 xhr.statusText = "";
             } else {
-                connection = url.openConnection();
-                connection.connect();
                 //try to add some canned headers that make sense
-
+                xhr.readyState = 4;
+                xhr.statusText = "ok";
+                xhr.responseText = Envjs.readFromFile(xhr.url);
                 try{
                     if(xhr.url.match(/html$/)){
                         xhr.responseHeaders["Content-Type"] = 'text/html';
@@ -168,6 +168,8 @@ Envjs.connection = function(xhr, responseHandler, data){
         for (header in xhr.headers){
             connection.addRequestProperty(header+'', xhr.headers[header]+'');
         }
+        connection.addRequestProperty("Accept-Encoding", 'gzip');
+        connection.addRequestProperty("Agent", 'gzip');
 
         //write data to output stream if required
         if(data){
@@ -251,7 +253,7 @@ Envjs.connection = function(xhr, responseHandler, data){
         instream.close();
         
         if(binary){
-            xhr.responseText = new String(outstream.toByteArray(), 'UTF-8')+'';
+            xhr.responseText = new java.lang.String(outstream.toByteArray(), 'UTF-8')+'';
         }else{
             xhr.responseText = outstream.toString()+'';
         }

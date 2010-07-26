@@ -64,11 +64,13 @@ Envjs.loadLocalScript = function(script){
                 return false;
             }
         }
+    }else if(!Envjs.scriptTypes['']){
+        return false;
     }
 
     try{
         //console.log('handling inline scripts');
-        if(!script.src.length){
+        if(!script.src.length && Envjs.scriptTypes[""]){
             Envjs.loadInlineScript(script);
             return true;
         }
@@ -185,7 +187,7 @@ Envjs.cookieFile = function(){
  * @param {Object} htmldoc
  */
 Envjs.saveCookies = function(){
-    var cookiejson = JSON.stringify(Envjs.cookies.peristent,null,'\t');
+    var cookiejson = JSON.stringify(Envjs.cookies.persistent,null,'\t');
     //console.log('persisting cookies %s', cookiejson);
     Envjs.writeToFile(cookiejson, Envjs.cookieFile());
 };
@@ -255,15 +257,15 @@ Envjs.setCookie = function(url, cookie){
         if(index > -1){
             name = __trim__(attrs[i].slice(0,index));
             value = __trim__(attrs[i].slice(index+1));
-            if(name=='max-age'){
+            if(name.toLowerCase() == 'max-age'){
                 //we'll have to when to check these
                 //and garbage collect expired cookies
                 cookie[name] = parseInt(value, 10);
-            } else if( name == 'domain' ){
+            } else if( name.toLowerCase() == 'domain' ){
                 if(__domainValid__(url, value)){
                     cookie['domain'] = value;
                 }
-            } else if( name == 'path' ){
+            } else if( name.toLowerCase() == 'path' ){
                 //not sure of any special logic for path
                 cookie['path'] = value;
             } else {
@@ -272,7 +274,7 @@ Envjs.setCookie = function(url, cookie){
                 properties[name] = value;
             }
         }else{
-            if( attrs[i] == 'secure' ){
+            if( attrs[i].toLowerCase() == 'secure' ){
                 cookie[attrs[i]] = true;
             }
         }

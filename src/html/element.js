@@ -177,7 +177,8 @@ __extend__(HTMLElement.prototype, {
             // serialize this Element
             ret += "<" + name + ns + attrstring +">";
             for(i=0;i< this.childNodes.length;i++){
-                ret += this.childNodes[i].xhtml ?
+                //console.debug('xhtml for '+ this);
+                ret += 'xhtml' in this.childNodes[i] ?
                     this.childNodes[i].xhtml :
                     this.childNodes[i].xml;
             }
@@ -185,6 +186,7 @@ __extend__(HTMLElement.prototype, {
         }else{
             switch(name){
             case 'script':
+            case 'noscript':
                 ret += "<" + name + ns + attrstring +"></"+name+">";
                 break;
             default:
