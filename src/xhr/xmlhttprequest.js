@@ -36,9 +36,10 @@ XMLHttpRequest.prototype = {
     setRequestHeader: function(header, value){
         this.headers[header] = value;
     },
-    send: function(data, parsedoc/*non-standard*/){
+    send: function(data, parsedoc/*non-standard*/, redirect_count){
         var _this = this;
         parsedoc = (parsedoc === undefined)?true:!!parsedoc;
+        redirect_count = (redirect_count === undefined) ? 0 : redirect_count
         function makeRequest(){
             var cookie = Envjs.getCookies(_this.url);
             if(cookie){
@@ -49,23 +50,6 @@ XMLHttpRequest.prototype = {
                     var doc = null,
                         domparser,
                         cookie;
-                    // try to parse the document if we havent explicitly set a
-                    // flag saying not to and if we can assure the text at least
-                    // starts with valid xml
-                    if ( parsedoc && _this.responseText.match(/^\s*</) ) {
-                        domparser = domparser||new DOMParser();
-                        try {
-                            //console.log("parsing response text into xml document");
-                            doc = domparser.parseFromString(_this.responseText+"", 'text/xml');
-                        } catch(e) {
-                            //Envjs.error('response XML does not appear to be well formed xml', e);
-                            console.warn('parseerror \n%s', e);
-                            doc = document.implementation.createDocument('','error',null);
-                            doc.appendChild(doc.createTextNode(e+''));
-                        }
-                    }else{
-                        //Envjs.warn('response XML does not appear to be xml');
-                    }
                     
                     try{
                         cookie = _this.getResponseHeader('SET-COOKIE');
@@ -75,9 +59,42 @@ XMLHttpRequest.prototype = {
                     }catch(e){
                         console.warn("Failed to set cookie");
                     }
-                    _this.__defineGetter__("responseXML", function(){
-                        return doc;
-                    });
+                    
+                    if(_this.status === 302 && _this.getResponseHeader('Location') && redirect_count < 20){
+                        //follow redirect and copy headers
+                        _this.url = Envjs.uri(_this.getResponseHeader('Location'));
+                        //remove current cookie headers to allow the redirect to determine
+                        //the currect cookie based on the new location
+                        if('Cookie' in _this.headers ){
+                            delete _this.headers.Cookie;
+                        }
+                        if('Cookie2' in _this.headers ){
+                            delete _this.headers.Cookie2;
+                        }
+                        _this.send(data, parsedoc, redirect_count++);
+                    }else{
+                        // try to parse the document if we havent explicitly set a
+                        // flag saying not to and if we can assure the text at least
+                        // starts with valid xml
+                        if ( parsedoc && _this.responseText.match(/^\s*</) ) {
+                            domparser = domparser||new DOMParser();
+                            try {
+                                //console.log("parsing response text into xml document");
+                                doc = domparser.parseFromString(_this.responseText+"", 'text/xml');
+                            } catch(e) {
+                                //Envjs.error('response XML does not appear to be well formed xml', e);
+                                console.warn('parseerror \n%s', e);
+                                doc = document.implementation.createDocument('','error',null);
+                                doc.appendChild(doc.createTextNode(e+''));
+                            }
+                        }else{
+                            //Envjs.warn('response XML does not appear to be xml');
+                        }
+                        
+                        _this.__defineGetter__("responseXML", function(){
+                            return doc;
+                        });
+                    }
                 }
             }, data);
 

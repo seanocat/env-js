@@ -114,6 +114,8 @@ Envjs.connection = function(xhr, responseHandler, data){
         instream,
         responseXML,
         i;
+    
+        
     if ( /^file\:/.test(url) ) {
         try{
             if ( "PUT" == xhr.method || "POST" == xhr.method ) {
@@ -162,6 +164,8 @@ Envjs.connection = function(xhr, responseHandler, data){
         }
     } else {
         connection = url.openConnection();
+        //handle redirects manually since cookie support sucks out of the box
+        connection.setFollowRedirects(false);
         connection.setRequestMethod( xhr.method );
 
         // Add headers to Java connection
