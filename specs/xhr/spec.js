@@ -133,3 +133,5 @@ test('HTMLParser document.writeln', function(){
     ok(document.getElementById('writeln'), 'document.writeln created a div during parsing');
     
 });
+
+

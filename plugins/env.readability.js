@@ -16,13 +16,13 @@ var readStyle='style-newspaper',
     readMargin='margin-medium',
     start = new Date().getTime(),
     docs = {
-        /*'http://www.loc.gov/pictures/collection/bbc/background.html':'background.html',
+        'http://www.loc.gov/pictures/collection/bbc/background.html':'background.html',
         'http://www.loc.gov/pictures/collection/bbc/bibliographies.html':'bibliographies.html',
         'http://www.loc.gov/pictures/collection/bbc/cataloging.html': 'cataloging.html',
         'http://www.loc.gov/pictures/collection/bbc/digitizing.html': 'digitizing.html',
         'http://www.loc.gov/pictures/collection/bbc/sets.html': 'sets.html',
-        'http://www.loc.gov/pictures/collection/bbc/tinker_evers_chance.html': 'tinkers_evers_chance.html'*/
-        'http://timesofindia.indiatimes.com/india/Railways-rot-as-Mamata-plays-politics-in-Bengal/articleshow/6193608.cms': '6193608.html'
+        'http://www.loc.gov/pictures/collection/bbc/tinker_evers_chance.html': 'tinkers_evers_chance.html'
+        /*'http://timesofindia.indiatimes.com/india/Railways-rot-as-Mamata-plays-politics-in-Bengal/articleshow/6193608.cms': '6193608.html'*/
         /*'http://www.articlesbase.com/communication-articles/difference-between-analog-and-digital-69824.html': 'article1.html'*/
     };
     

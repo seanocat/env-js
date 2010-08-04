@@ -9,7 +9,7 @@ function scrape(url, links){
     // scrape text from current document which we will
     // assign weights to in our search index
     var data = {
-        $id: encodeURIComponent(url),
+        $id: encodeURIComponent(url.replace('/','_')),
         url: url,
         full_text: $(document.body).text(),
         title: document.title,
@@ -22,23 +22,27 @@ function scrape(url, links){
     // already have in our link array
     $('a[href]').each(function(){
         var href = $(this).attr('href');
-        if($.inArray(href, links) == -1 && !href.match(/^(\s)*http|#/)){
+        if($.inArray(href, links) == -1 && !href.match(/^(\s)*http|#|mailto:/)){
             //we only want to crawl local links
+            console.log('adding seed %s', href);
             links.push(href);
         }
     });
     
     // save the record to our index
     $.ajax({
-        url:'http://localhost:8080/rest/index/'+data.$id,
+        url:'http://localhost:8080/rest/crawl/'+data.$id,
         contentType:'application/json',
         dataType:'json',
-        type: 'post',
+        type: 'put',
         async: false,
         data: JSON.stringify(data),
         processData: false,
-        success: function(){
-            console.log('indexed document %s', url);
+        success: function(response){
+            console.log('crawled document %s', url);
+        },
+        error: function(xhr, status, e){
+            console.log('failed to save crawled document %s', data.$id);
         }
     });
 }
@@ -47,26 +51,26 @@ $(function(){
 
     // delete the index to start fresh
     $.ajax({
-        url:'http://localhost:8080/rest/index/',
+        url:'http://localhost:8080/rest/crawl/',
         contentType:'application/json',
         dataType:'json',
         type:'delete',
         async: false,
         success: function(){
-            console.log('deleted search index');
+            console.log('deleted crawl domain');
         }
     });
     
     // create the search index we will populate with 
     // our simple crawl
     $.ajax({
-        url:'http://localhost:8080/rest/index/',
+        url:'http://localhost:8080/rest/crawl/',
         contentType:'application/json',
         dataType:'json',
         type:'put',
         async: false,
         success: function(){
-            console.log('created search index');
+            console.log('created crawl domain');
         }
     });
     
@@ -92,4 +96,4 @@ $(function(){
 
 });
 
-window.location = 'http://localhost:8080/';
+window.location = 'http://www.recordsofexistence.com/';

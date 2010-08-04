@@ -76,7 +76,9 @@ XMLHttpRequest.prototype = {
                         // try to parse the document if we havent explicitly set a
                         // flag saying not to and if we can assure the text at least
                         // starts with valid xml
-                        if ( parsedoc && _this.responseText.match(/^\s*</) ) {
+                        if ( parsedoc && 
+                            _this.getRequestHeader('Content-Type').indexOf('xml') > -1 &&
+                            _this.responseText.match(/^\s*</) ) {
                             domparser = domparser||new DOMParser();
                             try {
                                 //console.log("parsing response text into xml document");

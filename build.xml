@@ -582,6 +582,7 @@
             <fileset dir="${SRC_DIR}" includes="common/__setArray__.js" />
             <fileset dir="${SRC_DIR}" includes="common/__trim__.js" />
             <fileset dir="${SRC_DIR}" includes="xhr/document.js" />
+            <fileset dir="${SRC_DIR}" includes="xhr/a.js" />
             <fileset dir="${SRC_DIR}" includes="xhr/form.js" />
             <fileset dir="${SRC_DIR}" includes="xhr/location.js" />
             <fileset dir="${SRC_DIR}" includes="xhr/xmlhttprequest.js" />

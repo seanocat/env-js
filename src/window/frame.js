@@ -14,7 +14,7 @@ __extend__(HTMLFrameElement.prototype,{
         var event;
         this.setAttribute('src', value);
         if (this.parentNode && value && value.length > 0){
-            //console.log('loading frame %s', value);
+            //console.log('loading frame via set src %s', value);
             Envjs.loadFrame(this, Envjs.uri(value));
 
             //console.log('event frame load %s', value);

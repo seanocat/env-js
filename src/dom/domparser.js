@@ -35,7 +35,7 @@ __extend__(DOMParser.prototype,{
         // but simpler one seems to be ok
         // xmlstring = xmlstring.replace(/^<\?xml\s+version\s*=\s*(["'])[^\1]+\1[^?]*\?>/, "");
         //
-        xmlstring = xmlstring.replace(/<\?xml.*\?>/);
+        xmlstring = xmlstring.replace(/<\?xml.*\?>/, '');
 
         e4 = new XMLList(xmlstring);
 

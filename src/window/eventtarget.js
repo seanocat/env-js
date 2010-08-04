@@ -13,8 +13,17 @@ __extend__(Envjs.defaultEventBehaviors,{
             target.submit();
         }
     },
+    
     'click': function(event) {
-        // console.log('handling event target default behavior for click');
+        var target = event.target;
+        while (target && target.nodeName !== 'A') {
+            target = target.parentNode;
+        }
+        if (target && target.nodeName === 'A') {
+            if(target.href && !target.href.match(/^#/)){
+                target.click();
+            }
+        }
     }
 
 });

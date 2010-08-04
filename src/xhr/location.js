@@ -23,8 +23,8 @@
 Location = function(url, doc, history) {
     //console.log('Location url %s', url);
     var $url = url,
-    $document = doc ? doc : null,
-    $history = history ? history : null;
+        $document = doc ? doc : null,
+        $history = history ? history : null;
 
     var parts = Envjs.urlsplit($url);
 
@@ -226,12 +226,23 @@ Location = function(url, doc, history) {
     };
 };
 
-var __exchangeHTMLDocument__ = function(doc, text, url) {
-    var html, head, title, body, event, e;
+var __exchangeHTMLDocument__ = function(doc, text, url, frame) {
+    var html, head, title, body, event, frame, i;
     try {
         doc.baseURI = url;
+        //console.log('parsing document for window exchange %s', url); 
         HTMLParser.parseDocument(text, doc);
+        //console.log('finsihed parsing document for window exchange %s', url); 
         Envjs.wait();
+        /*console.log('finished wait after parse/exchange...( frame ? %s )', 
+            doc.baseURI, 
+            top.document.baseURI
+        );*/
+        if(frame){
+            event = doc.createEvent('HTMLEvents');
+            event.initEvent('load', false, false);
+            frame.dispatchEvent( event, false );
+        }
     } catch (e) {
         console.log('parsererror %s', e);
         try {

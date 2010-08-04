@@ -542,6 +542,7 @@ test('window.getComputedStyle', function() {
 
 });
 
+
 /**
  * Not sure where this goes, since it needs the parser
  */
@@ -579,3 +580,34 @@ test('Document Named Element Lookup', function(){
         ok(!doc.foo, 'old named element not found via named lookup');
 });
 
+
+test('Default Browser Events - Form method "get"', function(){
+    var windowExchangeTests = document.getElementById('window_exchange_tests'); 
+    ok(windowExchangeTests, 'window_exchange_tests frame available');
+    
+    windowExchangeTests.onload = function(){
+        ok(windowExchangeTests.contentDocument.getElementById('link_tests'), 'new page loaded');
+        start();
+    }
+    
+    var formTest1 = windowExchangeTests.contentDocument.getElementById('form_test_1');
+    formTest1.submit();
+    stop();
+    
+});
+
+
+test('Default Browser Events - Remote Link 1', function(){
+    var windowExchangeTests = document.getElementById('window_exchange_tests'); 
+    ok(windowExchangeTests, 'window_exchange_tests frame available');
+    
+    windowExchangeTests.onload = function(){
+        ok(windowExchangeTests.contentDocument.getElementById('form_tests'), 'new page loaded');
+        start();
+    }
+    
+    var linkTest1 = windowExchangeTests.contentDocument.getElementById('link_test_1');
+    linkTest1.click();
+    stop();
+    
+});

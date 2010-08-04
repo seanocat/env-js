@@ -443,6 +443,7 @@ Aspect.around({
                                 event.initEvent("load", false, false);
                                 node.dispatchEvent( event, false );
                             });
+                            console.log('error loading html element %s %e', node, e.toString());
                         }
                         try{
                             if (node.src && node.src.length > 0){
@@ -457,12 +458,14 @@ Aspect.around({
                                 try{
                                     if(Window){
                                         Envjs.loadFrame(node);
-                                        //console.log('src/html/document.js: triggering frame load');
+                                        //console.log('triggering frame load %s',node.xml);
                                         event = node.contentDocument.createEvent('HTMLEvents');
                                         event.initEvent("load", false, false);
                                         node.dispatchEvent( event, false );
                                     }
-                                }catch(e){}
+                                }catch(e){
+                                    console.log('error loading html element %s %e', node, e.toString());
+                                }
                             }
                         }catch(e){
                             console.log('error loading html element %s %e', node, e.toString());

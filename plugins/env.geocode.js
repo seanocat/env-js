@@ -1,57 +1,10 @@
 /**
  * @author thatcher
  */
-load('lib/env.rhino.js');
-load('lib/jquery-1.4.2.js');
-load('local_settings.js');
-
-// All we are using to geocode the record is the item title
-// and in particular the last 4 parts of the comma separted
-// title parts
-function get_item_title(i){
-    var title;
-    $.ajax({
-        url:XMLDB_HHH_DUMP,
-        contentType:'application/xml',
-        dataType:'xml',
-        type:'get',
-        data:{
-            _query: '/collection/document/item_title',
-            _howmany: 1,
-            _wrap: false,
-            _start: i
-        },
-        async: false,
-        success: function(xml){
-            title = $(xml).text();
-            console.log('item %s title %s', i ,title);
-        }
-    });
-    return title;
-};
+load('dist/env.rhino.js');
+load('plugins/jquery.js');
 
 
-function get_document_id(i){
-    var id;
-    $.ajax({
-        url:XMLDB_HHH_DUMP,
-        contentType:'application/xml',
-        dataType:'xml',
-        type:'get',
-        data:{
-            _query: '/collection/document/document_id',
-            _howmany: 1,
-            _wrap: false,
-            _start: i
-        },
-        async: false,
-        success: function(xml){
-            id = $(xml).text();
-            console.log('document %s id %s', i ,id);
-        }
-    });
-    return id;
-};
 
 function geocode_by_title(title, id){
     
@@ -75,8 +28,9 @@ function geocode_by_title(title, id){
         async: false,
         success: function(json_text){
             //save it out to flat file 
-            var flat_file = Envjs.uri(DATADIR_HHH + id + '.json');
-            Envjs.writeToFile(json_text, flat_file);
+            //var flat_file = Envjs.uri(DATADIR_HHH + id + '.json');
+            //Envjs.writeToFile(json_text, flat_file);
+            console.log('%s', json_text);
             geocode = JSON.parse(json_text);
             console.log('got geocodes for %s %s', title, geocode.status);
         }
@@ -89,29 +43,45 @@ $(function(){
     var current_item_title,
         current_document_id, 
         current_post;
+        
+    console.log('beginning geocoding of %s', PICTURES);
     //create the domain just in case its not create yet
+    
     $.ajax({
-        url:JSONDB_HHH,
+        url:GEOCODES,
         contentType:'application/json',
         dataType:'json',
         type:'put',
         async: false,
         success: function(){
-            console.log('created domain %s', JSONDB_HHH);
+            console.log('created domain %s', GEOCODES);
         },
         error: function(xhr, status, e){
-            console.log('failed to create domain', JSONDB_HHH);
+            console.log('failed to create domain', GEOCODES);
         },
         beforeSend: function(xhr){
             xhr.setRequestHeader('Content-Length', 0);
         }
     });
     
+    
+    $.ajax({
+       url: PICTURES,
+       async: false, 
+       dataType: 'json',
+       success: function(response){
+           RESULTS = response.results;
+       },
+       error: function(xhr, status, e){
+           console.log('failed to load pictures to geocode %s', e);
+       }
+    });
+    
     // now crawl our xmldb
-    for(var i = GEOCODE_HHH_START; i <= GEOCODE_HHH_END; i++){
+    for(var i = 0; i < GEOCODE_COUNT; i++){
         try{
-            current_document_id = get_document_id(i);
-            current_item_title = get_item_title(i);
+            current_document_id = RESULTS[i].pk;
+            current_item_title = RESULTS[i].title;
             geocode = geocode_by_title(
                 current_item_title, 
                 current_document_id
@@ -133,10 +103,10 @@ $(function(){
                     };
                     current_post = JSON.stringify(current_post, null, '');
                     $.ajax({
-                        url: JSONDB_HHH + '/' + current_document_id + '-' + index,
+                        url: GEOCODES + '/' + current_document_id + '-' + index,
                         contentType: 'application/json',
                         dataType:'json',
-                        type:'post',
+                        type:'put',
                         async: false,
                         data: current_post,
                         success: function(){
@@ -150,7 +120,7 @@ $(function(){
             }else if(geocode.status == "OVER_QUERY_LIMIT"){
                 console.log(
                     'over query limit [start %i] [current %s]', 
-                    GEOCODE_HHH_START, 
+                    GEOCODE_START, 
                     i
                 );
                 break;
@@ -162,10 +132,10 @@ $(function(){
                 };
                 current_post = JSON.stringify(current_post, null, '');
                 $.ajax({
-                    url: JSONDB_HHH + '/' + current_document_id,
+                    url: GEOCODES + '/' + current_document_id,
                     contentType: 'application/json',
                     dataType:'json',
-                    type:'post',
+                    type:'put',
                     async: false,
                     data: current_post,
                     success: function(){
@@ -184,4 +154,15 @@ $(function(){
 
 });
 
-window.location = 'http://localhost:8001/eup/';
+var GEOCODES = 'http://localhost:8080/rest/geocodes',
+    GEOCODE_START = 5,
+    GEOCODE_COUNT = 100,
+    RESULTS = [],
+    PICTURES = 'http://www.loc.gov/pictures/collection/hh/search?q'+
+        '&sp='+GEOCODE_START+
+        '&c='+GEOCODE_COUNT+
+        '&fo=json'+
+        '&at=results';
+
+
+window.location = 'http://www.loc.gov/pictures/';

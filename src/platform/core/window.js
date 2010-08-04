@@ -4,7 +4,9 @@
  * @param {Object} scope
  * @param {Object} parent
  */
-Envjs.proxy = function(scope, parent, aliasList){};
+Envjs.proxy = function(scope, parent, aliasList){
+    return (function(){return this;})();
+};
 
 Envjs.javaEnabled = false;
 
@@ -23,6 +25,7 @@ Envjs.platform       = '';
  */
 Envjs.loadFrame = function(frame, url){
     try {
+        //console.log('loading frame %s', url);
         if(frame.contentWindow){
             //mark for garbage collection
             frame.contentWindow = null;
@@ -31,7 +34,7 @@ Envjs.loadFrame = function(frame, url){
         //create a new scope for the window proxy
         //platforms will need to override this function
         //to make sure the scope is global-like
-        frame.contentWindow = (function(){return this;})();
+        frame.contentWindow = Envjs.proxy();
         new Window(frame.contentWindow, window);
 
         //I dont think frames load asynchronously in firefox
@@ -39,6 +42,7 @@ Envjs.loadFrame = function(frame, url){
         //some reason I'm less than confident... Are there cases?
         frame.contentDocument = frame.contentWindow.document;
         frame.contentDocument.async = false;
+        frame.contentDocument.__ownerFrame__ = frame;
         if(url){
             //console.log('envjs.loadFrame async %s', frame.contentDocument.async);
             frame.contentWindow.location = url;
