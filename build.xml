@@ -441,6 +441,7 @@
             <fileset dir="${SRC_DIR}" includes="html/option.js" />
             <fileset dir="${SRC_DIR}" includes="html/p.js" />
             <fileset dir="${SRC_DIR}" includes="html/param.js" />
+            <fileset dir="${SRC_DIR}" includes="html/pre.js" />
             <fileset dir="${SRC_DIR}" includes="html/script.js" />
             <fileset dir="${SRC_DIR}" includes="html/select.js" />
             <fileset dir="${SRC_DIR}" includes="html/span.js" />
