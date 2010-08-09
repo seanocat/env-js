@@ -9,7 +9,7 @@ var __eval__ = function(script, node){
     if (!script == "" && Envjs.scriptTypes['']){
         // don't assemble environment if no script...
         try{
-            eval(script);
+            Envjs.eval(node.ownerDocument.ownerWindow, script, script+" ("+node+")");
         }catch(e){
             console.log('error evaluating %s', e);
         }

@@ -70,7 +70,7 @@ var __elementPopped__ = function(ns, name, node){
                                 case 'script':
                                     try{
                                         okay = Envjs.loadLocalScript(node, null);
-                                        // console.log('loaded script? %s %s', node.uuid, okay);
+                                        //console.log('loaded script? %s %s', node.src, okay);
                                         // only fire event if we actually had something to load
                                         if (node.src && node.src.length > 0){
                                             event = doc.createEvent('HTMLEvents');

@@ -409,9 +409,13 @@ test('HTMLParser.parseDocument / non-polluting script', function(){
     doc = iframe.contentDocument;
     win = iframe.contentWindow;
 
+	//allow anonymous script types
+	Envjs.scriptTypes[""] = true;
     doc.open();
     doc.write("<html><head><script>var ABABABABAB = 123;</script></head><body>hello</body></html>");
     doc.close();
+	Envjs.scriptTypes[""] = false;
+	
     ok(doc, 'frame has contentDocument');
     equals(doc+'', '[object HTMLDocument]', 'doc is HTMLDocument');
     equals(win.ABABABABAB, 123, 'script evaluated in frame context');
@@ -436,9 +440,13 @@ test('HTMLParser.parseDocument / polluting script', function(){
     doc = iframe.contentDocument;
     win = iframe.contentWindow;
 
+	//allow anonymous script types
+	Envjs.scriptTypes[""] = true;
     doc.open();
     doc.write("<html><head><script>ABABABABAB = 123;</script></head><body>hello</body></html>");
     doc.close();
+	Envjs.scriptTypes[""] = false;
+	
     ok(doc, 'frame has contentDocument');
     equals(doc+'', '[object HTMLDocument]', 'doc is HTMLDocument');
     equals(win.ABABABABAB, 123, 'script evaluated in frame context');

@@ -372,9 +372,9 @@ Aspect.around({
     method:"appendChild"
 }, function(invocation) {
     var event,
-    okay,
-    node = invocation.proceed(),
-    doc = node.ownerDocument;
+        okay,
+        node = invocation.proceed(),
+        doc = node.ownerDocument;
 
     //console.log('element appended: %s %s %s', node+'', node.nodeName, node.namespaceURI);
     if((node.nodeType !== Node.ELEMENT_NODE)){
@@ -383,8 +383,7 @@ Aspect.around({
         //changes to src attributes
         return node;
     }
-    //console.log('appended html element %s %s %s',
-    //             node.namespaceURI, node.nodeName, node);
+    //console.log('appended html element %s %s %s', node.namespaceURI, node.nodeName, node);
     switch(doc.parsing){
         case true:
 
@@ -397,9 +396,7 @@ Aspect.around({
          * be in the head is correct or not.  NamespaceURI == null
          * might also need to corrected too.
          */
-        if (node.namespaceURI === null &&
-            node.tagName === 'SCRIPT' &&
-            this.tagName == 'HEAD') {
+        if (node.tagName.toLowerCase() === 'SCRIPT') {
             okay = Envjs.loadLocalScript(node, null);
         }
         break;
@@ -415,6 +412,7 @@ Aspect.around({
                         document.styleSheets.push(CSSStyleSheet(node));
                         break;
                     case 'script':
+                        //console.log('appending script %s', node.src);
                         if((this.nodeName.toLowerCase() === 'head')){
                             try{
                                 okay = Envjs.loadLocalScript(node, null);

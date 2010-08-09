@@ -5,6 +5,7 @@
  * the script like a browser would
  */
 Envjs.scriptTypes = {
+	"": false, //anonymous/inline
     "text/javascript"   :false,
     "text/envjs"        :true
 };
@@ -44,18 +45,18 @@ Envjs.eval = function(context, source, name){};
  * @param {Object} parser
  */
 Envjs.loadLocalScript = function(script){
-    //console.log("loading script %s", script);
+    //console.log("loading script %s \n %s", script.src, script.text);
     var types,
-    src,
-    i,
-    base,
-    filename,
-    xhr;
+        src,
+        i,
+        base,
+        filename,
+        xhr;
 
     if(script.type){
         types = script.type.split(";");
         for(i=0;i<types.length;i++){
-            if(Envjs.scriptTypes[types[i]]){
+            if(Envjs.scriptTypes[types[i].toLowerCase()]){
                 //ok this script type is allowed
                 break;
             }
@@ -64,7 +65,8 @@ Envjs.loadLocalScript = function(script){
                 return false;
             }
         }
-    }else if(!Envjs.scriptTypes['']){
+    }else if(!Envjs.scriptTypes['']){	
+        //console.log('wont load anonymous script type ""');
         return false;
     }
 
