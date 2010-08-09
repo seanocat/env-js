@@ -140,3 +140,19 @@ test('adding style element', function() {
     //equals(arule.style.toString(), '[object CSSStyleDeclaration]');
 
 });
+
+test('box model', function(){
+	var div1 = document.createElement('div');
+	div1.id = "div1";
+	div1.style.width = "1500px";
+	div1.style.height = "600px";
+	document.body.appendChild(div1);
+
+	var div2 = document.createElement('div');
+	div2.id = "div2";
+	div2.style.width = "100%";
+	div2.style.height = "100%";
+	div1.appendChild(div2);
+
+	equals(div2.offsetWidth , 1500, 'box model width should be 1500');
+});
