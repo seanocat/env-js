@@ -305,8 +305,9 @@ Window = function(scope, parent, opener){
         atob: function(ascii){
             return base64.decode(ascii);
         },
-        onload: function(){},
-        onunload: function(){},
+		//these should be undefined on instantiation
+        //onload: function(){},
+        //onunload: function(){},
         get guid(){
             return $uuid;
         }

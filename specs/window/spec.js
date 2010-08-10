@@ -49,7 +49,7 @@ test('window proxy', function(){
 
 test('window properties', function(){
 
-    expect(23);
+    expect(25);
     ok(window,              'window');
     ok(self,                'self');
     ok(top,                 'top');
@@ -71,6 +71,8 @@ test('window properties', function(){
     ok(innerHeight,         'innerHeight');
     ok(outerHeight,         'outerHeight');
     ok(outerWidth,          'outerWidth');
+    ok(window.onload === undefined ,         'onload');
+    ok(window.onunload === undefined,          'onunload');
     ok(Number(screenX) !== undefined,             'screenX');
     ok(Number(screenY) !== undefined,             'screenY');
 
