@@ -487,6 +487,12 @@ test('HTMLParser.parseDocument / empty script', function(){
 
 });
 
+test('HTMLParser document.writeln', function(){debugger;
+    
+    ok(document.getElementById('writeln'), 'document.writeln created a div during parsing');
+    
+});
+
 
 test('frame proxy', function(){
 

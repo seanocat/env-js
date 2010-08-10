@@ -18,7 +18,7 @@ Envjs.uri = function(path, base) {
 
     // Semi-common trick is to make an iframe with src='javascript:false'
     //  (or some equivalent).  By returning '', the load is skipped
-    if (path.indexOf('javascript') === 0) {
+    if (path.indexOf('javascript:') === 0) {
         return '';
     }
 
@@ -37,7 +37,10 @@ Envjs.uri = function(path, base) {
     // Ideally I would like the caller to pass in document.baseURI to
     //  make this more self-sufficient and testable
     if (!base && document) {
-        base = document.baseURI;
+		if(document.baseURI)
+        	base = document.baseURI;
+		else
+			base = window.location.protocol + ":" + window.location.host;
     }
 
     // about:blank doesn't count
@@ -53,7 +56,7 @@ Envjs.uri = function(path, base) {
     // handles all cases if path is abosulte or relative to base
     // 3rd arg is "false" --> remove fragments
     var newurl = urlparse.urlnormalize(urlparse.urljoin(base, path, false));
-
+	//console.log('uri %s %s = %s', base, path, newurl);
     return newurl;
 };
 

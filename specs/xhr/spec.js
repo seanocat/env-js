@@ -10,21 +10,25 @@ test('XMLHttpRequest Interfaces Available', function(){
 
 var expected_path_a = 'specs/xhr/index.html';
 var expected_path_b = 'specs/xhr/';
-var url = SETTINGS.AJAX_BASE +'specs/fixtures/simple.txt';
+var url = SETTINGS.AJAX_BASE +'specs/fixtures/simple.txt',
+	absolute_url = '/specs/fixtures/simple.txt';
     
 // mock the global document object if not available
 try{
     document;
 }catch(e){
     console.log('mocking global document object.');
-    document = new HTMLDocument(new DOMImplementation());
+	
+    window = document = new HTMLDocument(new DOMImplementation());
     
     console.log('mocking global document location.');
-    location = new Location(Envjs.uri(expected_path_a, SETTINGS.AJAX_BASE),
-                            document);
+    location = new Location(
+		Envjs.uri(expected_path_a, SETTINGS.AJAX_BASE),
+        document
+	);
     document.baseURI = location.href;
     location.reload();
-    
+	
     console.log('WARNING: AJAX TESTS WILL FAIL WITHOUT A SERVER AND local_settings.js');
 }
 
@@ -127,11 +131,33 @@ test('XMLHttpRequest async', function(){
     stop();
 });
 
-
-test('HTMLParser document.writeln', function(){
+test('xhr for relative path', function(){
+	var xhr;
+        
+    xhr = new XMLHttpRequest();
+    equals(xhr.readyState, 0, '.readyState');
+    equals(xhr.responseText, '', '.responseText');
+    equals(xhr.responseXML, null, '.responseXML');
+    equals(xhr.status, 0, '.status');
+    equals(xhr.statusText, '', '.statusText');
     
-    ok(document.getElementById('writeln'), 'document.writeln created a div during parsing');
-    
+    xhr.open("GET", absolute_url, true);
+    equals(xhr.readyState, 1, '.readyState');
+	xhr.onreadystatechange = function(){
+        if(xhr.readyState === 4){
+            equals(xhr.readyState, 4, '.readyState');
+            equals(xhr.responseText, 'Hello World', '.responseText');
+            equals(xhr.responseXML, null, '.responseXML');
+            equals(xhr.status, 200, '.status');
+            equals(xhr.statusText, 'OK', '.statusText');
+            start();
+         }
+    };
+        
+    xhr.send();
+    stop();
 });
+
+
 
 

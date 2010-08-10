@@ -21,5 +21,7 @@ load('specs/helpers.js');
 load('local_settings.js');
 load('specs/window/spec.js');
 
-
+Envjs.scriptTypes = {
+	"":true
+};
 location =  'specs/window/index.html';

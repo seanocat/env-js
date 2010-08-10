@@ -61,13 +61,14 @@ var __elementPopped__ = function(ns, name, node){
                 case '[object HTMLDocument]':
                     switch(node.namespaceURI){
                         case "http://n.validator.nu/placeholder/":
-                            //console.log('got script during parsing %s', node.textContent);
+                            //console.log('got holder script during parsing %s', node.textContent);
                             break;
                         case null:
                         case "":
                         case "http://www.w3.org/1999/xhtml":
                             switch(name.toLowerCase()){
                                 case 'script':
+		                            //console.log('got actual script during parsing %s', node.textContent);
                                     try{
                                         okay = Envjs.loadLocalScript(node, null);
                                         //console.log('loaded script? %s %s', node.src, okay);
