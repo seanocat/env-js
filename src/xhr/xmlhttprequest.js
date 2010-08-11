@@ -38,6 +38,7 @@ XMLHttpRequest.prototype = {
     },
     send: function(data, parsedoc/*non-standard*/, redirect_count){
         var _this = this;
+		//console.log('sending request for url %s', this.url);
         parsedoc = (parsedoc === undefined)?true:!!parsedoc;
         redirect_count = (redirect_count === undefined) ? 0 : redirect_count
         function makeRequest(){
@@ -62,6 +63,7 @@ XMLHttpRequest.prototype = {
                     
                     if(_this.status === 302 && _this.getResponseHeader('Location') && redirect_count < 20){
                         //follow redirect and copy headers
+						//console.log('following redirect from %s url %s', _this.url, _this.getResponseHeader('Location'));
                         _this.url = Envjs.uri(_this.getResponseHeader('Location'));
                         //remove current cookie headers to allow the redirect to determine
                         //the currect cookie based on the new location

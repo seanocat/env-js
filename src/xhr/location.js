@@ -190,18 +190,17 @@ Location = function(url, doc, history) {
                     xhr.onreadystatechange = function() {
                         //console.log('readyState %s', xhr.readyState);
                         if (xhr.readyState === 4) {
-                            $document.baseURI = new Location(url, $document);
                             //console.log('new document baseURI %s', $document.baseURI);
-                            __exchangeHTMLDocument__($document, xhr.responseText, url);
+                            __exchangeHTMLDocument__($document, xhr.responseText, xhr.url);
                         }
                     };
-                    xhr.send(null, false);
+                    xhr.send(null, false);//dont parse html
                 } else {
                     //Treat as an XMLDocument
                     xhr.onreadystatechange = function() {
                         if (xhr.readyState === 4) {
                             $document = xhr.responseXML;
-                            $document.baseURI = $url;
+                            $document.baseURI = xhr.url;
                             if ($document.createEvent) {
                                 event = $document.createEvent('Event');
                                 event.initEvent('DOMContentLoaded');

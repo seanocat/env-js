@@ -16,15 +16,15 @@ HTMLFormElement.prototype.submit = function(){
         this.action !== ""?this.action:this.ownerDocument.baseURI,
         this.ownerDocument.baseURI
     );
-    xhr.open(method, action, false);
-    xhr.send(serialized, false);
+    xhr.open(method, action, false);//synchronous
+    xhr.send(serialized, false);//dont parse html
     if(xhr.readyState === 4){
         /*console.log('%s new document text ready for parse and exchange %s \n %s',
             this.ownerDocument.baseURI, 
             action, 
             xhr.responseText
         );*/
-        __exchangeHTMLDocument__(this.ownerDocument, xhr.responseText, action, this.ownerDocument.__ownerFrame__);
+        __exchangeHTMLDocument__(this.ownerDocument, xhr.responseText, xhr.url, this.ownerDocument.__ownerFrame__);
         //DOMContentLoaded event
         //console.log('finished document exchange %s', this.ownerDocument.baseURI);
     }

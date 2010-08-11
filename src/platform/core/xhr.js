@@ -37,10 +37,7 @@ Envjs.uri = function(path, base) {
     // Ideally I would like the caller to pass in document.baseURI to
     //  make this more self-sufficient and testable
     if (!base && document) {
-		if(document.baseURI)
-        	base = document.baseURI;
-		else
-			base = window.location.protocol + ":" + window.location.host;
+        base = document.baseURI;
     }
 
     // about:blank doesn't count
