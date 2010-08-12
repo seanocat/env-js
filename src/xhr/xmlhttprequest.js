@@ -60,22 +60,29 @@ XMLHttpRequest.prototype = {
                     }catch(e){
                         console.warn("Failed to set cookie");
                     }
-                    
-                    if(_this.status === 302 && _this.getResponseHeader('Location') && redirect_count < 20){
-                        //follow redirect and copy headers
-						//console.log('following redirect from %s url %s', _this.url, _this.getResponseHeader('Location'));
-                        _this.url = Envjs.uri(_this.getResponseHeader('Location'));
-                        //remove current cookie headers to allow the redirect to determine
-                        //the currect cookie based on the new location
-                        if('Cookie' in _this.headers ){
-                            delete _this.headers.Cookie;
-                        }
-                        if('Cookie2' in _this.headers ){
-                            delete _this.headers.Cookie2;
-                        }
-                        _this.send(data, parsedoc, redirect_count++);
-                    }else{
-                        // try to parse the document if we havent explicitly set a
+                    //console.log('status : %s', _this.status);
+					switch(_this.status){
+						case 301:
+						case 302:
+						case 303:
+						case 305:
+						case 307:
+						if(_this.getResponseHeader('Location') && redirect_count < 20){
+							//follow redirect and copy headers
+							//console.log('following redirect from %s url %s', _this.url, _this.getResponseHeader('Location'));
+	                        _this.url = Envjs.uri(_this.getResponseHeader('Location'));
+	                        //remove current cookie headers to allow the redirect to determine
+	                        //the currect cookie based on the new location
+	                        if('Cookie' in _this.headers ){
+	                            delete _this.headers.Cookie;
+	                        }
+	                        if('Cookie2' in _this.headers ){
+	                            delete _this.headers.Cookie2;
+	                        }
+	                        _this.send(data, parsedoc, redirect_count++);
+						}break;
+						default:
+						// try to parse the document if we havent explicitly set a
                         // flag saying not to and if we can assure the text at least
                         // starts with valid xml
                         if ( parsedoc && 
@@ -94,11 +101,12 @@ XMLHttpRequest.prototype = {
                         }else{
                             //Envjs.warn('response XML does not appear to be xml');
                         }
-                        
+
                         _this.__defineGetter__("responseXML", function(){
                             return doc;
                         });
-                    }
+							
+					}
                 }
             }, data);
 
