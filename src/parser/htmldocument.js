@@ -9,9 +9,12 @@ __extend__(HTMLDocument.prototype, {
         }
     },
     close : function() {
+		var text;
         //console.log('closing doc.');
         if (this._writebuffer) {
-            HTMLParser.parseDocument(this._writebuffer.join(''), this);
+			text = this._writebuffer.join('');
+            //HTMLParser.parseDocument(this._writebuffer.join(''), this);
+			Envjs.exchangeHTMLDocument(this, text, this.location);
             this._writebuffer = null;
             //console.log('finished writing doc.');
         }

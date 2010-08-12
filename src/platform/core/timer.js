@@ -14,5 +14,5 @@ Envjs.sleep = function(millseconds){};
 /**
  * Interval to wait on event loop when nothing is happening
  */
-Envjs.WAIT_INTERVAL = 20;//milliseconds
+Envjs.WAIT_INTERVAL = 10;//milliseconds
 

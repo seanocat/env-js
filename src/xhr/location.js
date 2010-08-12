@@ -163,12 +163,12 @@ Location = function(url, doc, history) {
             return $url;
         },
 
-        assign: function(url) {
+        assign: function(url, /*non-standard*/ method, data) {
             var _this = this,
                 xhr,
-                event,
-                cookie;
-
+                event;
+			method = method||"GET";
+			data = data||null;
             //console.log('assigning %s',url);
 
             // update closure upvars
@@ -181,7 +181,7 @@ Location = function(url, doc, history) {
                 xhr = new XMLHttpRequest();
 
                 // TODO: make async flag a Envjs paramter
-                xhr.open('GET', url, false);//$document.async);
+                xhr.open(method, url, false);//$document.async);
 
                 // TODO: is there a better way to test if a node is an HTMLDocument?
                 if ($document.toString() === '[object HTMLDocument]') {
@@ -190,11 +190,18 @@ Location = function(url, doc, history) {
                     xhr.onreadystatechange = function() {
                         //console.log('readyState %s', xhr.readyState);
                         if (xhr.readyState === 4) {
-                            //console.log('new document baseURI %s', $document.baseURI);
-                            __exchangeHTMLDocument__($document, xhr.responseText, xhr.url);
+                            //console.log('new document baseURI %s', xhr.url);
+                            Envjs.exchangeHTMLDocument($document, xhr.responseText, xhr.url);
                         }
                     };
-                    xhr.send(null, false);//dont parse html
+					try{
+                    	xhr.send(data, false);//dont parse html
+					}catch(e){
+						//failed to load content
+						Envjs.exchangeHTMLDocument($document, "\
+							<html><head><title>Error Loading</title></head><body>"+e+"</body></html>\
+						", xhr.url);
+					}
                 } else {
                     //Treat as an XMLDocument
                     xhr.onreadystatechange = function() {
@@ -219,74 +226,9 @@ Location = function(url, doc, history) {
             //console.log('reloading %s',$url);
             this.assign($url);
         },
-        replace: function(url) {
-            this.assign(url);
+        replace: function(url, /*non-standard*/ method, data) {
+            this.assign(url, method, data);
         }
     };
 };
 
-var __exchangeHTMLDocument__ = function(doc, text, url, frame) {
-    var html, head, title, body, event, frame, i;
-    try {
-        doc.baseURI = url;
-        //console.log('parsing document for window exchange %s', url); 
-        HTMLParser.parseDocument(text, doc);
-        //console.log('finsihed parsing document for window exchange %s', url); 
-        Envjs.wait();
-        /*console.log('finished wait after parse/exchange...( frame ? %s )', 
-            doc.baseURI, 
-            top.document.baseURI
-        );*/
-        if(frame){
-            event = doc.createEvent('HTMLEvents');
-            event.initEvent('load', false, false);
-            frame.dispatchEvent( event, false );
-        }
-    } catch (e) {
-        console.log('parsererror %s', e);
-        try {
-            console.log('document \n %s', doc.documentElement.outerHTML);
-        } catch (e) {
-            // swallow
-        }
-        doc = new HTMLDocument(new DOMImplementation(), doc.ownerWindow);
-        html =    doc.createElement('html');
-        head =    doc.createElement('head');
-        title =   doc.createElement('title');
-        body =    doc.createElement('body');
-        title.appendChild(doc.createTextNode('Error'));
-        body.appendChild(doc.createTextNode('' + e));
-        head.appendChild(title);
-        html.appendChild(head);
-        html.appendChild(body);
-        doc.appendChild(html);
-        //console.log('default error document \n %s', doc.documentElement.outerHTML);
-
-        //DOMContentLoaded event
-        if (doc.createEvent) {
-            event = doc.createEvent('Event');
-            event.initEvent('DOMContentLoaded', false, false);
-            doc.dispatchEvent( event, false );
-
-            event = doc.createEvent('HTMLEvents');
-            event.initEvent('load', false, false);
-            doc.dispatchEvent( event, false );
-        }
-
-        //finally fire the window.onload event
-        //TODO: this belongs in window.js which is a event
-        //      event handler for DOMContentLoaded on document
-
-        try {
-            if (doc === window.document) {
-                console.log('triggering window.load');
-                event = doc.createEvent('HTMLEvents');
-                event.initEvent('load', false, false);
-                window.dispatchEvent( event, false );
-            }
-        } catch (e) {
-            //console.log('window load event failed %s', e);
-            //swallow
-        }
-    };  /* closes return {... */
-};

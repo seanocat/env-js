@@ -190,8 +190,8 @@ __extend__(HTMLDocument.prototype, {
             this.appendChild(this.createElement('html'));
         }
         var element = this.documentElement,
-        length = element.childNodes.length,
-        i;
+        	length = element.childNodes.length,
+	        i;
         //check for the presence of the head element in this html doc
         for(i=0;i<length;i++){
             if(element.childNodes[i].nodeType === Node.ELEMENT_NODE){
@@ -210,9 +210,9 @@ __extend__(HTMLDocument.prototype, {
             this.appendChild(this.createElement('html'));
         }
         var title,
-        head = this.head,
-        length = head.childNodes.length,
-        i;
+        	head = this.head,
+	        length = head.childNodes.length,
+	        i;
         //check for the presence of the title element in this head element
         for(i=0;i<length;i++){
             if(head.childNodes[i].nodeType === Node.ELEMENT_NODE){
@@ -445,25 +445,10 @@ Aspect.around({
                         }
                         try{
                             if (node.src && node.src.length > 0){
-                                //console.log("getting content document for (i)frame from %s", node.src);
+                                //console.log("trigger load on frame from appendChild %s", node.src);
                                 Envjs.loadFrame(node, Envjs.uri(node.src));
-                                event = node.contentDocument.createEvent('HTMLEvents');
-                                event.initEvent("load", false, false);
-                                node.dispatchEvent( event, false );
                             }else{
-                                //I dont like this being here:
-                                //TODO: better  mix-in strategy so the try/catch isnt required
-                                try{
-                                    if(Window){
-                                        Envjs.loadFrame(node);
-                                        //console.log('triggering frame load %s',node.xml);
-                                        event = node.contentDocument.createEvent('HTMLEvents');
-                                        event.initEvent("load", false, false);
-                                        node.dispatchEvent( event, false );
-                                    }
-                                }catch(e){
-                                    console.log('error loading html element %s %e', node, e.toString());
-                                }
+                                Envjs.loadFrame(node);
                             }
                         }catch(e){
                             console.log('error loading html element %s %e', node, e.toString());

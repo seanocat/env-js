@@ -1,8 +1,6 @@
 //These descriptions of window properties are taken loosely David Flanagan's
 //'JavaScript - The Definitive Guide' (O'Reilly)
 
-var __windows__ = {};
-
 var __top__ = function(_scope){
     var _parent = _scope.parent;
     while (_scope && _parent && _scope !== _parent) {
@@ -31,7 +29,7 @@ Window = function(scope, parent, opener){
     });
 
     var $uuid = new Date().getTime()+'-'+Math.floor(Math.random()*1000000000000000);
-    __windows__[$uuid] = scope;
+    Envjs.windows($uuid, scope);
     //console.log('opening window %s', $uuid);
 
     // every window has one-and-only-one .document property which is always
@@ -268,7 +266,7 @@ Window = function(scope, parent, opener){
             var _window = Envjs.proxy({}),
                 open;
             if(replace && name){
-                for(open in __windows__){
+                for(open in Envjs.windows()){
                     if(open.name === name) {
                         _window = open;
                     }
@@ -279,16 +277,17 @@ Window = function(scope, parent, opener){
                 _window.name = name;
             }
             _window.document.async = false;
-            _window.location.assign(Envjs.uri(url));
+            _window.document.location.assign(Envjs.uri(url));
             return _window;
         },
         close: function(){
             //console.log('closing window %s', __windows__[$uuid]);
             try{
-                delete __windows__[$uuid];
+				Envjs.windows($uuid, null);
             }catch(e){
                 console.log('%s',e);
             }
+			return null;
         },
         alert : function(message){
             Envjs.alert(message);

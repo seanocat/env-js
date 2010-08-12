@@ -435,8 +435,8 @@ test('HTMLParser.parseDocument / polluting script', function(){
     //writing the document directly
     expect(4);
     var iframe = document.createElement("iframe"),
-    doc,
-    win;
+    	doc,
+	    win;
 
     document.body.appendChild(iframe);
     doc = iframe.contentDocument;
@@ -458,6 +458,7 @@ test('HTMLParser.parseDocument / polluting script', function(){
     }catch(e){
         ok(true, 'script not evaluated top window context');
     }
+	Envjs.windows();
     document.body.removeChild( iframe );
 });
 

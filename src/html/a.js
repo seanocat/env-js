@@ -87,7 +87,9 @@ __extend__(HTMLAnchorElement.prototype, {
     focus: function() {
         __focus__(this);
     },
-
+	click: function(){
+		__click__(this);
+	},
     /**
      * Unlike other elements, toString returns the href
      */

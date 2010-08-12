@@ -12,27 +12,7 @@ Envjs.os_version     = java.lang.System.getProperty("os.version");
 Envjs.lang           = java.lang.System.getProperty("user.lang");
 
 
-
-/**
- * unloadFrame
- * @param {Object} frame
- */
-Envjs.unloadFrame = function(frame){
-    var all, length, i;
-    try{
-        //TODO: probably self-referencing structures within a document tree
-        //preventing it from being entirely garbage collected once orphaned.
-        //Should have code to walk tree and break all links between contained
-        //objects.
-        frame.contentDocument = null;
-        if(frame.contentWindow){
-            frame.contentWindow.close();
-        }
-        gc();
-    }catch(e){
-        console.log(e);
-    }
-};
+Envjs.gc = function(){ gc(); };
 
 /**
  * Makes an object window-like by proxying object accessors

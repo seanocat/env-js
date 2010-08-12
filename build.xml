@@ -583,8 +583,6 @@
             <fileset dir="${SRC_DIR}" includes="common/__setArray__.js" />
             <fileset dir="${SRC_DIR}" includes="common/__trim__.js" />
             <fileset dir="${SRC_DIR}" includes="xhr/document.js" />
-            <fileset dir="${SRC_DIR}" includes="xhr/a.js" />
-            <fileset dir="${SRC_DIR}" includes="xhr/form.js" />
             <fileset dir="${SRC_DIR}" includes="xhr/location.js" />
             <fileset dir="${SRC_DIR}" includes="xhr/xmlhttprequest.js" />
             <fileset dir="${SRC_DIR}" includes="common/outro.js" />
@@ -630,7 +628,6 @@
             <fileset dir="${SRC_DIR}" includes="window/screen.js" />
             <fileset dir="${SRC_DIR}" includes="window/base64.js" />
             <fileset dir="${SRC_DIR}" includes="window/window.js" />
-            <fileset dir="${SRC_DIR}" includes="window/eventtarget.js" />
             <fileset dir="${SRC_DIR}" includes="common/outro.js" />
         </concat>
         <echo message="Finished Building ${WINDOW_DIST}"/>
