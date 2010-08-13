@@ -278,6 +278,15 @@ Window = function(scope, parent, opener){
         },
         close: function(){
             //console.log('closing window %s', __windows__[$uuid]);
+			var frames = $document.getElementsByTagName('frame'),
+				iframes = $document.getElementsByTagName('iframe'),
+				i;
+			for(i=0;i<frames.length;i++){
+				Envjs.unloadFrame(frame[i]);
+			}	
+			for(i=0;i<iframes.length;i++){
+				Envjs.unloadFrame(frame[i]);
+			}
             try{
 				Envjs.windows($uuid, null);
             }catch(e){

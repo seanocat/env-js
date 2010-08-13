@@ -45,16 +45,16 @@ Envjs.windows = function(uuid, scope){
 Envjs.loadFrame = function(frame, url){
     try {
         //console.log('loading frame %s', url);
-        if(frame.contentWindow){
+        if(frame.contentWindow && frame.contentWindow.close){
             //mark for garbage collection
-            frame.contentWindow = null;
+            frame.contentWindow.close();
         }
 
         //create a new scope for the window proxy
         //platforms will need to override this function
         //to make sure the scope is global-like
-        frame.contentWindow = Envjs.proxy();
-        new Window(frame.contentWindow, window);
+        frame.contentWindow = Envjs.proxy({});
+		new Window(frame.contentWindow, window);
 
         //I dont think frames load asynchronously in firefox
         //and I think the tests have verified this but for
