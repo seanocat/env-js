@@ -160,16 +160,12 @@ Window = function(scope, parent, opener){
         get location(){
             return $location;
         },
-        set location(uri){
-            uri = Envjs.uri(uri);
-            //new Window(this, this.parent, this.opener);
-            if($location.href == uri){
-                $location.reload();
-            }else if($location.href == 'about:blank'){
-                $location.assign(uri);
-            }else{
-                $location.replace(uri);
-            }
+        set location(url){
+			//very important or you will go into an infinite
+        	//loop when creating a xml document
+        	if(url) {
+            	$location.assign(Envjs.uri(url));
+			}
         },
         get name(){
             return $name;
