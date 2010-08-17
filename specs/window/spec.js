@@ -565,16 +565,16 @@ test('window.getComputedStyle', function() {
  */
 test('Document Named Element Lookup', function(){
     if (runningUnderEnvjs())
-        expect(6);
+        expect(7);
     else
-        expect(5);
+        expect(6);
 
     var iframe = document.createElement("iframe");
     document.body.appendChild(iframe);
     var doc = iframe.contentDocument;
     doc.open();
     doc.write(
-        '<html><head></head><body><form name="foo"></form></body></html>');
+        '<html><head></head><body><form name="foo"><input name="goop"/></form></body></html>');
     doc.close();
 
     var nodelist = doc.getElementsByName('foo');
@@ -582,6 +582,8 @@ test('Document Named Element Lookup', function(){
     var node = doc.foo;
     ok(node, 'named lookup finds element');
     equals(nodelist[0], node, 'element is one expected');
+	node = doc.foo.goop;
+    ok(node, 'named lookup finds element');
 
     // ok now let's try to use innerHTML
     var str = '<form name="bar"></form>';

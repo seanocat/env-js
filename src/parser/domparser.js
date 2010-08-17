@@ -56,7 +56,8 @@ HTMLParser.parseDocument = function(htmlstring, htmldoc){
     //console.log('HTMLParser.parseDocument %s', htmldoc.async);
     htmldoc.parsing = true;
     Envjs.parseHtmlDocument(htmlstring, htmldoc, htmldoc.async, null, null);
-    //Envjs.wait(-1);
+    //Envjs.wait();
+    //console.log('Finished HTMLParser.parseDocument %s', htmldoc.async);
     return htmldoc;
 };
 HTMLParser.parseFragment = function(htmlstring, element){

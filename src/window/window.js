@@ -312,6 +312,8 @@ Window = function(scope, parent, opener){
 		//these should be undefined on instantiation
         //onload: function(){},
         //onunload: function(){},
+		focus: function(){},
+		blur: function(){},
         get guid(){
             return $uuid;
         }

@@ -374,7 +374,8 @@ Aspect.around({
     var event,
         okay,
         node = invocation.proceed(),
-        doc = node.ownerDocument;
+        doc = node.ownerDocument,
+		target;
 
     //console.log('element appended: %s %s %s', node+'', node.nodeName, node.namespaceURI);
     if((node.nodeType !== Node.ELEMENT_NODE)){
@@ -383,6 +384,19 @@ Aspect.around({
         //changes to src attributes
         return node;
     }
+	
+	if(node.tagName&&node.tagName.toLowerCase()=="input"){
+		target = node.parentNode;
+		//console.log('adding named map for input');
+		while(target&&target.tagName&&target.tagName.toLowerCase()!="form"){
+			//console.log('possible target for named map for input is %s', target);
+			target = target.parentNode;
+		}
+		if(target){
+			//console.log('target for named map for input is %s', target);
+			__addNamedMap__(target, node);
+		}
+	}
     //console.log('appended html element %s %s %s', node.namespaceURI, node.nodeName, node);
     switch(doc.parsing){
         case true:
@@ -510,7 +524,18 @@ Aspect.around({
         return node;
     }
     //console.log('appended html element %s %s %s', node.namespaceURI, node.nodeName, node);
-
+	if(node.tagName&&node.tagName.toLowerCase()=="input"){
+		target = node.parentNode;
+		//console.log('adding named map for input');
+		while(target&&target.tagName&&target.tagName.toLowerCase()!="form"){
+			//console.log('possible target for named map for input is %s', target);
+			target = target.parentNode;
+		}
+		if(target){
+			//console.log('target for named map for input is %s', target);
+			__removeNamedMap__(target, node);
+		}
+	}
     switch(doc.parsing){
         case true:
             //handled by parser if included
@@ -584,6 +609,7 @@ var __isNamedElement__ = function(node) {
         case 'embed':
         case 'form':
         case 'iframe':
+		case 'input':
             nodename = node.getAttribute('name');
             break;
         case 'applet':
@@ -607,9 +633,12 @@ var __isNamedElement__ = function(node) {
 var __addNamedMap__ = function(target, node) {
     var nodename = __isNamedElement__(node);
     if (nodename) {
-        target.__defineGetter__(nodename, function() {
+       	target.__defineGetter__(nodename, function() {
             return node;
-        });
+        });	
+		target.__defineSetter__(nodename, function(value) {
+	        return value;
+	    });
     }
 };
 
@@ -619,6 +648,6 @@ var __removeNamedMap__ = function(target, node) {
     }
     var nodename = __isNamedElement__(node);
     if (nodename) {
-        delete target[nodename];
+		delete target[nodename];
     }
 };

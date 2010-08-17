@@ -172,6 +172,7 @@ Envjs.wait = function(wait) {
         });
         //next sleep time
         sleep = earliest && earliest.at - Date.now();
+		//console.log('timer loop earliest %s sleep %s', earliest, sleep);
         if ( earliest && sleep <= 0 ) {
             nextfn = earliest.fn;
             try {
