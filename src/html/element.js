@@ -154,6 +154,7 @@ __extend__(HTMLElement.prototype, {
             name = (this.tagName+"").toLowerCase(),
             attrs,
             attrstring = "",
+			style = false,
             i;
 
         // serialize namespace declarations
@@ -171,7 +172,15 @@ __extend__(HTMLElement.prototype, {
         attrs = this.attributes;
         for(i=0;i< attrs.length;i++){
             attrstring += " "+attrs[i].name+'="'+attrs[i].xml+'"';
+			if(attrs[i].name == 'style'){
+				style = true;
+			}
         }
+		if(!style ){
+			style = this.getAttribute('style');
+			if(style!='')
+				attrstring += ' style="'+style+'"';
+		}
 
         if(this.hasChildNodes()){
             // serialize this Element

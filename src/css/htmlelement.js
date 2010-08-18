@@ -20,7 +20,7 @@ __extend__(HTMLElement.prototype, {
             $css2properties[this.css2uuid] = new CSS2Properties(this);
         }
         return $css2properties[this.css2uuid];
-    },
+    }
 });
 
 /**
@@ -41,7 +41,7 @@ var updateCss2Props = function(elem, values) {
         $css2properties[elem.css2uuid] = new CSS2Properties(elem);
     }
     __cssTextToStyles__($css2properties[elem.css2uuid], values);
-}
+};
 
 var origSetAttribute =  HTMLElement.prototype.setAttribute;
 
@@ -51,4 +51,17 @@ HTMLElement.prototype.setAttribute = function(name, value) {
     if (name === "style") {
         updateCss2Props(this, value);
     }
-}
+};
+
+var origGetAttribute =  HTMLElement.prototype.getAttribute;
+
+HTMLElement.prototype.getAttribute = function(name) {
+    //console.log("CSS set attribute: " + name + ", " + value);
+	var style;
+    if (name === "style") {
+        style = this.style.cssText;
+		return style===""?null:style;
+    }else{
+	    return origGetAttribute.apply(this, arguments);
+	}
+};

@@ -141,6 +141,15 @@ test('adding style element', function() {
 
 });
 
+test('serializing attribute when set with element.style.name', function(){
+	var divWrapper = document.createElement('div');
+	var div = document.createElement('div');
+	divWrapper.appendChild(div);
+    div.id = 'styleSerializeTest';
+	div.style.display = 'block';
+    equals(divWrapper.innerHTML, '<div id="styleSerializeTest" style="display: block;"/>', 'styles serialized');
+});
+
 test('box model', function(){
 	var div1 = document.createElement('div');
 	div1.id = "div1";
