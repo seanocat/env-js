@@ -40,7 +40,7 @@ XMLHttpRequest.prototype = {
         var _this = this;
 		//console.log('sending request for url %s', this.url);
         parsedoc = (parsedoc === undefined)?true:!!parsedoc;
-        redirect_count = (redirect_count === undefined) ? 0 : redirect_count
+        redirect_count = (redirect_count === undefined) ? 0 : redirect_count;
         function makeRequest(){
             var cookie = Envjs.getCookies(_this.url);
             if(cookie){

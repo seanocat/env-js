@@ -13,11 +13,16 @@ Envjs.defaultEventBehaviors = {
         }
         if (target && target.nodeName === 'FORM') {
             serialized = Envjs.serializeForm(target);
-		    method = target.method !== ""?target.method:"GET";
+			//console.log('serialized %s', serialized);
+		    method = target.method !== ""?target.method.toUpperCase():"GET";
+			
 		    action = Envjs.uri(
 		        target.action !== ""?target.action:target.ownerDocument.baseURI,
 		        target.ownerDocument.baseURI
 		    );
+			if(method=='GET' && !action.match(/^file:/)){
+				action = action + "?" + serialized;
+			}
 			target.ownerDocument.location.replace(
 				action, method, serialized
 			);
@@ -28,7 +33,8 @@ Envjs.defaultEventBehaviors = {
 		//console.log("handling default behavior for click %s", event.target);
         var target = event.target,
 			url,
-			form;
+			form,
+			inputs;
         while (target && target.nodeName !== 'A' && target.nodeName !== 'INPUT') {
             target = target.parentNode;
         }
@@ -40,11 +46,25 @@ Envjs.defaultEventBehaviors = {
             }
         }else if (target && target.nodeName === 'INPUT') {
             if(target.type.toLowerCase() === 'submit'){
-			    while (target && target.nodeName !== 'FORM' ) {
-		            target = target.parentNode;
+				if(!target.value){
+					target.value = 'submit';
+				}
+				//console.log('submit click %s %s', target.name, target.value);
+				form = target.parentNode;
+			    while (form && form.nodeName !== 'FORM' ) {
+		            form = form.parentNode;
 		        }
-				if(target && target.nodeName === 'FORM'){
-					target.submit();
+				if(form && form.nodeName === 'FORM'){
+					//disable other submit buttons before serializing
+					inputs = form.getElementsByTagName('input');
+					for(var i=0;i<inputs.length;i++){
+						if(inputs[i].type == 'submit' && inputs[i]!=target){
+							//console.log('disabling the non-relevant submit button %s', inputs[i].value);
+							inputs[i].disabled = true;
+							inputs[i].value = null;
+						}
+					}
+					form.submit();
 				}
             }
         }

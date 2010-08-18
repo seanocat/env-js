@@ -152,10 +152,15 @@ Envjs.wait = function(wait) {
         index,
         goal,
         now,
-        nextfn;
+        nextfn,
+		commandline;
 
     for (;;) {
-        //console.log('timer loop');
+        /*console.log('timer loop');
+		try{
+		commandline = Envjs.shell.next(' ');
+		}catch(e){console.log(e);}
+	    console.log('commandline %s', commandline);*/
         earliest = sleep = goal = now = nextfn = null;
         $timers.lock(function(){
             for(index in $timers){
@@ -172,11 +177,11 @@ Envjs.wait = function(wait) {
         });
         //next sleep time
         sleep = earliest && earliest.at - Date.now();
-		//console.log('timer loop earliest %s sleep %s', earliest, sleep);
+		/*console.log('timer loop earliest %s sleep %s', earliest, sleep);*/
         if ( earliest && sleep <= 0 ) {
             nextfn = earliest.fn;
             try {
-                //console.log('running stack %s', nextfn.toString().substring(0,64));
+                /*console.log('running stack %s', nextfn.toString().substring(0,64));*/
                 earliest.running = true;
                 nextfn();
             } catch (e) {

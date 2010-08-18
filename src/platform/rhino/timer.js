@@ -1,4 +1,5 @@
 
+Envjs.shell = new Packages.java.util.Scanner(Packages.java.lang.System['in']);
 /**
  * Rhino provides a very succinct 'sync'
  * @param {Function} fn

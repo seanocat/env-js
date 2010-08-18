@@ -616,6 +616,26 @@ test('Default Browser Events - Form method "get"', function(){
 });
 
 
+test('Default Browser Events - Serialized Submit Button', function(){
+    var submitButtonTests = document.getElementById('submit_button_tests'); 
+    ok(submitButtonTests, 'submit_button_tests frame available');
+    
+    submitButtonTests.onload = function(){
+        ok(submitButtonTests.contentDocument.getElementById('link_tests'), 'new page loaded');
+		ok(submitButtonTests.contentDocument.location.search.match('&submit1=yes'), 
+			'correct submit button value serialized');
+		ok(!submitButtonTests.contentDocument.location.search.match('submit2'), 
+			'incorrect submit button value not serialized');
+        start();
+    }
+    
+    var submit1 = submitButtonTests.contentDocument.getElementById('s1');
+    submit1.click();
+    stop();
+    
+});
+
+
 test('Default Browser Events - Remote Link 1', function(){
     var windowExchangeTests = document.getElementById('window_exchange_tests'); 
     ok(windowExchangeTests, 'window_exchange_tests frame available');

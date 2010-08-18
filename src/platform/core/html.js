@@ -453,6 +453,7 @@ function __formToArray__(form, semantic) {
         if (!name) {
             continue;
         }
+		//console.log('serializing input %s', name);
         if (semantic && form.clk && element.type === "image") {
             // handle image inputs on the fly when semantic == true
             if(!element.disabled && form.clk == element) {
@@ -468,12 +469,14 @@ function __formToArray__(form, semantic) {
         }
 
         value = __fieldValue__(element, true);
+		//console.log('input value is %s', value);
         if (value && value.constructor == Array) {
             jmax = value.length;
             for(j=0; j < jmax; j++){
                 array.push({name: name, value: value[j]});
             }
         } else if (value !== null && typeof value != 'undefined'){
+			//console.log('serializing form %s %s', name, value);
             array.push({name: name, value: value});
         }
     }
@@ -640,7 +643,8 @@ function __fieldSerialize__(inputs, successful) {
 
     if (successful && (!name || element.disabled || type == 'reset' || type == 'button' ||
              (type == 'checkbox' || type == 'radio') &&  !element.checked ||
-             (type == 'submit' || type == 'image') &&
+			/*thatcher - submit buttons should count?*/
+             (/*type == 'submit' || */type == 'image') &&
              element.form && element.form.clk != element || tag === 'select' &&
              element.selectedIndex === -1)) {
             return null;
