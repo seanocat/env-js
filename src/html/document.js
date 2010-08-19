@@ -244,7 +244,8 @@ __extend__(HTMLDocument.prototype, {
             i;
         for (i=0; i<length; i++) {
             if (element.childNodes[i].nodeType === Node.ELEMENT_NODE &&
-                element.childNodes[i].tagName === 'BODY') {
+                (element.childNodes[i].tagName === 'BODY' || 
+				 element.childNodes[i].tagName === 'FRAMESET')) {
                 return element.childNodes[i];
             }
         }

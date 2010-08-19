@@ -661,10 +661,12 @@ test('Default Browser Events - Remote Link 1', function(){
 });
 
 
-/*test('Serialize Frameset', function(){
-    var framesetHolder = document.getElementById('framesetHolder'); 
-    ok(framesetHolder, 'framesetHolder div available');debugger;
-	framesetHolder.innerHTML = '<div><frameset id="framesetSerializeTest"><noframe>frames not supported</noframe><iframe src="links.html"/></frameset></div>';
-    equals(framesetHolder.innerHTML, '<frameset id="framesetHolder"><frame src="links.html"/></frameset>', 'frameset serialized');
+test('Serialize Frameset', function(){
+    var frameset_tests = document.getElementById('frameset_tests'); 
+    ok(frameset_tests, 'frameset_tests available');debugger;
+	equals(frameset_tests.contentDocument.body.tagName, "FRAMESET", "frameset is returned for document.body");
+	equals(frameset_tests.contentDocument.body.innerHTML, 
+		'<frame src="links.html"/><noframes>frames not supported</noframes>', 
+		'frameset serialized');
     
-});*/
+});

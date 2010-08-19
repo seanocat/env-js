@@ -5,11 +5,11 @@
 
 __extend__(HTMLFrameElement.prototype,{
 
-    get contentDocument(){
+    /*get contentDocument(){
         return this.contentWindow?
             this.contentWindow.document:
             null;
-    },
+    },*/	
     set src(value){
         var event;
         this.setAttribute('src', value);
