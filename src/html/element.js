@@ -178,21 +178,23 @@ __extend__(HTMLElement.prototype, {
         }
 		if(!style ){
 			style = this.getAttribute('style');
-			if(style!='')
+			if(style)
 				attrstring += ' style="'+style+'"';
 		}
 
         if(this.hasChildNodes()){
             // serialize this Element
+	        //console.log('serializing childNodes for %s', name);
             ret += "<" + name + ns + attrstring +">";
             for(i=0;i< this.childNodes.length;i++){
-                //console.debug('xhtml for '+ this);
+                console.debug('xhtml for '+ this);
                 ret += 'xhtml' in this.childNodes[i] ?
                     this.childNodes[i].xhtml :
                     this.childNodes[i].xml;
             }
             ret += "</" + name + ">";
-        }else{
+        }else{	
+            //console.log('no childNodes to serialize for %s', name);
             switch(name){
             case 'script':
             case 'noscript':

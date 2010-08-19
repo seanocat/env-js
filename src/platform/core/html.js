@@ -59,7 +59,7 @@ Envjs.eval = function(context, source, name){};
  * @param {Object} parser
  */
 Envjs.loadLocalScript = function(script){
-    //console.log("loading script %s \n %s", script.src, script.text);
+    //console.log("loading script type %s \n source %s", script.type, script.src||script.text.substring(0,32));
     var types,
         src,
         i,

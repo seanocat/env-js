@@ -22,5 +22,4 @@ __extend__(HTMLFieldSetElement.prototype, {
 });
 
 // Named Element Support
-HTMLElement.registerSetAttribute('FIELDSET', 'name',
-                                 __updateFormForNamedElement__);
+HTMLElement.registerSetAttribute('FIELDSET', 'name', __updateFormForNamedElement__);

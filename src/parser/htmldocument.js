@@ -87,6 +87,7 @@ var __elementPopped__ = function(ns, name, node){
                                     break;
                                 case 'frame':
                                 case 'iframe':
+									//console.log('popped frame');
                                     node.contentWindow = { };
                                     node.contentDocument = new HTMLDocument(new DOMImplementation(), node.contentWindow);
                                     node.contentWindow.document = node.contentDocument;

@@ -64,6 +64,8 @@ __extend__(HTMLDocument.prototype, {
             node = new HTMLFormElement(this);break;
         case "FRAME":
             node = new HTMLFrameElement(this);break;
+        case "FRAMESET":
+            node = new HTMLFrameSetElement(this);break;
         case "H1":
             node = new HTMLHeadingElement(this);break;
         case "H2":
@@ -163,7 +165,9 @@ __extend__(HTMLDocument.prototype, {
             return this.createElement(local);
         } else if ("http://www.w3.org/1998/Math/MathML" == uri) {
             return this.createElement(local);
-        } else {
+        } else if ("http://www.w3.org/2000/svg" == uri) {
+ 			return this.createElement(local);
+		} else {
             return Document.prototype.createElementNS.apply(this,[uri, local]);
         }
     },
