@@ -661,12 +661,24 @@ test('Default Browser Events - Remote Link 1', function(){
 });
 
 
-test('Serialize Frameset', function(){
+test('Frameset', function(){
     var frameset_tests = document.getElementById('frameset_tests'); 
-    ok(frameset_tests, 'frameset_tests available');debugger;
+    ok(frameset_tests, 'frameset_tests available');
 	equals(frameset_tests.contentDocument.body.tagName, "FRAMESET", "frameset is returned for document.body");
+	equals(frameset_tests.contentWindow.parent, window, "frameset parent is window");
+	equals(frameset_tests.contentDocument.getElementById('fs1').contentWindow.parent, 
+		frameset_tests.contentWindow, "frame parent is frame '#frameset_tests'");
 	equals(frameset_tests.contentDocument.body.innerHTML, 
-		'<frame src="links.html"/><noframes>frames not supported</noframes>', 
+		'<frame id="fs1" src="links.html"/><noframes>frames not supported</noframes>', 
 		'frameset serialized');
+    
+});
+
+test('Nested Frameset', function(){
+    var nested_frameset_tests = document.getElementById('nested_frameset_tests'); 
+    ok(nested_frameset_tests, 'nested_frameset_tests available');
+	equals(nested_frameset_tests.contentDocument.getElementById('fsc').contentDocument.title, 
+		"c", "nested frameset loaded correctly");
+
     
 });

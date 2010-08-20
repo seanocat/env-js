@@ -179,7 +179,9 @@ Location = function(url, doc, history) {
             if ($document) {
                 //console.log('fetching %s (async? %s)', url, $document.async);
                 xhr = new XMLHttpRequest();
-
+				
+		        xhr.setRequestHeader('Referer', $document.location);
+				//console.log("REFERER: %s", $document.location);
                 // TODO: make async flag a Envjs paramter
                 xhr.open(method, url, false);//$document.async);
 

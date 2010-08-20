@@ -173,6 +173,7 @@
             <fileset dir="${SRC_DIR}" includes="platform/rhino/dom.js" />
             <fileset dir="${SRC_DIR}" includes="platform/rhino/event.js" />
             <fileset dir="${SRC_DIR}" includes="platform/rhino/html.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/rhino/svg.js" />
             <fileset dir="${SRC_DIR}" includes="platform/rhino/parser.js" />
             <fileset dir="${SRC_DIR}" includes="platform/rhino/timer.js" />
             <fileset dir="${SRC_DIR}" includes="platform/rhino/xhr.js" />

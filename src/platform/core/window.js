@@ -42,7 +42,7 @@ Envjs.windows = function(uuid, scope){
  * @param {Object} frameElement
  * @param {Object} url
  */
-Envjs.loadFrame = function(frame, url){
+Envjs.loadFrame = function(frame, url){	
     try {
         //console.log('loading frame %s', url);
         if(frame.contentWindow && frame.contentWindow.close){
@@ -54,7 +54,16 @@ Envjs.loadFrame = function(frame, url){
         //platforms will need to override this function
         //to make sure the scope is global-like
         frame.contentWindow = Envjs.proxy({});
-		new Window(frame.contentWindow, window);
+		//console.log("frame.ownerDocument %s subframe %s", 
+		//	frame.ownerDocument.location,
+		//	frame.ownerDocument.__ownerFrame__);
+		if(frame.ownerDocument&&frame.ownerDocument.__ownerFrame__){
+			//console.log('frame is parent %s', frame.ownerDocument.__ownerFrame__.contentWindow.guid);
+			new Window(frame.contentWindow, frame.ownerDocument.__ownerFrame__.contentWindow);
+		}else{
+			//console.log("window is parent %s", window.guid);
+			new Window(frame.contentWindow, window);
+		}
 
         //I dont think frames load asynchronously in firefox
         //and I think the tests have verified this but for
