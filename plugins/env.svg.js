@@ -28,7 +28,7 @@ var r = Raphael(10, 50, 640, 480);
 r.g.piechart(320, 240, 100, [55, 20, 13, 32, 5, 1, 2]);
 
 Envjs.writeToFile(document.body.innerHTML, Envjs.uri('reports/svg.html'));
-//Envjs.renderSVG = function(svgstring, url)
+
 
 /** if you want to render the svg to an image file use:
 
@@ -36,4 +36,4 @@ Envjs.writeToFile(document.body.innerHTML, Envjs.uri('reports/svg.html'));
 		org.mozilla.javascript.tools.shell.Main -opt -1 plugins/env.svg.js
 		
  */
-Envjs.renderSVG(document.body.innerHTML, Envjs.uri('reports/svg.jpg'));
+//Envjs.renderSVG(document.body.innerHTML, Envjs.uri('reports/svg.jpg'));
