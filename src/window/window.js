@@ -163,6 +163,7 @@ Window = function(scope, parent, opener){
         set location(url){
 			//very important or you will go into an infinite
         	//loop when creating a xml document
+			//console.log('setting window location %s', url);
         	if(url) {
             	$location.assign(Envjs.uri(url));
 			}

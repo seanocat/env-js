@@ -171,10 +171,6 @@ Location = function(url, doc, history) {
 			data = data||null;
             //console.log('assigning %s',url);
 
-            // update closure upvars
-            $url = url;
-            parts = Envjs.urlsplit($url);
-
             //we can only assign if this Location is associated with a document
             if ($document) {
                 //console.log('fetching %s (async? %s)', url, $document.async);
@@ -192,14 +188,29 @@ Location = function(url, doc, history) {
                     xhr.onreadystatechange = function() {
                         //console.log('readyState %s', xhr.readyState);
                         if (xhr.readyState === 4) {
-                            //console.log('new document baseURI %s', xhr.url);
-                            Envjs.exchangeHTMLDocument($document, xhr.responseText, xhr.url);
+							switch(xhr.status){
+							case 301:
+							case 302:
+							case 303:
+							case 305:
+							case 307:
+								//console.log('status is not good for assignment %s', xhr.status);
+								break;
+                       		default:
+								//console.log('status is good for assignment %s', xhr.status);
+	                        	if (xhr.readyState === 4) {// update closure upvars
+					            	$url = xhr.url;
+						            parts = Envjs.urlsplit($url);
+	                            	//console.log('new document baseURI %s', xhr.url);
+	                            	Envjs.exchangeHTMLDocument($document, xhr.responseText, xhr.url);
+	                        	}
+							}
                         }
                     };
 					try{
                     	xhr.send(data, false);//dont parse html
 					}catch(e){
-						//failed to load content
+						console.log('failed to load content %s', e);
 						Envjs.exchangeHTMLDocument($document, "\
 							<html><head><title>Error Loading</title></head><body>"+e+"</body></html>\
 						", xhr.url);
@@ -208,6 +219,7 @@ Location = function(url, doc, history) {
                     //Treat as an XMLDocument
                     xhr.onreadystatechange = function() {
                         if (xhr.readyState === 4) {
+							console.log('exchanging xml content %s', e);
                             $document = xhr.responseXML;
                             $document.baseURI = xhr.url;
                             if ($document.createEvent) {

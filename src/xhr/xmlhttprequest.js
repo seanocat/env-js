@@ -42,10 +42,13 @@ XMLHttpRequest.prototype = {
         parsedoc = (parsedoc === undefined)?true:!!parsedoc;
         redirect_count = (redirect_count === undefined) ? 0 : redirect_count;
         function makeRequest(){
-            var cookie = Envjs.getCookies(_this.url);
+            var cookie = Envjs.getCookies(_this.url),
+				redirecting = false;
             if(cookie){
                 _this.setRequestHeader('COOKIE', cookie);
             }
+			if(window&&window.navigator&&window.navigator.userAgent)
+	        	_this.setRequestHeader('User-Agent', window.navigator.userAgent);
             Envjs.connection(_this, function(){
                 if (!_this.aborted){
                     var doc = null,
@@ -69,7 +72,9 @@ XMLHttpRequest.prototype = {
 						case 307:
 						if(_this.getResponseHeader('Location') && redirect_count < 20){
 							//follow redirect and copy headers
-							//console.log('following redirect from %s url %s', _this.url, _this.getResponseHeader('Location'));
+							redirecting = true;
+							//console.log('following %s redirect %s from %s url %s', 
+							//	redirect_count, _this.status, _this.url, _this.getResponseHeader('Location'));
 	                        _this.url = Envjs.uri(_this.getResponseHeader('Location'));
 	                        //remove current cookie headers to allow the redirect to determine
 	                        //the currect cookie based on the new location
@@ -79,7 +84,14 @@ XMLHttpRequest.prototype = {
 	                        if('Cookie2' in _this.headers ){
 	                            delete _this.headers.Cookie2;
 	                        }
-	                        _this.send(data, parsedoc, redirect_count++);
+							redirect_count++;
+							if (_this.async){
+					            //TODO: see TODO notes below
+					            Envjs.runAsync(makeRequest);
+					        }else{
+					            makeRequest();
+					        }
+							return;
 						}break;
 						default:
 						// try to parse the document if we havent explicitly set a
@@ -110,7 +122,8 @@ XMLHttpRequest.prototype = {
                 }
             }, data);
 
-            if (!_this.aborted){
+            if (!_this.aborted  && !redirecting){
+				//console.log('did not abort so call onreadystatechange');
                 _this.onreadystatechange();
             }
         }

@@ -5,7 +5,7 @@
  *  Browser Navigator
  */
 Navigator = function(){
-
+	var $userAgent;
     return {
         get appCodeName(){
             return Envjs.appCodeName;
@@ -35,8 +35,11 @@ Navigator = function(){
             return [];
         },
         get userAgent(){
-            return this.appCodeName + "/" + this.appVersion + " Resig/20070309 PilotFish/@BUILD_VERSION@";
+            return $userAgent||(this.appCodeName + "/" + this.appVersion + " Resig/20070309 PilotFish/@BUILD_VERSION@");
         },
+		set userAgent(agent){
+			$userAgent = agent;
+		},
         javaEnabled : function(){
             return Envjs.javaEnabled;
         }

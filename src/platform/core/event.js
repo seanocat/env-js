@@ -14,7 +14,7 @@ Envjs.defaultEventBehaviors = {
         if (target && target.nodeName === 'FORM') {
             serialized = Envjs.serializeForm(target);
 			//console.log('serialized %s', serialized);
-		    method = target.method !== ""?target.method.toUpperCase():"GET";
+		    method = target.method?target.method.toUpperCase():"GET";
 			
 		    action = Envjs.uri(
 		        target.action !== ""?target.action:target.ownerDocument.baseURI,
@@ -23,6 +23,7 @@ Envjs.defaultEventBehaviors = {
 			if(method=='GET' && !action.match(/^file:/)){
 				action = action + "?" + serialized;
 			}
+			//console.log('replacing document with form submission %s', action);
 			target.ownerDocument.location.replace(
 				action, method, serialized
 			);
