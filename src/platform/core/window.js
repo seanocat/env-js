@@ -77,7 +77,7 @@ Envjs.loadFrame = function(frame, url){
         frame.contentDocument.__ownerFrame__ = frame;
         if(url){
             //console.log('envjs.loadFrame async %s', frame.contentDocument.async);
-            frame.contentDocument.location.assign(Envjs.uri(url));
+            frame.contentDocument.location.assign(Envjs.uri(url, frame.ownerDocument.location.toString()));
         }
     } catch(e) {
         console.log("failed to load frame content: from %s %s", url, e);

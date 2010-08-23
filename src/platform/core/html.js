@@ -85,13 +85,17 @@ Envjs.loadLocalScript = function(script){
     }
 
     try{
-        //console.log('handling inline scripts');
-        if(!script.src.length && Envjs.scriptTypes[""]){
-            Envjs.loadInlineScript(script);
-            return true;
+        //console.log('handling inline scripts %s %s', script.src, Envjs.scriptTypes[""] );
+        if(!script.src.length ){
+			if(Envjs.scriptTypes[""]){
+            	Envjs.loadInlineScript(script);
+	            return true;
+			}else{
+				return false;
+			}
         }
     }catch(e){
-        //Envjs.error("Error loading script.", e);
+        console.log("Error loading script. %s", e);
         Envjs.onScriptLoadError(script, e);
         return false;
     }

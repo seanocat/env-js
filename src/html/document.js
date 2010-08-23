@@ -415,8 +415,25 @@ Aspect.around({
          * be in the head is correct or not.  NamespaceURI == null
          * might also need to corrected too.
          */
-        if (node.tagName.toLowerCase() === 'SCRIPT') {
-            okay = Envjs.loadLocalScript(node, null);
+        if (node.tagName.toLowerCase() === 'script' && 
+			(node.namespaceURI === "" || 
+			 node.namespaceURI === "http://www.w3.org/1999/xhtml" || 
+			 node.namespaceURI === null) ) {
+            //console.log('appending script while parsing');
+            if((this.nodeName.toLowerCase() === 'head')){
+                try{
+                    okay = Envjs.loadLocalScript(node, null);
+                    //console.log('loaded script? %s %s', node.uuid, okay);
+                    // only fire event if we actually had something to load
+                    if (node.src && node.src.length > 0){
+                        event = doc.createEvent('HTMLEvents');
+                        event.initEvent( okay ? "load" : "error", false, false );
+                        node.dispatchEvent( event, false );
+                    }
+                }catch(e){
+                    console.log('error loading html element %s %e', node, e.toString());
+                }
+            }
         }
         break;
         case false:
@@ -465,7 +482,7 @@ Aspect.around({
                         try{
                             if (node.src && node.src.length > 0){
                                 //console.log("trigger load on frame from appendChild %s", node.src);
-                                Envjs.loadFrame(node, Envjs.uri(node.src));
+                                Envjs.loadFrame(node, Envjs.uri(node.src, doc.location+''));
                             }else{
                                 Envjs.loadFrame(node);
                             }

@@ -58,7 +58,7 @@ XMLHttpRequest.prototype = {
                     try{
                         cookie = _this.getResponseHeader('SET-COOKIE');
                         if(cookie){
-                             Envjs.setCookie(_this.url, cookie);
+                            Envjs.setCookie(_this.url, cookie);
                         }
                     }catch(e){
                         console.warn("Failed to set cookie");

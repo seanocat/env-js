@@ -16,7 +16,7 @@ __extend__(HTMLFrameElement.prototype,{
 		//only load if we are already appended to the dom
         if (this.parentNode && value && value.length > 0){
             console.log('loading frame via set src %s', value);
-            Envjs.loadFrame(this, Envjs.uri(value));
+            Envjs.loadFrame(this, Envjs.uri(value, this.ownerDocument?this.ownerDocument.location+'':null));
 
 			//DUPLICATED IN src/platform/core/event.js (Envjs.exchangeHTMLDocument)
             /*console.log('event frame load %s', value);

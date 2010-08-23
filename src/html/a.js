@@ -33,8 +33,7 @@ __extend__(HTMLAnchorElement.prototype, {
         if (!link) {
             return '';
         }
-        return Envjs.uri(link,
-                         this.ownerDocument.location.toString());
+        return Envjs.uri(link, this.ownerDocument.location.toString());
     },
     set href(val) {
         return this.setAttribute("href", val);
