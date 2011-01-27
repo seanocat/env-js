@@ -5,7 +5,17 @@
  * 4.8.12 The map element
  * http://dev.w3.org/html5/spec/Overview.html#the-map-element
  */
-HTMLMapElement = function(ownerDocument) {
+ 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLMapElement').
+		debug('HTMLMapElement available');    
+});
+
+exports.HTMLMapElement = HTMLMapElement = function(ownerDocument) {
     HTMLElement.apply(this, arguments);
 };
 HTMLMapElement.prototype = new HTMLElement();
@@ -23,3 +33,5 @@ __extend__(HTMLMapElement.prototype, {
         return '[object HTMLMapElement]';
     }
 });
+
+}(/*HTMLMapElement*/));

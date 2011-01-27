@@ -1,8 +1,12 @@
-
-/*
- * Forward declarations
- */
 var __isValidNamespace__;
+
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+   log = Envjs.logger('Envjs.DOM.Document').debug('available'); 
+});
 
 /**
  * @class  Document - The Document interface represents the entire HTML
@@ -12,10 +16,9 @@ var __isValidNamespace__;
  * @extends Node
  * @param  implementation : DOMImplementation - the creator Implementation
  */
-Document = function(implementation, docParentWindow) {
-    Node.apply(this, arguments);
+exports.Document = Document = function(implementation, docParentWindow) {
+    Node.apply(this, [this]);
 
-    //TODO: Temporary!!! Cnage back to true!!!
     this.async = true;
     // The Document Type Declaration (see DocumentType) associated with this document
     this.doctype = null;
@@ -26,7 +29,7 @@ Document = function(implementation, docParentWindow) {
     // initially false, set to true by parser
     this.parsing = false;
     this.baseURI = 'about:blank';
-
+    
     this.ownerDocument = null;
 
     this.importing = false;
@@ -41,7 +44,8 @@ __extend__(Document.prototype,{
         return null;
     },
     get all(){
-        return this.getElementsByTagName("*");
+        log.debug('all');
+        return this.getElementsByTagName('*');
     },
     get documentElement(){
         var i, length = this.childNodes?this.childNodes.length:0;
@@ -53,31 +57,38 @@ __extend__(Document.prototype,{
         return null;
     },
     get documentURI(){
+        log.debug('documentURI %s',this.baseURI);
         return this.baseURI;
     },
     createExpression: function(xpath, nsuriMap){
+        log.debug('createExpression %s %s',xpath, nsuriMap);
         return new XPathExpression(xpath, nsuriMap);
     },
     createDocumentFragment: function() {
+        log.debug('createDocumentFragment');
         var node = new DocumentFragment(this);
         return node;
     },
     createTextNode: function(data) {
+        log.debug('createTextNode %s', data);
         var node = new Text(this);
         node.data = data;
         return node;
     },
     createComment: function(data) {
+        log.debug('createComment %s', data);
         var node = new Comment(this);
         node.data = data;
         return node;
     },
     createCDATASection : function(data) {
+        log.debug('createCDATASection %s', data);
         var node = new CDATASection(this);
         node.data = data;
         return node;
     },
     createProcessingInstruction: function(target, data) {
+        log.debug('createProcessingInstruction %s %s', target, data);
         // throw Exception if the target string contains an illegal character
         if (__ownerDocument__(this).implementation.errorChecking &&
             (!__isValidName__(target))) {
@@ -90,6 +101,7 @@ __extend__(Document.prototype,{
         return node;
     },
     createElement: function(tagName) {
+        log.debug('createElement %s', tagName);
         // throw Exception if the tagName string contains an illegal character
         if (__ownerDocument__(this).implementation.errorChecking &&
             (!__isValidName__(tagName))) {
@@ -102,12 +114,7 @@ __extend__(Document.prototype,{
     createElementNS : function(namespaceURI, qualifiedName) {
         //we use this as a parser flag to ignore the xhtml
         //namespace assumed by the parser
-        //console.log('creating element %s %s', namespaceURI, qualifiedName);
-        if(this.baseURI === 'http://envjs.com/xml' &&
-            namespaceURI === 'http://www.w3.org/1999/xhtml'){
-            return this.createElement(qualifiedName);
-        }
-        //console.log('createElementNS %s %s', namespaceURI, qualifiedName);
+        log.debug('createElementNS %s %s', namespaceURI, qualifiedName);
         if (__ownerDocument__(this).implementation.errorChecking) {
             // throw Exception if the Namespace is invalid
             if (!__isValidNamespace__(this, namespaceURI, qualifiedName)) {
@@ -125,11 +132,10 @@ __extend__(Document.prototype,{
         node.prefix       = qname.prefix;
         node.nodeName     = qualifiedName;
 
-        //console.log('created element %s %s', namespaceURI, qualifiedName);
         return node;
     },
     createAttribute : function(name) {
-        //console.log('createAttribute %s ', name);
+        log.debug('createAttribute %s ', name);
         // throw Exception if the name string contains an illegal character
         if (__ownerDocument__(this).implementation.errorChecking &&
             (!__isValidName__(name))) {
@@ -142,11 +148,7 @@ __extend__(Document.prototype,{
     createAttributeNS : function(namespaceURI, qualifiedName) {
         //we use this as a parser flag to ignore the xhtml
         //namespace assumed by the parser
-        if(this.baseURI === 'http://envjs.com/xml' &&
-            namespaceURI === 'http://www.w3.org/1999/xhtml'){
-            return this.createAttribute(qualifiedName);
-        }
-        //console.log('createAttributeNS %s %s', namespaceURI, qualifiedName);
+        log.debug('createAttributeNS %s %s', namespaceURI, qualifiedName);
         // test for exceptions
         if (this.implementation.errorChecking) {
             // throw Exception if the Namespace is invalid
@@ -165,18 +167,17 @@ __extend__(Document.prototype,{
         node.prefix       = qname.prefix;
         node.nodeName     = qualifiedName;
         node.nodeValue    = "";
-        //console.log('attribute %s %s %s', node.namespaceURI, node.prefix, node.nodeName);
         return node;
     },
     createNamespace : function(qualifiedName) {
-        //console.log('createNamespace %s', qualifiedName);
+        log.debug('createNamespace %s', qualifiedName);
         // create Namespace specifying 'this' as ownerDocument
         var node  = new Namespace(this);
         var qname = __parseQName__(qualifiedName);
 
         // assign values to properties (and aliases)
         node.prefix       = qname.prefix;
-        node.localName    = qname.localName;
+        node.nodeName    = qname.localName;
         node.name         = qualifiedName;
         node.nodeValue    = "";
 
@@ -184,31 +185,21 @@ __extend__(Document.prototype,{
     },
 
     createRange: function(){
+        log.debug('createRange');
         return new Range();
     },
 
     evaluate: function(xpathText, contextNode, nsuriMapper, resultType, result){
         //return new XPathExpression().evaluate();
-        throw Error('Document.evaluate not supported yet!');
+        throw 'Document.evaluate not supported yet!';
     },
 
     getElementById : function(elementId) {
-        var retNode = null,
-            node;
-        // loop through all Elements
-        var all = this.getElementsByTagName('*');
-        for (var i=0; i < all.length; i++) {
-            node = all[i];
-            // if id matches
-            if (node.id == elementId) {
-                //found the node
-                retNode = node;
-                break;
-            }
-        }
-        return retNode;
+        log.debug('getElementById %s = %s', elementId, this._indexes_["#"+elementId]);
+        return this._indexes_["#"+elementId]||null;
     },
     normalizeDocument: function(){
+        log.debug('normalizeDocument');
         this.normalize();
     },
     get nodeType(){
@@ -221,11 +212,15 @@ __extend__(Document.prototype,{
         return "[object XMLDocument]";
     },
     get defaultView(){
+        log.debug('defaultView');
         return { getComputedStyle: function(elem){
             return window.getComputedStyle(elem);
         }};
-    },
+    }
 });
+
+}(/*Envjs.DOM.Document*/));
+
 
 /*
  * Helper function

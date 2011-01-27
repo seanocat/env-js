@@ -1,14 +1,20 @@
-load('specs/qunit.js');
-load('specs/env.qunit.js');
+
+require('specs/env.qunit');
+
+var QUnit 	= require('specs/qunit').QUnit,
+	module 	= require('specs/qunit').module,
+	expect 	= require('specs/qunit').expect,
+	equals 	= require('specs/qunit').equals,
+	start 	= require('specs/qunit').start,
+	test 	= require('specs/qunit').test,
+	ok 		= require('specs/qunit').ok;
+
+
 QUnit.init();
+start();
 
-load('dist/platform/core.js');
-
-load('dist/platform/rhino.js');
-
-load('dist/console.js');
-load('settings.js');
-load('local_settings.js');
+require('settings');
+require('local_settings');
 
 module('platform-core');
 

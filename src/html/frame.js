@@ -2,7 +2,16 @@
 /**
  * HTMLFrameElement - DOM Level 2
  */
-HTMLFrameElement = function(ownerDocument) {
+ 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLFrameElement').debug('HTMLFrameElement available');    
+});
+
+exports.HTMLFrameElement = HTMLFrameElement = function(ownerDocument) {
     HTMLElement.apply(this, arguments);
     // this is normally a getter but we need to be
     // able to set it to correctly emulate behavior
@@ -66,3 +75,4 @@ __extend__(HTMLFrameElement.prototype, {
     onload: HTMLEvents.prototype.onload
 });
 
+}(/*HTMLFrameElement*/));

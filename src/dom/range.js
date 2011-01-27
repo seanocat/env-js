@@ -1,9 +1,16 @@
+
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+   log = Envjs.logger('Envjs.DOM.Range').debug('available'); 
+});
+
 /**
  * @author thatcher
  */
-Range = function(){
-
-};
+exports.Range = Range = function(){};
 
 __extend__(Range.prototype, {
     get startContainer(){
@@ -81,9 +88,12 @@ __extend__(Range.prototype, {
 });
 
 
-  // CompareHow
+// CompareHow
 Range.START_TO_START                 = 0;
 Range.START_TO_END                   = 1;
 Range.END_TO_END                     = 2;
 Range.END_TO_START                   = 3;
   
+
+
+}(/*Envjs.DOM.Range*/));

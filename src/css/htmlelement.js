@@ -5,6 +5,14 @@
  * for xml use and additional changes for just HTMLElement.
  */
 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+   log = Envjs.logger('Envjs.HTML.HTMLElement').debug('available'); 
+});
+
 
 /**
  * Replace or add  the getter for 'style'
@@ -65,3 +73,5 @@ HTMLElement.prototype.getAttribute = function(name) {
 	    return origGetAttribute.apply(this, arguments);
 	}
 };
+
+}(/*Envjs.HTML.HTMLElement*/));

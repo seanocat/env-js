@@ -1,20 +1,13 @@
-
 /**
  * @author thatcher
  */
 
-load('specs/qunit.js');
-load('specs/env.qunit.js');
-load('specs/helpers.js');
+var QUnit 	= require('specs/qunit').QUnit,
+	start 	= require('specs/qunit').start;
+
+require('specs/env.qunit');
 QUnit.init();
 
-load('dist/platform/core.js');
-load('dist/platform/rhino.js');
-load('dist/console.js');
-load('dist/dom.js');
-load('dist/event.js');
-load('dist/html.js');
-load('dist/timer.js');
-load('dist/parser.js');
-load('specs/parser/spec.js');
+require('specs/parser/spec');
 start();
+

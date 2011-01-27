@@ -4,7 +4,17 @@
  * HTML5: 4.10.11 The textarea element
  * http://dev.w3.org/html5/spec/Overview.html#the-textarea-element
  */
-HTMLTextAreaElement = function(ownerDocument) {
+ 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLTextAreaElement').
+		debug('HTMLTextAreaElement available');    
+});
+
+exports.HTMLTextAreaElement = HTMLTextAreaElement = function(ownerDocument) {
     HTMLInputAreaCommon.apply(this, arguments);
     this._rawvalue = null;
 };
@@ -55,5 +65,6 @@ __extend__(HTMLTextAreaElement.prototype, {
 });
 
 // Named Element Support
-HTMLElement.registerSetAttribute('TEXTAREA', 'name',
-                                 __updateFormForNamedElement__);
+HTMLElement.registerSetAttribute('TEXTAREA', 'name', __updateFormForNamedElement__);
+
+}(/*HTMLTextAreaElement*/));

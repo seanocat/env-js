@@ -4,7 +4,17 @@
  * HTML5: 4.5.7 The dl Element
  * http://dev.w3.org/html5/spec/Overview.html#the-dl-element
  */
-HTMLDListElement = function(ownerDocument) {
+ 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLDListElement').
+		debug('HTMLDListElement available');    
+});
+
+exports.HTMLDListElement = HTMLDListElement = function(ownerDocument) {
     HTMLElement.apply(this, arguments);
 };
 
@@ -18,3 +28,4 @@ __extend__(HTMLDListElement.prototype, {
     }
 });
 
+}(/*HTMLDListElement*/));

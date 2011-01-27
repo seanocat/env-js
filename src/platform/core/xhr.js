@@ -1,10 +1,19 @@
 
+(function(){
+
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.XMLHttpRequest.Core').
+        debug('XMLHttpRequest.Core available');    
+});
+
 /**
  * getcwd - named after posix call of same name (see 'man 2 getcwd')
  *
  */
 Envjs.getcwd = function() {
-    return '.';
+    return Envjs.uri('.');
 };
 
 /**
@@ -15,10 +24,11 @@ Envjs.getcwd = function() {
  */
 Envjs.uri = function(path, base) {
     //console.log('constructing uri from path %s and base %s', path, base);
-
+    path = path+'';
     // Semi-common trick is to make an iframe with src='javascript:false'
-    //  (or some equivalent).  By returning '', the load is skipped
-    if (path.indexOf('javascript:') === 0) {
+    //  (or some equivalent).  By returning '', the load is skipped'
+    var js = 'javascript';
+    if (path.indexOf(js+':') === 0) {
         return '';
     }
 
@@ -53,18 +63,9 @@ Envjs.uri = function(path, base) {
     // handles all cases if path is abosulte or relative to base
     // 3rd arg is "false" --> remove fragments
     var newurl = urlparse.urlnormalize(urlparse.urljoin(base, path, false));
-	//console.log('uri %s %s = %s', base, path, newurl);
+    //console.log('uri %s %s = %s', base, path, newurl);
     return newurl;
 };
-
-
-
-/**
- * Used in the XMLHttpRquest implementation to run a
- * request in a seperate thread
- * @param {Object} fn
- */
-Envjs.runAsync = function(fn){};
 
 
 /**
@@ -94,6 +95,23 @@ Envjs.readFromFile = function(url){};
  */
 Envjs.deleteFile = function(url){};
 
+
+Envjs.connections = [];
+Envjs.connections.addConnection = Envjs.sync(function(xhr){
+    log.debug('registering connection.');
+    Envjs.connections.push(xhr);
+});
+Envjs.connections.removeConnection = Envjs.sync(function(xhr){
+    log.debug('unregistering connection.');
+    var i;
+    for(i = 0; i < Envjs.connections.length; i++){
+        if(Envjs.connections[i] === xhr){
+            Envjs.connections.splice(i,1);
+            break;
+        }
+    }
+    return;
+});
 /**
  * establishes connection and calls responsehandler
  * @param {Object} xhr
@@ -102,5 +120,57 @@ Envjs.deleteFile = function(url){};
  */
 Envjs.connection = function(xhr, responseHandler, data){};
 
+Envjs.localXHR = function(url, xhr, connection, data){
+    try{
+        if ( "PUT" == xhr.method || "POST" == xhr.method ) {
+            log.debug('writing to file %s', url);
+            data =  data || "" ;
+            Envjs.writeToFile(data, url);
+            xhr.readyState = 4;
+            //could be improved, I just cant recall the correct http codes
+            xhr.status = 200;
+            xhr.statusText = "";
+        } else if ( xhr.method == "DELETE" ) {  
+            log.debug('deleting file %s', url);
+            Envjs.deleteFile(url);
+            xhr.readyState = 4;
+            //could be improved, I just cant recall the correct http codes
+            xhr.status = 200;
+            xhr.statusText = "";
+        } else {
+            //try to add some canned headers that make sense
+            log.debug('reading from file %s', url);
+            xhr.readyState = 4;
+            xhr.statusText = "ok";
+            xhr.responseText = Envjs.readFromFile(url);
+            try{
+                if(url.match(/html$/)){
+                    xhr.responseHeaders["Content-Type"] = 'text/html';
+                }else if(url.match(/.xml$/)){
+                    xhr.responseHeaders["Content-Type"] = 'text/xml';
+                }else if(url.match(/.js$/)){
+                    xhr.responseHeaders["Content-Type"] = 'text/javascript';
+                }else if(url.match(/.json$/)){
+                    xhr.responseHeaders["Content-Type"] = 'application/json';
+                }else{
+                    xhr.responseHeaders["Content-Type"] = 'text/plain';
+                }
+                //xhr.responseHeaders['Last-Modified'] = connection.getLastModified();
+                //xhr.responseHeaders['Content-Length'] = headerValue+'';
+                //xhr.responseHeaders['Date'] = new Date()+'';
+            }catch(ee){
+                log.error('failed to load response headers', ee);
+            }
+        }
+    }catch(e){
+        log.error('failed to open file %s %s', url, e);
+        connection = null;
+        xhr.readyState = 4;
+        xhr.statusText = "Local File Protocol Error";
+        xhr.responseText = "<html><head/><body><p>"+ e+ "</p></body></html>";
+    }
+};
 
 __extend__(Envjs, urlparse);
+
+}(/*Envjs.XMLHttpRequest.Core*/));

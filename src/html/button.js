@@ -5,7 +5,17 @@
  * HTML5: 4.10.6 The button element
  * http://dev.w3.org/html5/spec/Overview.html#the-button-element
  */
-HTMLButtonElement = function(ownerDocument) {
+ 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLButtonElement').
+		debug('HTMLButtonElement available');    
+});
+
+exports.HTMLButtonElement = HTMLButtonElement = function(ownerDocument) {
     HTMLTypeValueInputs.apply(this, arguments);
 };
 HTMLButtonElement.prototype = new HTMLTypeValueInputs();
@@ -35,5 +45,6 @@ __extend__(HTMLButtonElement.prototype, {
 });
 
 // Named Element Support
-HTMLElement.registerSetAttribute('BUTTON', 'name',
-                                 __updateFormForNamedElement__);
+HTMLElement.registerSetAttribute('BUTTON', 'name', __updateFormForNamedElement__);
+
+}(/*Envjs.HTML.HTMLButtonElement*/));

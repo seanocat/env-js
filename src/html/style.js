@@ -4,7 +4,17 @@
  * HTML5 4.2.6 The style element
  * http://dev.w3.org/html5/spec/Overview.html#the-style-element
  */
-HTMLStyleElement = function(ownerDocument) {
+ 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLStyleElement').
+		debug('HTMLStyleElement available');    
+});
+
+exports.HTMLStyleElement = HTMLStyleElement = function(ownerDocument) {
     HTMLElement.apply(this, arguments);
 };
 HTMLStyleElement.prototype = new HTMLElement();
@@ -31,3 +41,5 @@ __extend__(HTMLStyleElement.prototype, {
         return '[object HTMLStyleElement]';
     }
 });
+
+}(/*HTMLStyleElement*/));

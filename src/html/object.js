@@ -4,7 +4,17 @@
  * HTML5: 4.8.5 The object element
  * http://dev.w3.org/html5/spec/Overview.html#the-object-element
  */
-HTMLObjectElement = function(ownerDocument) {
+ 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLObjectElement').
+		debug('HTMLObjectElement available');    
+});
+
+exports.HTMLObjectElement = HTMLObjectElement = function(ownerDocument) {
     HTMLElement.apply(this, arguments);
 };
 HTMLObjectElement.prototype = new HTMLElement();
@@ -90,5 +100,6 @@ __extend__(HTMLObjectElement.prototype, {
 });
 
 // Named Element Support
-HTMLElement.registerSetAttribute('OBJECT', 'name',
-                                 __updateFormForNamedElement__);
+HTMLElement.registerSetAttribute('OBJECT', 'name', __updateFormForNamedElement__);
+
+}(/*HTMLObjectElement*/));

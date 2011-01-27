@@ -1,22 +1,25 @@
 
 /**
- *
+ * @author thatcher
  */
-var myprint = print;
-load('dist/env.rhino.js');
 
+var QUnit 	= require('specs/qunit').QUnit,
+	start 	= require('specs/qunit').start;
 
-Envjs({
-    scriptTypes: { "text/javascript": true },
-});
-window.location = 'specs/fulldoc/index.html';
+require('specs/env.qunit');
+QUnit.init();
+location = 'specs/fulldoc/index.html';
+start();
 
-var div = window.document.getElementById('qunit-testresult');
-var spans = div.getElementsByTagName('SPAN')
-
-var summary = {};
-for (var i = 0; i < spans.length; ++i) {
-    var clazz = spans[i].getAttribute('class');
+var myprint = Envjs.log,
+	div = window.document.getElementById('qunit-testresult'),
+	spans = div.getElementsByTagName('SPAN'),
+	summary = {},
+	clazz,
+	i;
+	
+for (i = 0; i < spans.length; ++i) {
+    clazz = spans[i].getAttribute('class');
     summary[clazz] = parseInt(spans[i].textContent);
     myprint(clazz + ' = ' + summary[clazz]);
 }

@@ -6,7 +6,9 @@
  *
  * This file simply provides the global definitions we need to
  * be able to correctly implement to core browser DOM Event interfaces.
- */
+
+ - leaked globally -
+
 var Event,
     MouseEvent,
     UIEvent,
@@ -14,7 +16,10 @@ var Event,
     MutationEvent,
     DocumentEvent,
     EventTarget,
-    EventException,
-    //nonstandard but very useful for implementing mutation events
-    //among other things like general profiling
-    Aspect;
+    EventException;
+    
+ */
+
+var Envjs = Envjs || require('envjs/platform/core').Envjs,
+	After = After || require('envjs/platform/core').After,
+	Document = Document || require('envjs/dom').Document;

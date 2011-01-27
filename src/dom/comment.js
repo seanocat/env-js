@@ -1,3 +1,11 @@
+
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+   log = Envjs.logger('Envjs.DOM.Comment').debug('available'); 
+});
 /**
  * @class  Comment
  *      This represents the content of a comment, i.e., all the
@@ -5,7 +13,7 @@
  * @extends CharacterData
  * @param  ownerDocument :  The Document object associated with this node.
  */
-Comment = function(ownerDocument) {
+exports.Comment = Comment = function(ownerDocument) {
     CharacterData.apply(this, arguments);
     this.nodeName  = "#comment";
 };
@@ -25,3 +33,4 @@ __extend__(Comment.prototype, {
     }
 });
 
+}(/*Envjs.DOM.Comment*/));

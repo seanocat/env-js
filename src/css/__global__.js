@@ -1,7 +1,9 @@
 
 /**
  * DOM Style Level 2
- */
+ 
+Leaked globally 
+
 var CSS2Properties,
     CSSRule,
     CSSStyleRule,
@@ -13,4 +15,9 @@ var CSS2Properties,
     CSSStyleSheet,
     StyleSheet,
     StyleSheetList;
-;
+
+*/
+	
+var Envjs = Envjs || require('envjs/platform/core').Envjs,
+	Document = require('envjs/dom').Document,
+	HTMLElement = require('envjs/html').HTMLElement;

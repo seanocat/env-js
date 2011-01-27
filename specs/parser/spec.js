@@ -1,10 +1,26 @@
+var QUnit 	= require('specs/qunit').QUnit,
+	module 	= require('specs/qunit').module,
+	expect 	= require('specs/qunit').expect,
+	equals 	= require('specs/qunit').equals,
+	start 	= require('specs/qunit').start,
+	stop 	= require('specs/qunit').stop,
+	test 	= require('specs/qunit').test,
+	ok 		= require('specs/qunit').ok;
+	
 QUnit.module('parser');
+
+// helpers available to all tests
+
+function runningUnderEnvjs(){
+    return (typeof navigator === 'object') &&
+        navigator.userAgent.search( /Envjs/ ) > -1;
+}
 
 var isenvjs;
 try {
     isenvjs = runningUnderEnvjs();
 } catch (e) {
-    isenvjs= false;
+    isenvjs = false;
 }
 
 test('Parser Interfaces Available', function(){
@@ -45,7 +61,7 @@ test('DOMParser.parseFromString', function(){
     //equals(xmldoc.contentType, 'text/xml', '.contentType');
     //equals(xmldoc.inputEncoding, 'UTF-8', '.inputEncoding');
     equals(xmldoc.localName, null, '.localName');
-    equals(xmldoc.location, null, '.location');
+    //equals(xmldoc.location, null, '.location');
     equals(xmldoc.namespaceURI, null, '.namespaceURI');
     equals(xmldoc.nodeName, "#document", '.nodeName');
     equals(xmldoc.nodeType, Node.DOCUMENT_NODE, '.nodeType');
@@ -444,6 +460,13 @@ function testForm(doc, isenvjs) {
     equals(form.elements.item(1234), null, 'form.elements.item(12340)');
     equals(form.elements.namedItem('foo'), null, 'form.elements.namedItem(foo)');
 
+    ok(form.elements.e1, 'e1', 'form.elements.e1');
+    ok(form.elements.e2, 'e2', 'form.elements.e2');
+    ok(form.elements.e3, 'e3', 'form.elements.e3');
+    ok(form.elements.e4, 'e4', 'form.elements.e4');
+    ok(form.elements.e5, 'e5', 'form.elements.e5');
+    ok(form.elements.e6, 'e6', 'form.elements.e6');
+    
     equals(form.elements.e1.value, 'v1', 'form.elements.e1.value');
     equals(form.elements.e2.value, 'v2', 'form.elements.e2.value');
     equals(form.elements.e3.value, 'v3', 'form.elements.e3.value');
@@ -519,10 +542,7 @@ function testForm(doc, isenvjs) {
         equals(form.e5.namedItem('o1').value, 'v5', 'form.e5.namedItem(o1)');
         equals(form.e5.namedItem('o2').value, 'opt2', 'form.e5.namedItem(o2)');
     }
-
-
 }
-
 
 
 test('Form Named Elements via parser', function() {

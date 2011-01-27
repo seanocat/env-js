@@ -227,7 +227,7 @@ __extend__(HTMLTypeValueInputs.prototype, {
     },
     set name(value){
         this.setAttribute('name',value);
-    },
+    }
 });
 
 
@@ -258,6 +258,9 @@ var __updateFormForNamedElement__ = function(node, value) {
     if (node.form) {
         // to check for ID or NAME attribute too
         // not, then nothing to do
-        node.form._updateElements();
+
+		//THATCHER - I believe this is deprecated by the new
+		//internally managed indexes on elements
+        //node.form._updateElements();
     }
 };

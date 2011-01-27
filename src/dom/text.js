@@ -1,4 +1,11 @@
 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+   log = Envjs.logger('Envjs.DOM.Text').debug('available'); 
+});
 /**
  * @class  Text
  *      The Text interface represents the textual content (termed
@@ -11,7 +18,7 @@
  * @extends CharacterData
  * @param  ownerDocument The Document object associated with this node.
  */
-Text = function(ownerDocument) {
+exports.Text = Text = function(ownerDocument) {
     CharacterData.apply(this, arguments);
     this.nodeName  = "#text";
 };
@@ -65,3 +72,5 @@ __extend__(Text.prototype,{
         return "[object Text]";
     }
 });
+
+}(/*Envjs.DOM.Text*/));

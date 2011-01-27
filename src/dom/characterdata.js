@@ -1,10 +1,17 @@
 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+   log = Envjs.logger('Envjs.DOM.CharacterData').debug('available'); 
+});
 /**
  * @class  CharacterData - parent abstract class for Text and Comment
  * @extends Node
  * @param  ownerDocument : The Document object associated with this node.
  */
-CharacterData = function(ownerDocument) {
+exports.CharacterData = CharacterData = function(ownerDocument) {
     Node.apply(this, arguments);
 };
 CharacterData.prototype = new Node();
@@ -119,3 +126,5 @@ __extend__(CharacterData.prototype,{
         return "[object CharacterData]";
     }
 });
+
+}(/*Envjs.DOM.CharacterData*/));

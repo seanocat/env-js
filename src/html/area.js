@@ -5,7 +5,17 @@
  * HTML5: 4.8.13 The area element
  * http://dev.w3.org/html5/spec/Overview.html#the-area-element
  */
-HTMLAreaElement = function(ownerDocument) {
+ 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLAreaElement').
+		debug('HTMLAreaElement available');    
+});
+
+exports.HTMLAreaElement = HTMLAreaElement = function(ownerDocument) {
     HTMLElement.apply(this, arguments);
 };
 HTMLAreaElement.prototype = new HTMLElement();
@@ -62,3 +72,4 @@ __extend__(HTMLAreaElement.prototype, {
     }
 });
 
+}(/*Envjs.HTML.HTMLElement*/));

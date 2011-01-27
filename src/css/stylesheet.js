@@ -1,4 +1,12 @@
 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+   log = Envjs.logger('Envjs.CSS.CSSStyleSheet').debug('available'); 
+});
+
 /**
  * StyleSheet
  * http://dev.w3.org/csswg/cssom/#stylesheet
@@ -13,8 +21,7 @@
  *          attribute boolean disabled;
  * };
  */
-StyleSheet = function() {
-}
+StyleSheet = function() {};
 
 /*
  * CSSStyleSheet
@@ -27,7 +34,7 @@ StyleSheet = function() {
  *   void deleteRule(unsigned long index);
  * };
  */
-CSSStyleSheet = function(options){
+exports.CSSStyleSheets = CSSStyleSheet = function(options){
     var $cssRules,
         $disabled = options.disabled ? options.disabled : false,
         $href = options.href ? options.href : null,
@@ -94,9 +101,10 @@ CSSStyleSheet = function(options){
     });
 };
 
-StyleSheetList = function() {
-}
-StyleSheetList.prototype = new Array();
+exports.StyleSheetList = StyleSheetList = function() {};
+
+StyleSheetList.prototype = [];
+
 __extend__(StyleSheetList.prototype, {
     item : function(index) {
         if ((index >= 0) && (index < this.length)) {
@@ -109,3 +117,5 @@ __extend__(StyleSheetList.prototype, {
         return '[object StyleSheetList]';
     }
 });
+
+}(/*Envjs.CSS.CSSStyleSheet*/));

@@ -4,7 +4,17 @@
  *
  * HTML5: http://dev.w3.org/html5/spec/Overview.html#the-form-element
  */
-HTMLFormElement = function(ownerDocument){
+ 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLFormElement').
+		debug('HTMLFormElement available');    
+});
+
+exports.HTMLFormElement = HTMLFormElement = function(ownerDocument){
     HTMLElement.apply(this, arguments);
 
     //TODO: on __elementPopped__ from the parser
@@ -63,10 +73,9 @@ __extend__(HTMLFormElement.prototype,{
      */
     get elements() {
         var nodes = this.getElementsByTagName('*');
-        var alist = [];
+        var alist = new NodeList(this.ownerDocument, this);
         var i, tmp;
         for (i = 0; i < nodes.length; ++i) {
-            nodename = nodes[i].nodeName;
             // would like to replace switch with something else
             //  since it's redundant with the SetAttribute callbacks
             switch (nodes[i].nodeName) {
@@ -93,8 +102,16 @@ __extend__(HTMLFormElement.prototype,{
         return new HTMLCollection(alist);
     },
     _updateElements: function() {
-        this.elements;
+        var elm = this.elements;
     },
+    
+    /*get elements() {
+        //console.log('getting form input type elements.');
+        if(!(this._indexes_['$elements'])){
+			this._indexes_['$elements'] = new NodeList(this.ownerDocument, null);
+		}
+        return new HTMLCollection(this._indexes_['$elements']);
+    },*/
     get length() {
         return this.elements.length;
     },
@@ -108,18 +125,15 @@ __extend__(HTMLFormElement.prototype,{
         return '[object HTMLFormElement]';
     },
     submit: function() {
-        //TODO: this needs to perform the form inputs serialization
-        //      and submission
-        //  DONE: see xhr/form.js
         var event = __submit__(this);
-
     },
     reset: function() {
         //TODO: this needs to reset all values specified in the form
         //      to those which where set as defaults
         __reset__(this);
-
     },
     onsubmit: HTMLEvents.prototype.onsubmit,
     onreset: HTMLEvents.prototype.onreset
 });
+
+}(/*HTMLFormElement*/));

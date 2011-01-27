@@ -1,16 +1,22 @@
 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+   log = Envjs.logger('Envjs.CSS.CSSRule').debug('available'); 
+});
+
 /*
  * CSSRule - DOM Level 2
  */
-CSSRule = function(options) {
-
-
+exports.CSSRule = CSSRule = function(options) {
 
     var $style,
-    $selectorText = options.selectorText ? options.selectorText : '';
-    $style = new CSS2Properties({
-        cssText: options.cssText ? options.cssText : null
-    });
+        $selectorText = options.selectorText ? options.selectorText : '';
+        $style = new CSS2Properties({
+            cssText: options.cssText ? options.cssText : null
+        });
 
     return __extend__(this, {
         get style(){
@@ -27,6 +33,7 @@ CSSRule = function(options) {
         }
     });
 };
+
 CSSRule.STYLE_RULE     =  1;
 CSSRule.IMPORT_RULE    =  3;
 CSSRule.MEDIA_RULE     =  4;
@@ -73,3 +80,6 @@ __extend__(CSSRuleList.prototype, {
         return '[object CSSRuleList]';
     }
 });
+
+}(/*Envjs.CSS.CSSRuleList*/));
+

@@ -3,7 +3,17 @@
  * HTMLBodyElement - DOM Level 2
  * HTML5: http://dev.w3.org/html5/spec/Overview.html#the-body-element-0
  */
-HTMLBodyElement = function(ownerDocument) {
+ 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLBodyElement').
+		debug('HTMLBodyElement available');    
+});
+
+exports.HTMLBodyElement = HTMLBodyElement = function(ownerDocument) {
     HTMLElement.apply(this, arguments);
 };
 HTMLBodyElement.prototype = new HTMLElement();
@@ -18,3 +28,5 @@ __extend__(HTMLBodyElement.prototype, {
         return '[object HTMLBodyElement]';
     }
 });
+
+}(/*Envjs.HTML.HTMLBodyElement*/));

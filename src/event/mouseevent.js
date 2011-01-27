@@ -1,10 +1,18 @@
 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+   log = Envjs.logger('Envjs.DOM2.MouseEvent').debug('available'); 
+});
+
 /**
  * @name MouseEvent
  * @w3c:domlevel 2 
  * @uri http://www.w3.org/TR/2000/REC-DOM-Level-2-Events-20001113/events.html
  */
-MouseEvent = function(options) {
+exports.MouseEvent = MouseEvent = function(options) {
     this._screenX= 0;
     this._screenY= 0;
     this._clientX= 0;
@@ -63,3 +71,5 @@ __extend__(MouseEvent.prototype,{
         this._relatedTarget = relatedTarget;
     }
 });
+
+}(/*Envjs.DOM2.MouseEvent*/));

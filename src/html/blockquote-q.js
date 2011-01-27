@@ -4,10 +4,20 @@
  * HTML5: 4.5.5 The blockquote element
  * http://dev.w3.org/html5/spec/Overview.html#htmlquoteelement
  */
-HTMLQuoteElement = function(ownerDocument) {
+ 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLQuoteElement').
+		debug('HTMLQuoteElement available');    
+});
+
+exports.HTMLQuoteElement = HTMLQuoteElement = function(ownerDocument) {
     HTMLElement.apply(this, arguments);
 };
-__extend__(HTMLQuoteElement.prototype, HTMLElement.prototype);
+HTMLQuoteElement.prototype = new HTMLElement();
 __extend__(HTMLQuoteElement.prototype, {
     /**
      * Quoth the spec:
@@ -32,3 +42,5 @@ __extend__(HTMLQuoteElement.prototype, {
         return '[object HTMLQuoteElement]';
     }
 });
+
+}(/*Envjs.HTML.HTMLQuoteElement*/));

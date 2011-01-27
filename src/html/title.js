@@ -5,7 +5,17 @@
  * HTML5: 4.2.2 The title element
  * http://dev.w3.org/html5/spec/Overview.html#the-title-element-0
  */
-HTMLTitleElement = function(ownerDocument) {
+ 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLTitleElement').
+		debug('HTMLTitleElement available');    
+});
+
+exports.HTMLTitleElement = HTMLTitleElement = function(ownerDocument) {
     HTMLElement.apply(this, arguments);
 };
 HTMLTitleElement.prototype = new HTMLElement();
@@ -22,4 +32,4 @@ __extend__(HTMLTitleElement.prototype, {
     }
 });
 
-
+}(/*HTMLTitleElement*/));

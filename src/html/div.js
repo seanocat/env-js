@@ -4,7 +4,16 @@
  * HTML5: 4.5.12 The Div Element
  * http://dev.w3.org/html5/spec/Overview.html#the-div-element
  */
-HTMLDivElement = function(ownerDocument) {
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLDivElement').
+		debug('HTMLDivElement available');    
+});
+
+exports.HTMLDivElement = HTMLDivElement = function(ownerDocument) {
     HTMLElement.apply(this, arguments);
 };
 
@@ -21,3 +30,4 @@ __extend__(HTMLDivElement.prototype, {
     }
 });
 
+}(/*HTMLDivElement*/));

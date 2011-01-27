@@ -4,7 +4,19 @@ env.js : A pure JavaScript browser environment.
 Developed by John Resig (http://ejohn.org)
 
 Major Contributers:
-Envjs Team
+Christopher Thatcher
+Nick Galbreath
+Steven Parkes
+
+Early Contributers and Integrated Project Authors:
+John Resig       (Envjs Prototype and Concept)
+Yehuda Katz      (Early XHR Implementation)
+Jon van Noort    (Early DOM Implementation)
+David Joham      (Early DOM Implementation)
+Scott Severtson  (Early DOM Implementation)
+Steffen Meschkat (XPath Implementation)
+Henri Sivonen    (HTML5Parser Implementation)
+
 
 GitHub repositories:
 http://github.com/jeresig/env-js/
@@ -13,6 +25,8 @@ http://github.com/thatcher/env-js/
 Mailing List:
 http://groups.google.com/group/envjs
 
+* BUG TRACKING HAS MOVED TO GITHUB!!
+http://github.com/thatcher/env-js/
 Lighthouse (Bug Tracking):
 http://envjs.lighthouseapp.com/
 
@@ -80,7 +94,6 @@ Getting the code:
  * Variable naming should be short but complete words.
  * Module level internal functions should be prefixed and appended with __. 
    For example __example__.
-
    
 == contributing tests with patches ==
     
@@ -92,13 +105,46 @@ Getting the code:
     those urls included in the spec.js;
     
     
-== platforms ==
+== Platforms ==
 
- Out of the box we have support for native platforms with rhino.  A spidermonkey
- port is also being widely used, and we hope to integrate into the main branch 
- or as a github plugin.
+=== 1.3 ===
+    Out of the box we have support for native platforms with rhino, nodejs, 
+    python-spidermonkey, ruby-v8 (via therubyracer), and ruby-spidermonkey (via 
+    johnson).  We hope to support php and perl as well soon.
     
-Installing:
+    We hope to integrate a thin build and test wrapper for each platform which 
+    is most familiar with its native build/test/install process so each platform 
+    can feel closely integrated.  For now however each test target can be run
+    independently the same way you run other scripts:
+    
+    envjs <platform> specs/<module>/boot.js
+    
+    where <module> is one of:
+        console | css | dom | event | html | parser | timer | window | xhr
+ 
+== 1.2 and lower ==
+    Out of the box 1.2 and lower will only run on rhino.  Some support via ruby 
+    was possible via steven parkes fork of envjs.
+
+== Installing ==
+
+=== 1.3 ===
+
+0) common usage - 
+     bin/envjs <platform> file0.js file1.js file2.js ... fileN.js
+     
+     - where <platform> is one of
+        node | spyd | rhino | rhino-debug | johnson | rubyracer
+        
+1) fileX.js should be used to simply set window.location and do whatever 
+   else your browser-javascript-loving-heart desires. For example
+   
+   window.location = 'http://www.loc.gov/pictures/';
+
+Thats its!  There are a lot of ways to use Envjs to be productive so enjoy!
+        
+=== 1.2 and lower ===
+
 0) common usage - all you need is env.rhino.js and rhino js.jar
      java -jar js.jar -opt -1 myscript.js
 
@@ -155,6 +201,21 @@ Testing jQuery Compatibility:
 * Checks out the given jQuery tag from Subversion into test/vendor/jQuery/[version], 
   moves dist/env.rhino.js into the correct location in their tree, and runs the test suites.
 
+== 1.3 change notes ==
+
+    * ALL JAVASCRIPT IS LOADED AND RUN BY DEFAULT!! WARNING !!
+    * Runs in Java, Nodejs, Ruby, and Python environments!
+    * Commonjs support.  Just add envjs to your load path.
+    * Rhino no longer needs to be run in non-optimized mode. ( yeah! )
+    * XML Parser no longer uses e4x since it is not supported by V8 and 
+     several other javascript engines.  We reintroduced the old xml parser 
+     to allow simplified support across all engines.
+    * Basic XPath support from googles ajaxslt project now included.
+    * NodeList are live, meaning getElementByTagName returns a nodelist 
+      which will change when node are added or removed from the document.
+    * Reimplementation of Timer internals to allow
+    * Cleaned up all jslint errors and 99.9% of warnings.
+    * Added internal Category Logging implementation.
 
 == 1.1 to 1.2 note ==
 
@@ -179,8 +240,9 @@ Testing jQuery Compatibility:
     local path to a different version of the Rhino js.jar file.  The
     "javascript file" is the path to the JavaScript you wish to execute.
     
-Changes with new timer code:
+    Changes with new timer code:
 
-Previously with envjs, you could call Java's thread sleep() method to delay execution. This was mostly used in test suites. This may no
-longer work the same since it will inhibit all events from firing. You can now use the Envjs.wait(milliseconds) call to achieve an
-effect similar to calling sleep().
+    Previously with envjs, you could call Java's thread sleep() method to delay 
+    execution. This was mostly used in test suites. This may no longer work the 
+    same since it will inhibit all events from firing. You can now use the 
+    Envjs.wait(milliseconds) call to achieve an effect similar to calling sleep().

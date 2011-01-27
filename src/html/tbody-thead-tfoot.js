@@ -7,7 +7,17 @@
  * http://dev.w3.org/html5/spec/Overview.html#the-tbody-element
  * http://dev.w3.org/html5/spec/Overview.html#htmltablesectionelement
  */
-HTMLTableSectionElement = function(ownerDocument) {
+ 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLTableSectionElement').
+		debug('HTMLTableSectionElement available');    
+});
+
+exports.HTMLTableSectionElement = HTMLTableSectionElement = function(ownerDocument) {
     HTMLElement.apply(this, arguments);
 };
 HTMLTableSectionElement.prototype = new HTMLElement();
@@ -93,3 +103,6 @@ __extend__(HTMLTableSectionElement.prototype, {
         return '[object HTMLTableSectionElement]';
     }
 });
+
+}(/*HTMLTableSectionElement*/));
+

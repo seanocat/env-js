@@ -1,13 +1,15 @@
+var QUnit 	= require('specs/qunit').QUnit,
+	module 	= require('specs/qunit').module,
+	expect 	= require('specs/qunit').expect,
+	equals 	= require('specs/qunit').equals,
+	test 	= require('specs/qunit').test,
+	ok 		= require('specs/qunit').ok;
+	
 QUnit.module('html');
 
 test('HTML Interfaces Available', function(){
 
-    if (runningUnderEnvjs()) {
-        expect(53);
-    } else {
-        expect(51);
-    }
-
+    expect(51);
     ok(HTMLDocument,            'HTMLDocument defined');
     ok(HTMLElement,             'HTMLElement defined');
     ok(HTMLCollection,          'HTMLCollection defined');
@@ -52,11 +54,12 @@ test('HTML Interfaces Available', function(){
     ok(HTMLTableElement,        'HTMLTableElement defined');
     ok(HTMLTableSectionElement, 'HTMLTableSectionElement defined');
     ok(HTMLTableCellElement,    'HTMLTableCellElement defined');
-
-    if (runningUnderEnvjs()){
+	
+	//REMOVE
+    /*if (runningUnderEnvjs()){
         ok(HTMLTableDataCellElement,    'HTMLTableDataCellElement defined');
         ok(HTMLTableHeaderCellElement,  'HTMLTableHeaderCellElement defined');
-    }
+    }*/
 
     ok(HTMLTableRowElement,     'HTMLTableRowElement defined');
     ok(HTMLTextAreaElement,     'HTMLTextAreaElement defined');
@@ -100,7 +103,7 @@ test('HTMLDocument', function(){
 test('HTMLDocument.createAttribute', function(){
 
     var doc,
-    attribute;
+    	attribute;
 
     attribute = document.createAttribute('envjs');
 
@@ -394,6 +397,7 @@ test('HTMLButtonElement', function() {
     e.value = 'foo';
     equals(e.value, 'foo', 'set value');
 });
+
 test('HTMLCanvasElement', function() {
     var element;
 
@@ -689,9 +693,9 @@ test('HTMLTableDataCellElement', function() {
     var element;
     element = document.createElement('td');
     ok(element, 'element created');
-    if (runningUnderEnvjs())
-        equals(element.toString(), '[object HTMLTableDataCellElement]',
-               'toString');
+    //if (runningUnderEnvjs())
+    //    equals(element.toString(), '[object HTMLTableDataCellElement]',
+    //          'toString');
     // don't run in-browser, FF uses HTMLTableCellElement
 });
 
@@ -699,9 +703,9 @@ test('HTMLTableHeaderCellElement', function() {
     var element;
     element = document.createElement('th');
     ok(element, 'element created');
-    if (runningUnderEnvjs())
-        equals(element.toString(), '[object HTMLTableHeaderCellElement]',
-               'toString');
+    //if (runningUnderEnvjs())
+    //    equals(element.toString(), '[object HTMLTableHeaderCellElement]',
+    //           'toString');
     // don't run in-browser, FF uses HTMLTableCellElement
 });
 

@@ -6,7 +6,17 @@
  * HTML5: 4.9.8 The tr element
  * http://dev.w3.org/html5/spec/Overview.html#the-tr-element
  */
-HTMLTableRowElement = function(ownerDocument) {
+ 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLTableRowElement').
+		debug('HTMLTableRowElement available');    
+});
+
+exports.HTMLTableRowElement = HTMLTableRowElement = function(ownerDocument) {
     HTMLElement.apply(this, arguments);
 };
 HTMLTableRowElement.prototype = new HTMLElement();
@@ -120,3 +130,5 @@ __extend__(HTMLTableRowElement.prototype, {
     }
 
 });
+
+}(/*HTMLTableRowElement*/));

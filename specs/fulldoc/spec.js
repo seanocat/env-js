@@ -1,3 +1,11 @@
+
+var QUnit 	= require('specs/qunit').QUnit,
+	module 	= require('specs/qunit').module,
+	expect 	= require('specs/qunit').expect,
+	equals 	= require('specs/qunit').equals,
+	test 	= require('specs/qunit').test,
+	ok 		= require('specs/qunit').ok;
+	
 QUnit.module('integration');
 
 /**

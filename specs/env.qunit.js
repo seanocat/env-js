@@ -1,4 +1,8 @@
-
+if(!QUnit){
+	QUnit = require('specs/qunit').QUnit;
+	quit = require('specs/qunit').quit;
+}
+		
 var _count = 1,
     _starttime = new Date().getTime(),
     _endtime,
@@ -11,7 +15,7 @@ QUnit.jsDump = {
     parse: function(thing){
         return thing+"";
     }
-}
+};
 QUnit.moduleStart = function(name, testEnvironment) {
     _module = name;
 };
@@ -25,13 +29,18 @@ QUnit.log = function(result, message){
 QUnit.done = function( fail, pass){
     if(console){
         _endtime = new Date().getTime();
-        console.log('\n\tRESULTS: ( of '+(pass+fail)+' total tests )');
+
+		try{ 
+		console.log('\n\tPLATFORM: %s', navigator.userAgent); 
+		}catch(e){}
+        console.log('\t\tRESULTS: ( of '+(pass+fail)+' total tests )');
         console.log('\t\tPASSED: ' +pass);
         console.log('\t\tFAILED: ' +fail);
         console.log('\tCompleted in '+(_endtime-_starttime)+' milliseconds.\n');
+		console.log('\n');
     }
-    if (fail > 0)
-        quit(42);
+    /*if (fail > 0)
+        quit(42);*/
 };
 QUnit.start = function(){
     _start();

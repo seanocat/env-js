@@ -4,7 +4,15 @@
  * HTML5: 12.3.3 Frames
  * http://dev.w3.org/html5/spec/Overview.html#frameset
  */
-HTMLFrameSetElement = function(ownerDocument) {
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLFrameSetElement').debug('HTMLFrameSetElement available');    
+});
+
+exports.HTMLFrameSetElement = HTMLFrameSetElement = function(ownerDocument) {
     HTMLElement.apply(this, arguments);
 };
 HTMLFrameSetElement.prototype = new HTMLElement();
@@ -25,3 +33,5 @@ __extend__(HTMLFrameSetElement.prototype, {
         return '[object HTMLFrameSetElement]';
     }
 });
+
+}(/*HTMLFrameSetElement*/));

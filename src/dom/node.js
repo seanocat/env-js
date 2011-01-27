@@ -1,8 +1,21 @@
 
 var __ownerDocument__ = function(node){
-    return (node.nodeType == Node.DOCUMENT_NODE)?node:node.ownerDocument;
-};
+        return (node.nodeType == Node.DOCUMENT_NODE)?node:node.ownerDocument;
+    },
+    __recursivelyGatherText__,
+    __isAncestor__,
+    __escapeXML__,
+    __unescapeXML__,
+    __getElementsByTagNameRecursive__,
+    __getElementsByTagNameNSRecursive__;
 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+   log = Envjs.logger('Envjs.DOM.Node').debug('available'); 
+});
 /**
  * @class  Node -
  *      The Node interface is the primary datatype for the entire
@@ -11,7 +24,7 @@ var __ownerDocument__ = function(node){
  * @param  ownerDocument : Document - The Document object associated with this node.
  */
 
-Node = function(ownerDocument) {
+exports.Node = Node = function(ownerDocument) {
     this.baseURI = 'about:blank';
     this.namespaceURI = null;
     this.nodeName = "";
@@ -42,6 +55,7 @@ Node = function(ownerDocument) {
     this._namespaces = new NamespaceNodeMap(ownerDocument, this);
     this._readonly = false;
 
+
     //IMPORTANT: These must come last so rhino will not iterate parent
     //           properties before child properties.  (qunit.equiv issue)
 
@@ -52,6 +66,10 @@ Node = function(ownerDocument) {
     this.parentNode      = null;
     // The Document object associated with this node
     this.ownerDocument = ownerDocument;
+	this._indexes_ = {
+		'ancestors'	: new NodeList(ownerDocument, this),
+		'*': new NodeList(ownerDocument, this)
+	};
 
 };
 
@@ -98,29 +116,29 @@ __extend__(Node.prototype, {
         }
     },
     hasAttributes : function() {
-        if (this.attributes.length == 0) {
-            return false;
-        }else{
-            return true;
-        }
+        return this.attributes.length ?
+            true :
+            false ;
     },
     get textContent(){
         return __recursivelyGatherText__(this);
     },
     set textContent(newText){
-        while(this.firstChild != null){
+		log.debug('setText %s', newText);
+        while(this.firstChild){
             this.removeChild( this.firstChild );
         }
         var text = this.ownerDocument.createTextNode(newText);
         this.appendChild(text);
     },
     insertBefore : function(newChild, refChild) {
+		log.debug('insert %s Before %s', newChild.nodeName, refChild.nodeName);
         var prevNode;
 
-        if(newChild==null){
+        if(!newChild){
             return newChild;
         }
-        if(refChild==null){
+        if(!refChild){
             this.appendChild(newChild);
             return this.newChild;
         }
@@ -166,7 +184,7 @@ __extend__(Node.prototype, {
             prevNode = refChild.previousSibling;
 
             // handle DocumentFragment
-            if (newChild.nodeType == Node.DOCUMENT_FRAGMENT_NODE) {
+            if (newChild.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
                 if (newChild.childNodes.length > 0) {
                     // set the parentNode of DocumentFragment's children
                     for (var ind = 0; ind < newChild.childNodes.length; ind++) {
@@ -189,7 +207,7 @@ __extend__(Node.prototype, {
             this.appendChild(newChild);
         }
 
-        if (newChild.nodeType == Node.DOCUMENT_FRAGMENT_NODE) {
+        if (newChild.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
             // do node pointer surgery for DocumentFragment
             if (newChild.childNodes.length > 0) {
                 if (prevNode) {
@@ -216,9 +234,11 @@ __extend__(Node.prototype, {
         return newChild;
     },
     replaceChild : function(newChild, oldChild) {
+	
+		log.debug('replaceChild  %s with %s', oldChild.nodeName, newChild.nodeName);
         var ret = null;
 
-        if(newChild==null || oldChild==null){
+        if(!newChild  || !oldChild ){
             return oldChild;
         }
 
@@ -302,6 +322,7 @@ __extend__(Node.prototype, {
         return ret;
     },
     removeChild : function(oldChild) {
+		log.debug('removeChild  %s from %s', oldChild.nodeName, this.nodeName);
         if(!oldChild){
             return null;
         }
@@ -342,6 +363,7 @@ __extend__(Node.prototype, {
         return oldChild;
     },
     appendChild : function(newChild) {
+		log.debug('appendChild  %s to %s', newChild.nodeName, this.nodeName);
         if(!newChild){
             return null;
         }
@@ -374,7 +396,7 @@ __extend__(Node.prototype, {
         // add newChild to childNodes
         __appendChild__(this.childNodes, newChild);
 
-        if (newChild.nodeType == Node.DOCUMENT_FRAGMENT_NODE) {
+        if (newChild.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
             // do node pointer surgery for DocumentFragment
             if (newChild.childNodes.length > 0) {
                 for (var ind = 0; ind < newChild.childNodes.length; ind++) {
@@ -392,7 +414,6 @@ __extend__(Node.prototype, {
             }
         } else {
             // do node pointer surgery for newChild
-            newChild.parentNode = this;
             if (this.lastChild) {
                 this.lastChild.nextSibling = newChild;
                 newChild.previousSibling = this.lastChild;
@@ -402,12 +423,14 @@ __extend__(Node.prototype, {
                 this.firstChild = newChild;
             }
        }
+       newChild.parentNode = this;
        return newChild;
     },
     hasChildNodes : function() {
         return (this.childNodes.length > 0);
     },
     cloneNode: function(deep) {
+		log.debug('cloneNode  %s', deep);
         // use importNode to clone this Node
         //do not throw any exceptions
         try {
@@ -419,6 +442,7 @@ __extend__(Node.prototype, {
         }
     },
     normalize : function() {
+		log.debug('normalize');
         var i;
         var inode;
         var nodesToRemove = new NodeList();
@@ -470,22 +494,31 @@ __extend__(Node.prototype, {
     getElementsByTagName : function(tagname) {
         // delegate to _getElementsByTagNameRecursive
         // recurse childNodes
-        var nodelist = new NodeList(__ownerDocument__(this));
-        for (var i = 0; i < this.childNodes.length; i++) {
-            __getElementsByTagNameRecursive__(this.childNodes.item(i),
-                                              tagname,
-                                              nodelist);
-        }
-        return nodelist;
+		log.debug('getElementsByTagName %s',tagname);
+		var normalizedName = (tagname+'').toLowerCase();
+		if(!this._indexes_[normalizedName]){
+			this._indexes_[normalizedName] = new NodeList(__ownerDocument__(this));
+		}
+        return this._indexes_[normalizedName];
     },
     getElementsByTagNameNS : function(namespaceURI, localName) {
         // delegate to _getElementsByTagNameNSRecursive
-        return __getElementsByTagNameNSRecursive__(this, namespaceURI, localName,
-            new NodeList(__ownerDocument__(this)));
+		log.debug('getElementsByTagNameNS %s %s',namespaceURI, localName);
+        var nodelist = new NodeList(__ownerDocument__(this));
+        for (var i = 0; i < this.childNodes.length; i++) {
+            __getElementsByTagNameNSRecursive__(
+				this.childNodes.item(i),
+				namespaceURI, 
+				localName,
+                nodelist
+			);
+        }
+        return nodelist;
     },
     importNode : function(importedNode, deep) {
-        var i;
-        var importNode;
+		log.debug('importNode %s %s', importedNode.nodeName, deep);
+        var i,
+			importNode;
 
         //there is no need to perform namespace checks since everything has already gone through them
         //in order to have gotten into the DOM in the first place. The following line
@@ -571,13 +604,14 @@ __extend__(Node.prototype, {
 
     },
     contains : function(node){
+        log.debug("this %s contains %s ?", this.nodeName, node.nodeName);
         while(node && node != this ){
             node = node.parentNode;
         }
         return !!node;
     },
     compareDocumentPosition : function(b){
-        //console.log("comparing document position %s %s", this, b);
+        log.debug("compareDocumentPosition of this %s to %s", this.nodeName, b.nodeName);
         var i,
             length,
             a = this,
@@ -655,6 +689,8 @@ __extend__(Node.prototype, {
 });
 
 
+}(/*Envjs.DOM.Node*/));
+
 
 /**
  * @method __getElementsByTagNameRecursive__ - implements getElementsByTagName()
@@ -664,7 +700,7 @@ __extend__(Node.prototype, {
  *
  * @return : NodeList
  */
-var __getElementsByTagNameRecursive__ = function (elem, tagname, nodeList) {
+__getElementsByTagNameRecursive__ = function (elem, tagname, nodeList) {
 
     if (elem.nodeType == Node.ELEMENT_NODE || elem.nodeType == Node.DOCUMENT_NODE) {
 
@@ -695,7 +731,7 @@ var __getElementsByTagNameRecursive__ = function (elem, tagname, nodeList) {
  *
  * @return : NodeList
  */
-var __getElementsByTagNameNSRecursive__ = function(elem, namespaceURI, localName, nodeList) {
+__getElementsByTagNameNSRecursive__ = function(elem, namespaceURI, localName, nodeList) {
     if (elem.nodeType == Node.ELEMENT_NODE || elem.nodeType == Node.DOCUMENT_NODE) {
 
         if (((elem.namespaceURI == namespaceURI) || (namespaceURI == "*")) &&
@@ -720,7 +756,7 @@ var __getElementsByTagNameNSRecursive__ = function(elem, namespaceURI, localName
  * @param  node         : Node - The candidate ancestor node
  * @return : boolean
  */
-var __isAncestor__ = function(target, node) {
+__isAncestor__ = function(target, node) {
     // if this node matches, return true,
     // otherwise recurse up (if there is a parentNode)
     return ((target == node) || ((target.parentNode) && (__isAncestor__(target.parentNode, node))));
@@ -728,16 +764,17 @@ var __isAncestor__ = function(target, node) {
 
 
 
-var __recursivelyGatherText__ = function(aNode) {
+__recursivelyGatherText__ = function(aNode) {
     var accumulateText = "",
         idx,
         node;
     for (idx=0;idx < aNode.childNodes.length;idx++){
         node = aNode.childNodes.item(idx);
-        if(node.nodeType == Node.TEXT_NODE)
+        if(node.nodeType == Node.TEXT_NODE){
             accumulateText += node.data;
-        else
+        }else{
             accumulateText += __recursivelyGatherText__(node);
+        }
     }
     return accumulateText;
 };
@@ -752,8 +789,7 @@ var escLtRegEx = /</g;
 var escGtRegEx = />/g;
 var quotRegEx = /"/g;
 var aposRegEx = /'/g;
-
-function __escapeXML__(str) {
+__escapeXML__ = function(str) {
     str = str.replace(escAmpRegEx, "&amp;").
             replace(escLtRegEx, "&lt;").
             replace(escGtRegEx, "&gt;").
@@ -762,25 +798,6 @@ function __escapeXML__(str) {
 
     return str;
 };
-
-/*
-function __escapeHTML5__(str) {
-    str = str.replace(escAmpRegEx, "&amp;").
-            replace(escLtRegEx, "&lt;").
-            replace(escGtRegEx, "&gt;");
-
-    return str;
-};
-function __escapeHTML5Atribute__(str) {
-    str = str.replace(escAmpRegEx, "&amp;").
-            replace(escLtRegEx, "&lt;").
-            replace(escGtRegEx, "&gt;").
-            replace(quotRegEx, "&quot;").
-            replace(aposRegEx, "&apos;");
-
-    return str;
-};
-*/
 
 /**
  * function __unescapeXML__
@@ -792,7 +809,7 @@ var unescLtRegEx = /&lt;/g;
 var unescGtRegEx = /&gt;/g;
 var unquotRegEx = /&quot;/g;
 var unaposRegEx = /&apos;/g;
-function __unescapeXML__(str) {
+__unescapeXML__ = function(str) {
     str = str.replace(unescAmpRegEx, "&").
             replace(unescLtRegEx, "<").
             replace(unescGtRegEx, ">").

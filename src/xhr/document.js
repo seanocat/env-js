@@ -1,7 +1,15 @@
 
 /**
- * @todo: document
+ * These functions require network IO provided by XMLHttpRequest
  */
+(function(){
+	
+var log = Envjs.logger();	
+Envjs.once('tick', function(){
+	log = Envjs.logger('Envjs.DOM.Document').
+		info('doc logger available');
+});
+
 __extend__(Document.prototype,{
     load: function(url){
         if(this.documentURI == 'about:html'){
@@ -21,3 +29,5 @@ __extend__(Document.prototype,{
         this.ownerWindow.location = url;
     }
 });
+
+}(/*Document/Location Mixin*/));

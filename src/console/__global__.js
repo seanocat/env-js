@@ -1,6 +1,7 @@
 
 /**
  * @author envjs team
+ * @Console
  */
-var Console,
-    console;
+
+var Envjs = Envjs || require('envjs/platform/core').Envjs;

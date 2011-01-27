@@ -53,7 +53,9 @@ java \
 #    -draftCompile \
 echo "----"
 echo "COPY to envjs src tree"
-cp war/nu.validator.htmlparser.HtmlParser/nu.validator.htmlparser.HtmlParser.nocache.js ../../src/parser/htmlparser.js
+cp \
+	war/nu.validator.htmlparser.HtmlParser/nu.validator.htmlparser.HtmlParser.nocache.js \
+	../../src/parser/generated.js
 
 #
 # On innerhtml and some document-writes,some problems occurs when the
@@ -61,6 +63,6 @@ cp war/nu.validator.htmlparser.HtmlParser/nu.validator.htmlparser.HtmlParser.noc
 # the parser from dying and throwing an exception.
 #
 echo "PATCHING"
-patch ../../src/parser/htmlparser.js patch1.diff
+patch ../../src/parser/generated.js patch1.diff
 echo "DONE"
 

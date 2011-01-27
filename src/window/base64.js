@@ -51,7 +51,7 @@ base64.ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/
 
 base64.makeDOMException = function() {
     // sadly in FF,Safari,Chrome you can't make a DOMException
-    var e, tmp;
+    var e;
 
     try {
         return new DOMException(DOMException.INVALID_CHARACTER_ERR);

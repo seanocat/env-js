@@ -3,7 +3,17 @@
  * HTMLSelectElement
  * HTML5: http://dev.w3.org/html5/spec/Overview.html#the-select-element
  */
-HTMLSelectElement = function(ownerDocument) {
+ 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLSelectElement').
+		debug('HTMLSelectElement available');    
+});
+
+exports.HTMLSelectElement = HTMLSelectElement = function(ownerDocument) {
     HTMLTypeValueInputs.apply(this, arguments);
     this._oldIndex = -1;
 };
@@ -45,7 +55,7 @@ __extend__(HTMLSelectElement.prototype, {
     // Returns HTMLOptionsCollection
     get options() {
         var nodes = this.getElementsByTagName('option');
-        var alist = [];
+        var alist = new NodeList();
         var i, tmp;
         for (i = 0; i < nodes.length; ++i) {
             alist.push(nodes[i]);
@@ -101,7 +111,7 @@ __extend__(HTMLSelectElement.prototype, {
         //__add__(this);
     },
     remove: function() {
-        __remove__(this);
+        //__remove__(this);
     },
     toString: function() {
         return '[object HTMLSelectElement]';
@@ -109,5 +119,6 @@ __extend__(HTMLSelectElement.prototype, {
 });
 
 // Named Element Support
-HTMLElement.registerSetAttribute('SELECT', 'name',
-                                 __updateFormForNamedElement__);
+HTMLElement.registerSetAttribute('SELECT', 'name', __updateFormForNamedElement__);
+
+}(/*HTMLSelectElement*/));

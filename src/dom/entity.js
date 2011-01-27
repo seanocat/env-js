@@ -1,9 +1,16 @@
 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+   log = Envjs.logger('Envjs.DOM.Entity').debug('available'); 
+});
 /**
  * @author envjs team
  */
 
-Entity = function() {
+exports.Entity = Entity = function() {
     throw new Error("Entity Not Implemented" );
 };
 
@@ -267,3 +274,6 @@ Entity.constants = {
     // non-standard entities
     apos: "'"
 };
+
+
+}(/*Envjs.DOM.Entity*/));

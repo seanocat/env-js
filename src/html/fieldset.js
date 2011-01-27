@@ -5,7 +5,17 @@
  * HTML5: 4.10.2 The fieldset element
  * http://dev.w3.org/html5/spec/Overview.html#the-fieldset-element
  */
-HTMLFieldSetElement = function(ownerDocument) {
+ 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLFieldSetElement').
+		debug('HTMLFieldSetElement available');    
+});
+
+exports.HTMLFieldSetElement = HTMLFieldSetElement = function(ownerDocument) {
     HTMLLegendElement.apply(this, arguments);
 };
 HTMLFieldSetElement.prototype = new HTMLLegendElement();
@@ -23,3 +33,5 @@ __extend__(HTMLFieldSetElement.prototype, {
 
 // Named Element Support
 HTMLElement.registerSetAttribute('FIELDSET', 'name', __updateFormForNamedElement__);
+
+}(/*HTMLFieldSetElement*/));

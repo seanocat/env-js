@@ -1,4 +1,11 @@
 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+   log = Envjs.logger('Envjs.DOM.CDATASection').debug('available'); 
+});
 /**
  * @class CDATASection 
  *      CDATA sections are used to escape blocks of text containing 
@@ -8,7 +15,7 @@
  * @extends Text
  * @param  ownerDocument : The Document object associated with this node.
  */
-CDATASection = function(ownerDocument) {
+exports.CDATASection = CDATASection = function(ownerDocument) {
     Text.apply(this, arguments);
     this.nodeName = '#cdata-section';
 };
@@ -24,3 +31,5 @@ __extend__(CDATASection.prototype,{
         return "[object CDATASection]";
     }
 });
+
+}(/*Envjs.DOM.CDATASection*/));

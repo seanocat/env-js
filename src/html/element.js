@@ -4,6 +4,15 @@
  */
 
 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLElement').
+		debug('HTMLElement available');    
+});
+
 /* Hack for http://www.prototypejs.org/
  *
  * Prototype 1.6 (the library) creates a new global Element, which causes
@@ -35,7 +44,7 @@
  */
 var  __DOMElement__ = Element;
 
-HTMLElement = function(ownerDocument) {
+exports.HTMLElement = HTMLElement = function(ownerDocument) {
     __DOMElement__.apply(this, arguments);
 };
 
@@ -178,8 +187,9 @@ __extend__(HTMLElement.prototype, {
         }
 		if(!style ){
 			style = this.getAttribute('style');
-			if(style)
+			if(style){
 				attrstring += ' style="'+style+'"';
+			}
 		}
 
         if(this.hasChildNodes()){
@@ -187,7 +197,7 @@ __extend__(HTMLElement.prototype, {
 	        //console.log('serializing childNodes for %s', name);
             ret += "<" + name + ns + attrstring +">";
             for(i=0;i< this.childNodes.length;i++){
-                console.debug('xhtml for '+ this);
+                //console.debug('xhtml for '+ this);
                 ret += 'xhtml' in this.childNodes[i] ?
                     this.childNodes[i].xhtml :
                     this.childNodes[i].xml;
@@ -241,7 +251,7 @@ __extend__(HTMLElement.prototype, {
         var tagname = this.tagName;
         var callback = HTMLElement.getAttributeCallback('set', tagname, newnode.name);
         if (callback) {
-            callback(this, node.value);
+            callback(this, newnode.value);
         }
         return result;
     },
@@ -251,7 +261,7 @@ __extend__(HTMLElement.prototype, {
         var tagname = this.tagName;
         var callback = HTMLElement.getAttributeCallback('set', tagname, newnode.name);
         if (callback) {
-            callback(this, node.value);
+            callback(this, newnode.value);
         }
         return result;
     },
@@ -265,7 +275,7 @@ __extend__(HTMLElement.prototype, {
     },
     removeAttributeNode: function(name) {
         __removeNamedMap__(this.ownerDocument, this);
-        return __DOMElement__.prototype.removeAttribute.apply(this, arguments);
+        return __DOMElement__.prototype.removeAttributeNode.apply(this, arguments);
     },
     removeChild: function(oldChild) {
         __removeNamedMap__(this.ownerDocument, oldChild);
@@ -302,3 +312,5 @@ HTMLElement.registerRemoveAttribute = function(tag, attrib, callbackfn) {
 HTMLElement.getAttributeCallback = function(type, tag, attrib) {
     return HTMLElement.attributeCallbacks[tag + ':' + type + ':' + attrib] || null;
 };
+
+}(/*HTMLElement*/));

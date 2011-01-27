@@ -2,10 +2,20 @@
 /*
  * HTMLLinkElement - DOM Level 2
  *
- * HTML5: 4.8.12 The map element
- * http://dev.w3.org/html5/spec/Overview.html#the-map-element
+ * HTML5: 4.8.12 The link element
+ * http://dev.w3.org/html5/spec/Overview.html#the-link-element
  */
-HTMLLinkElement = function(ownerDocument) {
+ 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLLinkElement').
+		debug('HTMLLinkElement available');    
+});
+
+exports.HTMLLinkElement = HTMLLinkElement = function(ownerDocument) {
     HTMLElement.apply(this, arguments);
 };
 HTMLLinkElement.prototype = new HTMLElement();
@@ -69,46 +79,13 @@ __extend__(HTMLLinkElement.prototype, {
     }
 });
 
-__loadLink__ = function(node, value) {
-    var event;
-    var owner = node.ownerDocument;
+}(/*HTMLLinkElement*/));
 
-    if (owner.fragment) {
-        /**
-         * if we are in an innerHTML fragment parsing step
-         * then ignore.  It will be handled once the fragment is
-         * added to the real doco
-         */
-        return;
-    }
 
-    if (node.parentNode === null) {
-        /*
-         * if a <link> is parentless (normally by create a new link
-         * via document.createElement('link'), then do *not* fire an
-         * event, even if it has a valid 'href' attribute.
-         */
-        return;
-    }
-    if (value != '' && (!Envjs.loadLink ||
-                        (Envjs.loadLink &&
-                         Envjs.loadLink(node, value)))) {
-        // value has to be something (easy)
-        // if the user-land API doesn't exist
-        // Or if the API exists and it returns true, then ok:
-        event = document.createEvent('Events');
-        event.initEvent('load');
-    } else {
-        // oops
-        event = document.createEvent('Events');
-        event.initEvent('error');
-    }
-    node.dispatchEvent(event, false);
-};
 
 
 HTMLElement.registerSetAttribute('LINK', 'href', function(node, value) {
-    __loadLink__(node, value);
+    Envjs.loadLink(node, value);
 });
 
 /**
@@ -117,5 +94,5 @@ HTMLElement.registerSetAttribute('LINK', 'href', function(node, value) {
 __extend__(HTMLLinkElement.prototype, {
     onload: function(event){
         __eval__(this.getAttribute('onload')||'', this);
-    },
+    }
 });

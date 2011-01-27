@@ -6,7 +6,17 @@
  * HTML5: 4.9.1 The table element
  * http://dev.w3.org/html5/spec/Overview.html#the-table-element
  */
-HTMLTableElement = function(ownerDocument) {
+ 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLTableElement').
+		debug('HTMLTableElement available');    
+});
+
+exports.HTMLTableElement = HTMLTableElement = function(ownerDocument) {
     HTMLElement.apply(this, arguments);
 };
 HTMLTableElement.prototype = new HTMLElement();
@@ -195,3 +205,5 @@ __extend__(HTMLTableElement.prototype, {
         return '[object HTMLTableElement]';
     }
 });
+
+}(/*HTMLTableElement*/));

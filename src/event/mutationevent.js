@@ -15,7 +15,7 @@ var __fireMutationEvents__ = Aspect.before({
             method:"removeChild"
         }, function(invocation){
             var event,
-                node = invocation.arguments[0];
+                node = invocation['arguments'][0];
             event = node.ownerDocument.createEvent('MutationEvents');
             event.initEvent('DOMNodeRemoved', true, false, node.parentNode, null, null, null, null);
             node.dispatchEvent(event, false);
@@ -36,11 +36,19 @@ var __fireMutationEvents__ = Aspect.before({
     }
 });
 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+   log = Envjs.logger('Envjs.DOM2.MutationEvent').debug('available'); 
+});
+
 /**
  * @name MutationEvent
  * @param {Object} options
  */
-MutationEvent = function(options) {
+exports.MutationEvent = MutationEvent = function(options) {
     this._cancelable = false;
     this._timeStamp = 0;
 };
@@ -101,4 +109,6 @@ __extend__(MutationEvent.prototype,{
 MutationEvent.ADDITION = 0;
 MutationEvent.MODIFICATION = 1;
 MutationEvent.REMOVAL = 2;
+
+}(/*Envjs.DOM2.MutationEvent*/));
 

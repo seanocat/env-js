@@ -1,4 +1,13 @@
-/*
+
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+   log = Envjs.logger('Envjs.DOM.Document').debug('available'); 
+});
+
+/**
  * Interface DocumentStyle (introduced in DOM Level 2)
  * http://www.w3.org/TR/2000/REC-DOM-Level-2-Style-20001113/stylesheets.html#StyleSheets-StyleSheet-DocumentStyle
  *
@@ -7,6 +16,7 @@
  * };
  *
  */
+
 __extend__(Document.prototype, {
     get styleSheets() {
         if (! this._styleSheets) {
@@ -15,3 +25,5 @@ __extend__(Document.prototype, {
         return this._styleSheets;
     }
 });
+
+}(/*Envjs.DOM.Document*/));

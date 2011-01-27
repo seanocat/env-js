@@ -6,17 +6,17 @@
  */
 
 var __eval__ = function(script, node){
-    if (!script == "" && Envjs.scriptTypes['']){
+    if (script !== "" && Envjs.scriptTypes['']){
         // don't assemble environment if no script...
         try{
-            Envjs.eval(node.ownerDocument.ownerWindow, script, script+" ("+node+")");
+            Envjs['eval'](node.ownerDocument.ownerWindow, script, script+" ("+node+")");
         }catch(e){
             console.log('error evaluating %s', e);
         }
     }
 };
 
-var HTMLEvents= function(){};
+var HTMLEvents = function(){};
 HTMLEvents.prototype = {
     onload: function(event){
         __eval__(this.getAttribute('onload')||'', this);

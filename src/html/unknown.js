@@ -2,7 +2,17 @@
 /**
  * HTMLUnknownElement DOM Level 2
  */
-HTMLUnknownElement = function(ownerDocument) {
+ 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLUnknownElement').
+		debug('HTMLUnknownElement available');    
+});
+
+exports.HTMLUnknownElement = HTMLUnknownElement = function(ownerDocument) {
     HTMLElement.apply(this, arguments);
 };
 HTMLUnknownElement.prototype = new HTMLElement();
@@ -11,3 +21,5 @@ __extend__(HTMLUnknownElement.prototype,{
         return '[object HTMLUnknownElement]';
     }
 });
+
+}(/*HTMLUnknownElement*/));

@@ -1,9 +1,17 @@
 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+   log = Envjs.logger('Envjs.DOM3.UIEvent').debug('available'); 
+});
+
 /**
  * @name UIEvent
  * @param {Object} options
  */
-UIEvent = function(options) {
+exports.UIEvent = UIEvent = function(options) {
     this._view = null;
     this._detail = 0;
 };
@@ -23,7 +31,4 @@ __extend__(UIEvent.prototype,{
     }
 });
 
-var $onblur,
-    $onfocus,
-    $onresize;
-
+}(/*Envjs.DOM3.UIEvent*/));

@@ -12,10 +12,18 @@
  * Safari (4) does NOT.
  */
 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+   log = Envjs.logger('Envjs.DOM2.DocumentEvent').debug('available'); 
+});
+
 /**
  * TODO: Not sure we need a full prototype.  We not just an regular object?
  */
-DocumentEvent = function(){};
+exports.DocumentEvent = DocumentEvent = function(){};
 DocumentEvent.prototype.__EventMap__ = {
     // Safari4: singular and plural forms accepted
     // Firefox3.6: singular and plural forms accepted
@@ -53,3 +61,6 @@ DocumentEvent.prototype.createEvent = function(eventType) {
 };
 
 __extend__(Document.prototype, DocumentEvent.prototype);
+
+
+}(/*Envjs.DOM2.DocumentEvent*/));

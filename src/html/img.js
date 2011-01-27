@@ -3,8 +3,15 @@
  * HTMLImageElement and Image
  */
 
+(function(){
+    
+var log = Envjs.logger();
 
-HTMLImageElement = function(ownerDocument) {
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLImageElement').debug('HTMLImageElement available');    
+});
+
+exports.HTMLImageElement = HTMLImageElement = function(ownerDocument) {
     HTMLElement.apply(this, arguments);
 };
 HTMLImageElement.prototype = new HTMLElement();
@@ -60,7 +67,7 @@ __extend__(HTMLImageElement.prototype, {
  * html5 4.8.1
  * http://dev.w3.org/html5/spec/Overview.html#the-img-element
  */
-Image = function(width, height) {
+exports.Image = Image = function(width, height) {
     // Not sure if "[global].document" satifies this requirement:
     // "The element's document must be the active document of the
     // browsing context of the Window object on which the interface
@@ -98,23 +105,6 @@ Image.prototype = new HTMLImageElement();
  *  and dispatches to a user-callback.
  *
  */
-__loadImage__ = function(node, value) {
-    var event;
-    if (value && (!Envjs.loadImage ||
-                  (Envjs.loadImage &&
-                   Envjs.loadImage(node, value)))) {
-        // value has to be something (easy)
-        // if the user-land API doesn't exist
-        // Or if the API exists and it returns true, then ok:
-        event = document.createEvent('Events');
-        event.initEvent('load');
-    } else {
-        // oops
-        event = document.createEvent('Events');
-        event.initEvent('error');
-    }
-    node.dispatchEvent(event, false);
-};
 
 __extend__(HTMLImageElement.prototype, {
     onload: function(event){
@@ -134,7 +124,7 @@ __extend__(HTMLImageElement.prototype, {
  *
  *   For images, __elementPopped__ is called with everything the
  *    tag has.  which in turn looks for a "src" attr and calls
- *    __loadImage__
+ *    Envjs.loadImage
  *
  * If owner.parser === false (or non-existant), then we are not in
  * a parsing step.  For images, perhaps someone directly modified
@@ -158,6 +148,8 @@ __extend__(HTMLImageElement.prototype, {
 HTMLElement.registerSetAttribute('IMG', 'src', function(node, value) {
     var owner = node.ownerDocument;
     if (!owner.parsing && !owner.fragment) {
-        __loadImage__(node, value);
+        Envjs.loadImage(node, value);
     }
 });
+
+}(/*HTMLImageElement*/));

@@ -1,11 +1,18 @@
 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+   log = Envjs.logger('Envjs.DOM.DocumentFragment').debug('available'); 
+});
 /**
  * @class  DocumentFragment -
  *      DocumentFragment is a "lightweight" or "minimal" Document object.
  * @extends Node
  * @param  ownerDocument :  The Document object associated with this node.
  */
-DocumentFragment = function(ownerDocument) {
+exports.DocumentFragment = DocumentFragment =function(ownerDocument) {
     Node.apply(this, arguments);
     this.nodeName  = "#document-fragment";
 };
@@ -32,4 +39,7 @@ __extend__(DocumentFragment.prototype,{
         return null;
     }
 });
+
+}(/*Envjs.DOM.DocumentFragment*/));
+
 

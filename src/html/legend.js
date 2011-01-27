@@ -5,7 +5,17 @@
  * HTML5: 4.10.3 The legend element
  * http://dev.w3.org/html5/spec/Overview.html#the-legend-element
  */
-HTMLLegendElement = function(ownerDocument) {
+ 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLLegendElement').
+		debug('HTMLLegendElement available');    
+});
+
+exports.HTMLLegendElement = HTMLLegendElement = function(ownerDocument) {
     HTMLInputCommon.apply(this, arguments);
 };
 HTMLLegendElement.prototype = new HTMLInputCommon();
@@ -18,3 +28,4 @@ __extend__(HTMLLegendElement.prototype, {
     }
 });
 
+}(/*HTMLLegendElement*/));

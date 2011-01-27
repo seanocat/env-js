@@ -1,4 +1,13 @@
 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.DOM.Document').
+		debug('Document.loadXML available');    
+});
+
 /**
  * @name Document
  * @w3c:domlevel 2 
@@ -8,10 +17,6 @@ __extend__(Document.prototype, {
     loadXML : function(xmlString) {
         //console.log('Parser::Document.loadXML');
         // create Document
-        if(this === document){
-            //$debug("Setting internal window.document");
-            document = this;
-        }
         // populate Document
         try {
             // make sure this document object is empty before we try to load ...
@@ -20,11 +25,12 @@ __extend__(Document.prototype, {
             this._readonly = false;
 
             XMLParser.parseDocument(xmlString, this);
-            
-            Envjs.wait(-1);
+           
         } catch (e) {
-            //$error(e);
+            log.error(e);
         }
         return this;
     }
 });
+
+})(/*Envjs.DOM.Document*/);

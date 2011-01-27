@@ -1,7 +1,16 @@
+
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+   log = Envjs.logger('Envjs.DOM2.Event').debug('available'); 
+});
+
 /**
  * @class Event
  */
-Event = function(options){
+exports.Event = Event = function(options){
     // event state is kept read-only by forcing
     // a new object for each event.  This may not
     // be appropriate in the long run and we'll
@@ -56,5 +65,7 @@ __extend__(Event,{
     AT_TARGET       : 2,
     BUBBLING_PHASE  : 3
 });
+
+}(/*Envjs.DOM2.Event*/));
 
 

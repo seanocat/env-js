@@ -9,11 +9,14 @@
  * Steven Parkes
  * 
  * requires Envjs.wait, Envjs.sleep, Envjs.WAIT_INTERVAL
- */
+
+This module leaks the following global definitions. 
+
 var setTimeout,
     clearTimeout,
     setInterval,
     clearInterval;
 
+ */ 
 
-    
+var Envjs = require('envjs/platform/core').Envjs;

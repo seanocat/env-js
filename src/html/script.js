@@ -5,7 +5,17 @@
  * HTML5: 4.3.1 The script element
  * http://dev.w3.org/html5/spec/Overview.html#script
  */
-HTMLScriptElement = function(ownerDocument) {
+ 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLScriptElement').
+		debug('HTMLScriptElement available');    
+});
+
+exports.HTMLScriptElement = HTMLScriptElement = function(ownerDocument) {
     HTMLElement.apply(this, arguments);
 };
 HTMLScriptElement.prototype = new HTMLElement();
@@ -112,3 +122,4 @@ __extend__(HTMLScriptElement.prototype, {
     }
 });
 
+}(/*HTMLScriptElement*/));

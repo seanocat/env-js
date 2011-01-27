@@ -1,10 +1,17 @@
 
 /*
- *       history.js
+ *  TODO: Document the History object via HTML5 spec
  *
  */
+(function(){
 
-History = function(owner) {
+var log = Envjs.logger();
+Envjs.once('tick', function(){
+	log = Envjs.logger('Envjs.Window.History').
+		debug('history logger available');
+});
+
+exports.History = History = function(owner) {
     var $current = 0,
         $history = [null],
         $owner = owner;
@@ -77,5 +84,7 @@ History = function(owner) {
                 });
             }
         }
-    }; /* closes 'return {' */
+    }; 
 };
+
+}(/*History*/));

@@ -5,7 +5,17 @@
  * HTML5: 4.6.1 The a element
  * http://dev.w3.org/html5/spec/Overview.html#the-a-element
  */
-HTMLAnchorElement = function(ownerDocument) {
+ 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLAnchorElement').
+		debug('HTMLAnchorElement available');    
+});
+
+exports.HTMLAnchorElement = HTMLAnchorElement = function(ownerDocument) {
     HTMLElement.apply(this, arguments);
 };
 HTMLAnchorElement.prototype = new HTMLElement();
@@ -96,3 +106,5 @@ __extend__(HTMLAnchorElement.prototype, {
         return this.href;
     }
 });
+
+}(/*Envjs.HTML.HTMLAnchorElement*/));

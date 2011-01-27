@@ -5,7 +5,17 @@
  * HTML5: 4.2.3 The base element
  * http://dev.w3.org/html5/spec/Overview.html#the-base-element
  */
-HTMLBaseElement = function(ownerDocument) {
+
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLBaseElement').
+		debug('HTMLBaseElement available');    
+});
+
+exports.HTMLBaseElement = HTMLBaseElement = function(ownerDocument) {
     HTMLElement.apply(this, arguments);
 };
 HTMLBaseElement.prototype = new HTMLElement();
@@ -27,3 +37,4 @@ __extend__(HTMLBaseElement.prototype, {
     }
 });
 
+}(/*Envjs.HTML.HTMLBaseElement*/));

@@ -1,4 +1,11 @@
 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+   log = Envjs.logger('Envjs.DOM.ProcessingInstruction').debug('available'); 
+});
 /**
  * @class  ProcessingInstruction -
  *      The ProcessingInstruction interface represents a
@@ -9,7 +16,7 @@
  * @author Jon van Noort (jon@webarcana.com.au)
  * @param  ownerDocument :  The Document object associated with this node.
  */
-ProcessingInstruction = function(ownerDocument) {
+exports.ProcessingInstruction = ProcessingInstruction = function(ownerDocument) {
     Node.apply(this, arguments);
 };
 ProcessingInstruction.prototype = new Node();
@@ -52,4 +59,7 @@ __extend__(ProcessingInstruction.prototype, {
         return "[object ProcessingInstruction]";
     }
 });
+
+}(/*Envjs.DOM.ProcessingInstruction*/));
+
 

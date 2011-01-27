@@ -1,144 +1,200 @@
+(function(){
 /**
- * TODO: used in ./event/eventtarget.js
+ *  The main event loop is unrelated to html/dom events
+ */
+var log;
+
+var eventListeners = {
+        newListener:[],
+        tick:[],
+        exit:[]
+    },
+    eventQueue = [];
+    
+Envjs.eventLoop = Envjs.eventLoop || function(){
+    log = log||Envjs.logger('Envjs.Core');
+    while(true) {
+        Envjs.tick();
+    }
+};
+
+Envjs.on = function(event, callback){
+    if(!(event in eventListeners)){
+        eventListeners[event] = [];
+    }
+    eventListeners[event].push(callback);
+};
+
+Envjs.once = function(event, callback){
+    var once = function(){
+        Envjs.removeListener(event, once);
+        callback.apply(callback, arguments);
+    };
+    Envjs.on(event, once);
+};
+
+Envjs.removeListener = function(event, callback){
+    if(!(event in eventListeners)){
+        return;
+    }
+    var index = eventListeners[event].indexOf(callback);
+    if(index > -1){
+        eventListeners[event].splice(index, 1);
+    }
+};
+
+Envjs.removeAllListeners = function(event){
+    eventListeners[event] = [];
+};
+
+Envjs.listeners = function(event){
+    return (event in eventListeners) ?
+        eventListeners[event] : [];
+};
+
+Envjs.emit = function(event /*, arg1, arg2, etc*/ ){
+    eventQueue.push({event:event, args:arguments});
+};
+
+setTimeout  = require('envjs/timer').setTimeout;
+
+var $warming = 3;
+
+Envjs.tick = function(){
+    var y, next, fn, arg, file; 
+    log = log||Envjs.logger('Envjs.Core');
+    
+    log.debug('go through %s events', eventQueue.length);
+    next = eventQueue.shift();
+    while( next ){
+        
+        log.debug('next event %s', next.event);
+        if(next.event in eventListeners){
+
+            if('exit' === next.event){
+                log.info('exiting');
+                Envjs.exit();
+            }
+            for(y = 0; y < eventListeners[next.event].length; y++){
+                log.debug('event %s %s', y, next.event);
+                fn = eventListeners[next.event][y];
+                fn.apply(fn, next.args);
+            }
+        }
+        next = eventQueue.shift();
+    }
+    if(!$warming && Envjs.argv && Envjs.argv.length){
+        
+        log.debug('parsing args %s',  Envjs.argv);
+        arg = Envjs.argv.shift();
+        if(arg && typeof(arg) == 'string'){
+            file = arg;
+            log.debug('will load file %s next', file);
+            setTimeout(function(){
+                log.debug('loading script %s', file);
+                Envjs['eval'](__this__, Envjs.readFromFile(file), file, !$warming);
+            },1);
+        }
+
+    }else if($warming === 0 && Envjs.argv.length === 0){
+        $warming = false;
+        //prevents repl from being opened twice
+        //Envjs.repl();
+    }else if($warming){  
+        log.debug('warming');
+        $warming--;
+    }
+    
+    if($warming === false && !eventQueue.length && !Envjs.connections.length && !Envjs.timers.length ){
+        log.debug('ready to exit warming %s eventQueue %s connections %s timers %s',
+            $warming,
+            eventQueue.length,
+            Envjs.connections.length,
+            Envjs.timers.length
+        );  
+        log.info('event loop is passive, exiting');
+        Envjs.emit('exit');
+    }
+        
+    Envjs.emit('tick', Date.now());
+    Envjs.sleep(4);
+};
+
+
+/**
+ * Used in ./event/eventtarget.js  These are DOM related events
  * @param {Object} event
  */
 Envjs.defaultEventBehaviors = {
-	'submit': function(event) {
+    'submit': function(event) {
         var target = event.target,
-			serialized,
-		    method,
-		    action;
+            serialized,
+            method,
+            action;
         while (target && target.nodeName !== 'FORM') {
             target = target.parentNode;
         }
         if (target && target.nodeName === 'FORM') {
             serialized = Envjs.serializeForm(target);
-			//console.log('serialized %s', serialized);
-		    method = target.method?target.method.toUpperCase():"GET";
-			
-		    action = Envjs.uri(
-		        target.action !== ""?target.action:target.ownerDocument.baseURI,
-		        target.ownerDocument.baseURI
-		    );
-			if(method=='GET' && !action.match(/^file:/)){
-				action = action + "?" + serialized;
-			}
-			//console.log('replacing document with form submission %s', action);
-			target.ownerDocument.location.replace(
-				action, method, serialized
-			);
+            //console.log('serialized %s', serialized);
+            method = target.method?target.method.toUpperCase():"GET";
+            
+            action = Envjs.uri(
+                target.action !== ""?target.action:target.ownerDocument.baseURI,
+                target.ownerDocument.baseURI
+            );
+            if(method=='GET' && !action.match(/^file:/)){
+                action = action + "?" + serialized;
+            }
+            //console.log('replacing document with form submission %s', action);
+            target.ownerDocument.location.replace(
+                action, method, serialized
+            );
         }
     },
     
     'click': function(event) {
-		//console.log("handling default behavior for click %s", event.target);
+        //console.log("handling default behavior for click %s", event.target);
         var target = event.target,
-			url,
-			form,
-			inputs;
+            url,
+            form,
+            inputs;
         while (target && target.nodeName !== 'A' && target.nodeName !== 'INPUT') {
             target = target.parentNode;
         }
         if (target && target.nodeName === 'A') {
-			//console.log('target is a link');
+            //console.log('target is a link');
             if(target.href && !target.href.match(/^#/)){
-			    url = Envjs.uri(target.href, target.ownerDocument.baseURI);
-				target.ownerDocument.location.replace(url);
+                url = Envjs.uri(target.href, target.ownerDocument.baseURI);
+                target.ownerDocument.location.replace(url);
             }
-        }else if (target && target.nodeName === 'INPUT') {
+        }else if (target && target.nodeName === 'INPUT') {  
+            //console.log('input %s', target.xml);
             if(target.type.toLowerCase() === 'submit'){
-				if(!target.value){
-					target.value = 'submit';
-				}
-				//console.log('submit click %s %s', target.name, target.value);
-				form = target.parentNode;
-			    while (form && form.nodeName !== 'FORM' ) {
-		            form = form.parentNode;
-		        }
-				if(form && form.nodeName === 'FORM'){
-					//disable other submit buttons before serializing
-					inputs = form.getElementsByTagName('input');
-					for(var i=0;i<inputs.length;i++){
-						if(inputs[i].type == 'submit' && inputs[i]!=target){
-							//console.log('disabling the non-relevant submit button %s', inputs[i].value);
-							inputs[i].disabled = true;
-							inputs[i].value = null;
-						}
-					}
-					form.submit();
-				}
+                if(!target.value){
+                    target.value = 'submit';
+                }
+                //console.log('submit click %s %s', target.name, target.value);
+                form = target.parentNode;
+                while (form && form.nodeName !== 'FORM' ) {
+                    form = form.parentNode;
+                }
+                if(form && form.nodeName === 'FORM'){
+                    //disable other submit buttons before serializing
+                    inputs = form.getElementsByTagName('input');
+                    for(var i=0;i<inputs.length;i++){
+                        //console.log('checking for non-relevant submit buttons %s', inputs[i].name);
+                        if(inputs[i].type == 'submit' && inputs[i]!=target){
+                            //console.log('disabling the non-relevant submit button %s', inputs[i].value);
+                            inputs[i].disabled = true;
+                            inputs[i].value = null;
+                        }
+                    }
+                    form.submit();
+                }
             }
         }
     }
 };
 
-Envjs.exchangeHTMLDocument = function(doc, text, url, frame) {
-    var html, head, title, body, 
-		event, 
-		frame = doc.__ownerFrame__, 
-		i;
-    try {
-        doc.baseURI = url;
-        //console.log('parsing document for window exchange %s', url); 
-        HTMLParser.parseDocument(text, doc);
-        //console.log('finsihed parsing document for window exchange %s', url); 
-        Envjs.wait();
-        /*console.log('finished wait after parse/exchange %s...( frame ? %s )', 
-            doc.baseURI, 
-            top.document.baseURI
-        );*/
-		//if this document is inside a frame make sure to trigger
-		//a new load event on the frame
-        if(frame){
-            event = doc.createEvent('HTMLEvents');
-            event.initEvent('load', false, false);
-            frame.dispatchEvent( event, false );
-        }
-    } catch (e) {
-        console.log('parsererror %s', e);
-        try {
-            console.log('document \n %s', doc.documentElement.outerHTML);
-        } catch (e) {
-            // swallow
-        }
-        doc = new HTMLDocument(new DOMImplementation(), doc.ownerWindow);
-        html =    doc.createElement('html');
-        head =    doc.createElement('head');
-        title =   doc.createElement('title');
-        body =    doc.createElement('body');
-        title.appendChild(doc.createTextNode('Error'));
-        body.appendChild(doc.createTextNode('' + e));
-        head.appendChild(title);
-        html.appendChild(head);
-        html.appendChild(body);
-        doc.appendChild(html);
-        //console.log('default error document \n %s', doc.documentElement.outerHTML);
-
-        //DOMContentLoaded event
-        if (doc.createEvent) {
-            event = doc.createEvent('Event');
-            event.initEvent('DOMContentLoaded', false, false);
-            doc.dispatchEvent( event, false );
-
-            event = doc.createEvent('HTMLEvents');
-            event.initEvent('load', false, false);
-            doc.dispatchEvent( event, false );
-        }
-
-        //finally fire the window.onload event
-        //TODO: this belongs in window.js which is a event
-        //      event handler for DOMContentLoaded on document
-
-        try {
-            if (doc === window.document) {
-                console.log('triggering window.load');
-                event = doc.createEvent('HTMLEvents');
-                event.initEvent('load', false, false);
-                window.dispatchEvent( event, false );
-            }
-        } catch (e) {
-            //console.log('window load event failed %s', e);
-            //swallow
-        }
-    };  /* closes return {... */
-};
+}(/*Envjs.Platform.Core*/));

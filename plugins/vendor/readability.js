@@ -708,7 +708,7 @@ var readability = {
                 {
                     dbg("Removing unlikely candidate - " + unlikelyMatchString);
                     node.parentNode.removeChild(node);
-                    //nodeIndex--;
+                    nodeIndex--;
                     continue;
                 }               
             }

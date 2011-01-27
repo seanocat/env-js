@@ -21,7 +21,19 @@ var __toDashed__ = function(camelCaseName) {
     return camelCaseName;
 };
 
-CSS2Properties = function(element){
+var __cssTextToStyles__,
+    __supportedStyles__;
+    
+
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+   log = Envjs.logger('Envjs.CSS.CSS2Properties').debug('available'); 
+});
+
+exports.CSS2Properties = CSS2Properties = function(element){
     //console.log('css2properties %s', __cssproperties__++);
     this.styleIndex = __supportedStyles__;//non-standard
     this.type = element.tagName;//non-standard
@@ -89,15 +101,16 @@ __extend__(CSS2Properties.prototype, {
 
 
 
-var __cssTextToStyles__ = function(css2props, cssText) {
+__cssTextToStyles__ = function(css2props, cssText) {
     //console.log('__cssTextToStyles__ %s %s', css2props, cssText);
-    //var styleArray=[];
     var i, style, styles = cssText.split(';');
     for (i = 0; i < styles.length; ++i) {
         style = styles[i].split(':');
         if (style.length === 2) {
-            css2props.setProperty(style[0].replace(' ', '', 'g'),
-                                  style[1].replace(' ', '', 'g'));
+            css2props.setProperty(
+                style[0].replace(' ', '', 'g'),
+                style[1].replace(' ', '', 'g')
+            );
         }
     }
 };
@@ -105,7 +118,7 @@ var __cssTextToStyles__ = function(css2props, cssText) {
 //Obviously these arent all supported but by commenting out various
 //sections this provides a single location to configure what is
 //exposed as supported.
-var __supportedStyles__ = {
+__supportedStyles__ = {
     azimuth:                null,
     background:             null,
     backgroundAttachment:   null,
@@ -250,31 +263,36 @@ var __displayMap__ = {
     LI       : 'list-item'
 };
 
+var __addStyleAccessor__ = function(name){
+    if (name === 'width' || name === 'height') {
+        CSS2Properties.prototype.__defineGetter__(name, function() {
+            if (this.display === 'none'){
+                return '0px';
+            }
+            return this.styleIndex[name];
+        });
+    } else if (name === 'display') {
+        //display will be set to a tagName specific value if ''
+        CSS2Properties.prototype.__defineGetter__(name, function() {
+            var val = this.styleIndex[name];
+            val = val ? val :__displayMap__[this.type];
+            return val;
+        });
+    } else {
+        CSS2Properties.prototype.__defineGetter__(name, function() {
+            return this.styleIndex[name];
+        });
+    }
+    CSS2Properties.prototype.__defineSetter__(name, function(value) {
+        this.setProperty(name, value);
+    });
+};
+
 for (var style in __supportedStyles__) {
     if (__supportedStyles__.hasOwnProperty(style)) {
-        (function(name) {
-            if (name === 'width' || name === 'height') {
-                CSS2Properties.prototype.__defineGetter__(name, function() {
-                    if (this.display === 'none'){
-                        return '0px';
-                    }
-                    return this.styleIndex[name];
-                });
-            } else if (name === 'display') {
-                //display will be set to a tagName specific value if ''
-                CSS2Properties.prototype.__defineGetter__(name, function() {
-                    var val = this.styleIndex[name];
-                    val = val ? val :__displayMap__[this.type];
-                    return val;
-                });
-            } else {
-                CSS2Properties.prototype.__defineGetter__(name, function() {
-                    return this.styleIndex[name];
-                });
-            }
-            CSS2Properties.prototype.__defineSetter__(name, function(value) {
-                this.setProperty(name, value);
-            });
-        }(style));
+        __addStyleAccessor__(style);
     }
 }
+
+}(/*Envjs.CSS.CSS2Properties*/));
+

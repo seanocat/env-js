@@ -26,15 +26,15 @@ var readStyle='style-newspaper',
         /*'http://timesofindia.indiatimes.com/india/Railways-rot-as-Mamata-plays-politics-in-Bengal/articleshow/6193608.cms': '6193608.html'*/
         /*'http://www.articlesbase.com/communication-articles/difference-between-analog-and-digital-69824.html': 'article1.html'*/
     };
-	
-jQuery(document).ready(function(){
-	console.log('document ready')
-    makeReadable(name);
-});
+
 	    
 jQuery.each(docs, function(doc, name){
     console.log('loading document %s', doc);
     start = new Date().getTime();
+	jQuery(document).ready(function(){
+		console.log('document ready')
+	    makeReadable(name);
+	});
     document.location = doc;
 });
 

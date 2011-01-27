@@ -4,7 +4,17 @@
  * HTML5: 4.10.5 The input element
  * http://dev.w3.org/html5/spec/Overview.html#the-input-element
  */
-HTMLInputElement = function(ownerDocument) {
+ 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLInputElement').
+		debug('HTMLInputElement available');    
+});
+
+exports.HTMLInputElement = HTMLInputElement = function(ownerDocument) {
     HTMLInputAreaCommon.apply(this, arguments);
     this._dirty = false;
     this._checked = null;
@@ -142,5 +152,6 @@ HTMLElement.registerSetAttribute('INPUT', 'value', function(node, value) {
  *the element to false.
  */
 // Named Element Support
-HTMLElement.registerSetAttribute('INPUT', 'name',
-                                 __updateFormForNamedElement__);
+HTMLElement.registerSetAttribute('INPUT', 'name', __updateFormForNamedElement__);
+
+}(/*HTMLInputElement*/));

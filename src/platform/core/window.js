@@ -1,10 +1,18 @@
+
+(function(){
+    
+var log = Envjs.logger('Envjs.Window');
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.Window');
+});
+
 /**
  * Makes an object window-like by proxying object accessors
  * @param {Object} scope
  * @param {Object} parent
  */
 Envjs.proxy = function(scope, parent, aliasList){
-    return (function(){return this;})();
+    return (function(){return this;}());
 };
 
 Envjs.javaEnabled = false;
@@ -19,34 +27,33 @@ Envjs.platform       = '';
 
 //some common user agents as constants so you can emulate them
 Envjs.userAgents = {
-	firefox3: 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.7) Gecko/2009021910 Firefox/3.0.7'
-}
+    firefox3: 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.7) Gecko/2009021910 Firefox/3.0.7'
+};
 
 var __windows__ = {};
 
 Envjs.windows = function(uuid, scope){
-	var w;
-	if(arguments.length === 0){
-		/*for(w in __windows__){
-			console.log('window uuid => %s', w);
-			console.log('window document => %s', __windows__[w].document.baseURI);
-		}*/
-		return __windows__;
-	}else if(arguments.length === 1){
-		return (uuid in __windows__) ? __windows__[uuid] : null
-	}else if(arguments.length === 2){
-		__windows__[uuid] = scope;
-		if(scope === null){
+    var w;
+    if(arguments.length === 0){
+        return __windows__;
+    }else if(arguments.length === 1){
+        return __windows__.hasOwnProperty(uuid) ? 
+            __windows__[uuid] : 
+            null;
+    }else if(arguments.length === 2){
+        __windows__[uuid] = scope;
+        if(scope === null){
             delete __windows__[uuid];
-		}
-	}
+        }
+    }
 };
 /**
  *
  * @param {Object} frameElement
  * @param {Object} url
  */
-Envjs.loadFrame = function(frame, url){	
+Envjs.loadFrame = function(frame, url){ 
+    var w;
     try {
         //console.log('loading frame %s', url);
         if(frame.contentWindow && frame.contentWindow.close){
@@ -58,16 +65,16 @@ Envjs.loadFrame = function(frame, url){
         //platforms will need to override this function
         //to make sure the scope is global-like
         frame.contentWindow = Envjs.proxy({});
-		//console.log("frame.ownerDocument %s subframe %s", 
-		//	frame.ownerDocument.location,
-		//	frame.ownerDocument.__ownerFrame__);
-		if(frame.ownerDocument&&frame.ownerDocument.__ownerFrame__){
-			//console.log('frame is parent %s', frame.ownerDocument.__ownerFrame__.contentWindow.guid);
-			new Window(frame.contentWindow, frame.ownerDocument.__ownerFrame__.contentWindow);
-		}else{
-			//console.log("window is parent %s", window.guid);
-			new Window(frame.contentWindow, window);
-		}
+        //console.log("frame.ownerDocument %s subframe %s", 
+        //  frame.ownerDocument.location,
+        //  frame.ownerDocument.__ownerFrame__);
+        if(frame.ownerDocument&&frame.ownerDocument.__ownerFrame__){
+            //console.log('frame is parent %s', frame.ownerDocument.__ownerFrame__.contentWindow.guid);
+            w = new Window(frame.contentWindow, frame.ownerDocument.__ownerFrame__.contentWindow);
+        }else{
+            //log.debug("window is parent %s", window.guid);
+            w = new Window(frame.contentWindow, window);
+        }
 
         //I dont think frames load asynchronously in firefox
         //and I think the tests have verified this but for
@@ -76,11 +83,11 @@ Envjs.loadFrame = function(frame, url){
         frame.contentDocument.async = false;
         frame.contentDocument.__ownerFrame__ = frame;
         if(url){
-            //console.log('envjs.loadFrame async %s', frame.contentDocument.async);
+            log.debug('envjs.loadFrame async %s', frame.contentDocument.async);
             frame.contentDocument.location.assign(Envjs.uri(url, frame.ownerDocument.location.toString()));
         }
     } catch(e) {
-        console.log("failed to load frame content: from %s %s", url, e);
+        log.error("failed to load frame content: from %s %s", url, e);
     }
 };
 
@@ -98,7 +105,7 @@ Envjs.unloadFrame = function(frame){
         //objects.
         frame.contentDocument = null;
         if(frame.contentWindow){
-			//console.log('closing window %s', frame.contentWindow);
+            //console.log('closing window %s', frame.contentWindow);
             frame.contentWindow.close();
         }
         Envjs.gc();
@@ -111,3 +118,5 @@ Envjs.unloadFrame = function(frame){
  * Platform clean up hook if it ever makes sense - see Envjs.unloadFrame for example
  */
 Envjs.gc = function(){};
+
+}());

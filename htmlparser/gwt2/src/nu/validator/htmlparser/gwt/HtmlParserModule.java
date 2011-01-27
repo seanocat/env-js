@@ -75,9 +75,23 @@ public class HtmlParserModule implements EntryPoint {
         
         parser.parse(source, useSetTimeouts, new ParseEndListener(readyCallback));
     }
+
+	@SuppressWarnings("unused")
+    private static void parseXmlDocument(String source, JavaScriptObject document, boolean useSetTimeouts,JavaScriptObject readyCallback, JavaScriptObject errorHandler) throws SAXException {
+        if (readyCallback == null) {
+            readyCallback = JavaScriptObject.createFunction();
+        }
+        zapChildren(document);
+        HtmlParser parser = new HtmlParser(document);
+		parser.treatAsXMLParser();
+        // XXX error handler
+        
+        parser.parse(source, useSetTimeouts, new ParseEndListener(readyCallback));
+    }
     
     private static native void exportEntryPoints() /*-{
         Envjs.parseHtmlDocument = @nu.validator.htmlparser.gwt.HtmlParserModule::parseHtmlDocument(Ljava/lang/String;Lcom/google/gwt/core/client/JavaScriptObject;ZLcom/google/gwt/core/client/JavaScriptObject;Lcom/google/gwt/core/client/JavaScriptObject;);
+	    Envjs.parseXmlDocument = @nu.validator.htmlparser.gwt.HtmlParserModule::parseXmlDocument(Ljava/lang/String;Lcom/google/gwt/core/client/JavaScriptObject;ZLcom/google/gwt/core/client/JavaScriptObject;Lcom/google/gwt/core/client/JavaScriptObject;);
     }-*/;
 
     

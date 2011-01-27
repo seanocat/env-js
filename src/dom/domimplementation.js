@@ -1,4 +1,11 @@
 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+   log = Envjs.logger('Envjs.DOM.DOMImplementation').debug('available'); 
+});
 /**
  * @class  DOMImplementation -
  *      provides a number of methods for performing operations
@@ -7,10 +14,10 @@
  *
  * @author Jon van Noort (jon@webarcana.com.au)
  */
-DOMImplementation = function() {
-    this.preserveWhiteSpace = false;  // by default, ignore whitespace
+exports.DOMImplementation = DOMImplementation = function() {
+    this.preserveWhiteSpace = true;  // by default, ignore whitespace
     this.namespaceAware = true;       // by default, handle namespaces
-    this.errorChecking  = true;      // by default, test for exceptions
+    this.errorChecking  = false;      // by default, test for exceptions
 };
 
 __extend__(DOMImplementation.prototype,{
@@ -59,7 +66,7 @@ __extend__(DOMImplementation.prototype,{
         return doc;
     },
     createHTMLDocument : function(title){
-        var doc = new HTMLDocument($implementation, null, "");
+        var doc = new HTMLDocument(this, null, "");
         var html = doc.createElement("html"); doc.appendChild(html);
         var head = doc.createElement("head"); html.appendChild(head);
         var body = doc.createElement("body"); html.appendChild(body);
@@ -146,6 +153,9 @@ __extend__(DOMImplementation.prototype,{
     }
 });
 
+}(/*Envjs.DOM.DOMImplementation*/));
+
+
 
 
 /**
@@ -177,11 +187,11 @@ function __isIdDeclaration__(attributeName) {
  * @param  name : string - the candidate name
  * @return : boolean
  */
+var re_validName = /^[a-zA-Z_:][a-zA-Z0-9\.\-_:]*$/;
 function __isValidName__(name) {
   // test if name contains only valid characters
   return name.match(re_validName);
 }
-var re_validName = /^[a-zA-Z_:][a-zA-Z0-9\.\-_:]*$/;
 
 /**
  * @method DOMImplementation._isValidString - Return true, if string does not contain any illegal chars
@@ -192,11 +202,11 @@ var re_validName = /^[a-zA-Z_:][a-zA-Z0-9\.\-_:]*$/;
  * @param  name : string - the candidate string
  * @return : boolean
  */
+var re_invalidStringChars = /\x01|\x02|\x03|\x04|\x05|\x06|\x07|\x08|\x0B|\x0C|\x0E|\x0F|\x10|\x11|\x12|\x13|\x14|\x15|\x16|\x17|\x18|\x19|\x1A|\x1B|\x1C|\x1D|\x1E|\x1F|\x7F/;
 function __isValidString__(name) {
   // test that string does not contains invalid characters
   return (name.search(re_invalidStringChars) < 0);
 }
-var re_invalidStringChars = /\x01|\x02|\x03|\x04|\x05|\x06|\x07|\x08|\x0B|\x0C|\x0E|\x0F|\x10|\x11|\x12|\x13|\x14|\x15|\x16|\x17|\x18|\x19|\x1A|\x1B|\x1C|\x1D|\x1E|\x1F|\x7F/;
 
 /**
  * @method DOMImplementation._parseNSName - parse the namespace name.

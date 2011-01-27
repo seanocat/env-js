@@ -1,11 +1,19 @@
 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+   log = Envjs.logger('Envjs.DOM.Namespace').debug('available'); 
+});
+
 /**
  * @class  Namespace -
  *      The Namespace interface represents an namespace in an Element object
  *
  * @param  ownerDocument : The Document object associated with this node.
  */
-Namespace = function(ownerDocument) {
+exports.Namespace = Namespace = function(ownerDocument) {
     Node.apply(this, arguments);
     // the name of this attribute
     this.name      = "";
@@ -35,9 +43,10 @@ __extend__(Namespace.prototype, {
 
           // serialize Namespace Declaration
           if (this.nodeName != "") {
-            ret += this.nodeName +"=\""+ __escapeXML__(this.nodeValue) +"\"";
+            ret += "xmlns:"+this.nodeName +"=\""+ __escapeXML__(this.nodeValue) +"\"";
           }
-          else {  // handle default namespace
+          else {  
+            // handle default namespace
             ret += "xmlns=\""+ __escapeXML__(this.nodeValue) +"\"";
           }
 
@@ -47,4 +56,7 @@ __extend__(Namespace.prototype, {
         return '[object Namespace]';
     }
 });
+
+}(/*Envjs.DOM.Namespace*/));
+
 

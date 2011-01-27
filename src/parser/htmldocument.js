@@ -1,4 +1,12 @@
 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.Document').
+		debug('HTMLDocument write module/mixins available');    
+});
 
 __extend__(HTMLDocument.prototype, {
 
@@ -38,17 +46,32 @@ __extend__(HTMLDocument.prototype, {
     }
 });
 
+})(/*Envjs.HTML.Document*/);
+
+
 /**
  * elementPopped is called by the parser in two cases
  *
- * - an 'tag' is * complete (all children process and end tag, real or
- *   implied is * processed)
- * - a replaceElement happens (this happens by making placeholder
- *   nodes and then the real one is swapped in.
+ * - a 'tag' is * complete 
+ *      (all children process and end tag, real or implied is * processed)
+ * - a replaceElement happens 
+ *      (this happens by making placeholder nodes and then the real one 
+ *      is swapped in.
  *
  */
-var __elementPopped__ = function(ns, name, node){
-    //console.log('popped html element %s %s %s', ns, name, node);
+var __elementPopped__;
+
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.Parser').
+		debug('Parser elementPopped available');    
+});
+
+__elementPopped__ = function(ns, name, node){
+    log.debug('elementPopped %s %s %s', ns, name, node);
     var doc = node.ownerDocument,
         okay,
         event;
@@ -139,15 +162,15 @@ var __elementPopped__ = function(ns, name, node){
                                     break;
                                 case 'link':
                                     if (node.href) {
-                                        __loadLink__(node, node.href);
+                                        Envjs.loadLink(node, node.href);
                                     }
                                     break;
                                 case 'option':
-                                    node._updateoptions();
+                                    Envjs.updateOptions(node);
                                     break;
                                 case 'img':
                                     if (node.src){
-                                        __loadImage__(node, node.src);
+                                        Envjs.loadImage(node, node.src);
                                     }
                                     break;
                                 case 'html':
@@ -215,3 +238,5 @@ var __elementPopped__ = function(ns, name, node){
             break;
     }//switch on parsing
 };
+
+})(/*Envjs.Parser*/);

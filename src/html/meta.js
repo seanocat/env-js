@@ -4,7 +4,17 @@
  * HTML5: 4.2.5 The meta element
  * http://dev.w3.org/html5/spec/Overview.html#meta
  */
-HTMLMetaElement = function(ownerDocument) {
+ 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLMetaElement').
+		debug('HTMLMetaElement available');    
+});
+
+exports.HTMLMetaElement = HTMLMetaElement = function(ownerDocument) {
     HTMLElement.apply(this, arguments);
 };
 HTMLMetaElement.prototype = new HTMLElement();
@@ -38,3 +48,4 @@ __extend__(HTMLMetaElement.prototype, {
     }
 });
 
+}(/*HTMLMetaElement*/));

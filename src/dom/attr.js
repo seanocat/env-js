@@ -1,11 +1,19 @@
 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+   log = Envjs.logger('Envjs.DOM.Attr').debug('available'); 
+});
+    
 /**
  * @class  Attr
  *      The Attr interface represents an attribute in an Element object
  * @extends Node
  * @param  ownerDocument : The Document object associated with this node.
  */
-Attr = function(ownerDocument) {
+exports.Attr = Attr = function(ownerDocument) {
     Node.apply(this, arguments);
     // set when Attr is added to NamedNodeMap
     this.ownerElement = null;
@@ -54,3 +62,4 @@ __extend__(Attr.prototype, {
     }
 });
 
+}(/*Envjs.DOM.Attr*/));

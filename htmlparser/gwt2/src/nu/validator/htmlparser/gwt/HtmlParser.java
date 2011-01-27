@@ -130,18 +130,18 @@ public class HtmlParser {
      */
     private void tokenize(String source, final boolean useSetTimeouts, String context) throws SAXException {
     	
-                lastWasCR = false;
-                ending = false;
-                documentWriteBuffer.setLength(0);
-                streamLength = source.length();
-                stream = new UTF16Buffer(source.toCharArray(), 0,
-                        (streamLength < CHUNK_SIZE ? streamLength : CHUNK_SIZE));
-                bufferStack.clear();
-                push(stream);
-                domTreeBuilder.setFragmentContext(context == null ? null : context.intern());
-                
-                tokenizer.start();
-                pump(useSetTimeouts);
+        lastWasCR = false;
+	    ending = false;
+	    documentWriteBuffer.setLength(0);
+	    streamLength = source.length();
+	    stream = new UTF16Buffer(source.toCharArray(), 0,
+	            (streamLength < CHUNK_SIZE ? streamLength : CHUNK_SIZE));
+	    bufferStack.clear();
+	    push(stream);
+	    domTreeBuilder.setFragmentContext(context == null ? null : context.intern());
+    
+	    tokenizer.start();
+	    pump(useSetTimeouts);
     }
 
     /**
@@ -306,5 +306,15 @@ public class HtmlParser {
     public void setScriptingEnabled(boolean scriptingEnabled) {
         domTreeBuilder.setScriptingEnabled(scriptingEnabled);
     }
+
+	public void treatAsXMLParser(){
+        this.setIgnoringComments(false);
+        this.domTreeBuilder.setNamePolicy(XmlViolationPolicy.ALLOW);
+        this.tokenizer.setCommentPolicy(XmlViolationPolicy.ALLOW);
+        this.tokenizer.setContentNonXmlCharPolicy(XmlViolationPolicy.ALLOW);
+        this.tokenizer.setContentSpacePolicy(XmlViolationPolicy.ALLOW);
+        this.tokenizer.setNamePolicy(XmlViolationPolicy.ALLOW);
+        this.tokenizer.setXmlnsPolicy(XmlViolationPolicy.ALLOW);
+	}
 
 }

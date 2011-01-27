@@ -1,8 +1,17 @@
 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+   log = Envjs.logger('Envjs.DOM3.KeyboardEvent').
+		debug('KeyboardEvent available'); 
+});
+
 /**
  * Interface KeyboardEvent (introduced in DOM Level 3)
  */
-KeyboardEvent = function(options) {
+exports.KeyboardEvent = KeyboardEvent = function(options) {
     this._keyIdentifier = 0;
     this._keyLocation = 0;
     this._ctrlKey = false;
@@ -52,4 +61,5 @@ KeyboardEvent.DOM_KEY_LOCATION_NUMPAD        = 3;
 KeyboardEvent.DOM_KEY_LOCATION_MOBILE        = 4;
 KeyboardEvent.DOM_KEY_LOCATION_JOYSTICK      = 5;
 
+}(/*Envjs.DOM3.KeyboardEvent*/));
 

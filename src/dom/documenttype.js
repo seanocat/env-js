@@ -1,9 +1,17 @@
 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+   log = Envjs.logger('Envjs.DOM.DocumentType').debug('available'); 
+});
+
 /**
  * @author envjs team
  * @param {Document} onwnerDocument
  */
-DocumentType = function(ownerDocument) {
+exports.DocumentType = DocumentType = function(ownerDocument) {
     Node.apply(this, arguments);
     this.systemId = null;
     this.publicId = null;
@@ -26,3 +34,5 @@ __extend__({
         return "[object DocumentType]";
     }
 });
+
+}(/*Envjs.DOM.DocumentType*/));

@@ -4,7 +4,17 @@
  * HTML5: 4.10.10 The option element
  * http://dev.w3.org/html5/spec/Overview.html#the-option-element
  */
-HTMLOptionElement = function(ownerDocument) {
+ 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLOptionElement').
+		debug('HTMLOptionElement available');    
+});
+
+exports.HTMLOptionElement = HTMLOptionElement = function(ownerDocument) {
     HTMLInputCommon.apply(this, arguments);
     this._selected = null;
 };
@@ -27,41 +37,8 @@ __extend__(HTMLOptionElement.prototype, {
             }
         }
     },
-
-    /*
-     * HTML5: The form IDL attribute's behavior depends on whether the
-     * option element is in a select element or not. If the option has
-     * a select element as its parent, or has a colgroup element as
-     * its parent and that colgroup element has a select element as
-     * its parent, then the form IDL attribute must return the same
-     * value as the form IDL attribute on that select
-     * element. Otherwise, it must return null.
-     */
-    _selectparent: function() {
-        var parent = this.parentNode;
-        if (!parent) {
-            return null;
-        }
-
-        if (parent.tagName === 'SELECT') {
-            return parent;
-        }
-        if (parent.tagName === 'COLGROUP') {
-            parent = parent.parentNode;
-            if (parent && parent.tagName === 'SELECT') {
-                return parent;
-            }
-        }
-    },
-    _updateoptions: function() {
-        var parent = this._selectparent();
-        if (parent) {
-            // has side effects and updates owner select's options
-            parent.options;
-        }
-    },
     get form() {
-        var parent = this._selectparent();
+        var parent = __selectparent__(this);
         return parent ? parent.form : null;
     },
     get index() {
@@ -134,7 +111,7 @@ __extend__(HTMLOptionElement.prototype, {
     }
 });
 
-Option = function(text, value, defaultSelected, selected) {
+exports.Option = Option = function(text, value, defaultSelected, selected) {
 
     // Not sure if this is correct:
     //
@@ -165,7 +142,49 @@ Option.prototype = new HTMLOptionElement();
 // Named Element Support
 
 function updater(node, value) {
-    node._updateoptions();
+    __updateoptions__(node);
 }
 HTMLElement.registerSetAttribute('OPTION', 'name', updater);
 HTMLElement.registerSetAttribute('OPTION', 'id', updater);
+
+
+
+}(/*HTMLOptionElement*/));
+
+
+/*
+ * HTML5: The form IDL attribute's behavior depends on whether the
+ * option element is in a select element or not. If the option has
+ * a select element as its parent, or has a colgroup element as
+ * its parent and that colgroup element has a select element as
+ * its parent, then the form IDL attribute must return the same
+ * value as the form IDL attribute on that select
+ * element. Otherwise, it must return null.
+ */
+__selectparent__ = function(node) {
+    var parent = node.parentNode;
+    if (!parent) {
+        return null;
+    }
+
+    if (parent.tagName === 'SELECT') {
+        return parent;
+    }
+    if (parent.tagName === 'COLGROUP') {
+        parent = parent.parentNode;
+        if (parent && parent.tagName === 'SELECT') {
+            return parent;
+        }
+    }
+};
+//Blah this is used in parser/htmldocument, so we have to create
+//some way to access it outside the module so Envjs.updateOptions
+//is a temp place holder for that
+__updateoptions__ = Envjs.updateOptions = function(node) {
+    var parent = __selectparent__(node),
+        s;
+    if (parent) {
+        // has side effects and updates owner select's options
+        s = parent.options;
+    }
+};

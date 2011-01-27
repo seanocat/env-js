@@ -1,9 +1,17 @@
+
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+   log = Envjs.logger('Envjs.DOM.DOMException').debug('available'); 
+});
 /**
  * @class  DOMException - raised when an operation is impossible to perform
  * @author Jon van Noort (jon@webarcana.com.au)
  * @param  code : int - the exception code (one of the DOMException constants)
  */
-DOMException = function(code) {
+exports.DOMException = DOMException = function(code) {
     this.code = code;
 };
 
@@ -26,3 +34,6 @@ DOMException.SYNTAX_ERR                     = 12;
 DOMException.INVALID_MODIFICATION_ERR       = 13;
 DOMException.NAMESPACE_ERR                  = 14;
 DOMException.INVALID_ACCESS_ERR             = 15;
+
+
+}(/*Envjs.DOM.DOMException*/));

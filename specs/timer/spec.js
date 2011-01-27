@@ -1,3 +1,14 @@
+var QUnit 	= require('specs/qunit').QUnit,
+	module 	= require('specs/qunit').module,
+	expect 	= require('specs/qunit').expect,
+	start 	= require('specs/qunit').start,
+	stop 	= require('specs/qunit').stop,
+	test 	= require('specs/qunit').test,
+	ok 		= require('specs/qunit').ok;
+
+//must leak on purpose	
+equals 	= require('specs/qunit').equals;
+
 QUnit.module('timer');
 test('Timer Interfaces Available', function(){
 
@@ -11,8 +22,8 @@ test('Timer Interfaces Available', function(){
 
 /**
  * When passing a string to the set-timeout, it is evaluated in global scope
- *
  */
+ 
 test('setTimeoutScopeString', function() {
     expect(1);
     var BOGON = 1;
@@ -23,7 +34,6 @@ test('setTimeoutScopeString', function() {
 
 /**
  * This case works, since the function is under a closure
- *
  */
 test('setTimeoutScopeFunction', function() {
     expect(1);
@@ -93,4 +103,5 @@ test('setInterval / clearInterval', function(){
     stop();
 
 });
+
 

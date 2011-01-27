@@ -5,7 +5,17 @@
  * HTML5: 4.8.6 The param element
  * http://dev.w3.org/html5/spec/Overview.html#the-param-element
  */
-HTMLParamElement = function(ownerDocument) {
+ 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLParamElement').
+		debug('HTMLParamElement available');    
+});
+
+exports.HTMLParamElement = HTMLParamElement = function(ownerDocument) {
     HTMLElement.apply(this, arguments);
 };
 HTMLParamElement.prototype = new HTMLElement();
@@ -39,3 +49,4 @@ __extend__(HTMLParamElement.prototype, {
     }
 });
 
+}(/*HTMLParamElement*/));

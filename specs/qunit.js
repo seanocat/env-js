@@ -10,7 +10,7 @@
 
 (function(window) {
 
-var QUnit = {
+QUnit = {
 
 	// Initialize the configuration options
 	init: function() {

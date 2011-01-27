@@ -1,4 +1,11 @@
 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+   log = Envjs.logger('Envjs.DOM.Element').debug('available'); 
+});
 /**
  * @class  Element -
  *      By far the vast majority of objects (apart from text)
@@ -7,7 +14,7 @@
  * @extends Node
  * @param  ownerDocument : The Document object associated with this node.
  */
-Element = function(ownerDocument) {
+exports.Element = Element = function(ownerDocument) {
     Node.apply(this, arguments);
     this.attributes = new NamedNodeMap(this.ownerDocument, this);
 };
@@ -28,46 +35,40 @@ __extend__(Element.prototype, {
         // if Attribute exists, return its value, otherwise, return null
         return ret;
     },
+
     setAttribute : function (name, value) {
+		log.debug('setting attribute %s = %s for element %s', name, value, this.nodeName);
         // if attribute exists, use it
         var attr = this.attributes.getNamedItem(name);
-       //console.log('attr %s', attr);
-        //I had to add this check because as the script initializes
-        //the id may be set in the constructor, and the html element
-        //overrides the id property with a getter/setter.
-        if(__ownerDocument__(this)){
-            if (attr===null||attr===undefined) {
-                // otherwise create it
-                attr = __ownerDocument__(this).createAttribute(name);
-               //console.log('attr %s', attr);
-            }
-
-
-            // test for exceptions
-            if (__ownerDocument__(this).implementation.errorChecking) {
-                // throw Exception if Attribute is readonly
-                if (attr._readonly) {
-                    throw(new DOMException(DOMException.NO_MODIFICATION_ALLOWED_ERR));
-                }
-
-                // throw Exception if the value string contains an illegal character
-                if (!__isValidString__(value+'')) {
-                    throw(new DOMException(DOMException.INVALID_CHARACTER_ERR));
-                }
-            }
-
-            // assign values to properties (and aliases)
-            attr.value     = value + '';
-
-            // add/replace Attribute in NamedNodeMap
-            this.attributes.setNamedItem(attr);
-           //console.log('element setNamedItem %s', attr);
-        }else{
-           console.warn('Element has no owner document '+this.tagName+
-                '\n\t cant set attribute ' + name + ' = '+value );
+        if (attr===null||attr===undefined) {
+            // otherwise create it
+            attr = __ownerDocument__(this).createAttribute(name);
+           //console.log('attr %s', attr);
         }
+
+
+        // test for exceptions
+        if (__ownerDocument__(this).implementation.errorChecking) {
+            // throw Exception if Attribute is readonly
+            if (attr._readonly) {
+                throw(new DOMException(DOMException.NO_MODIFICATION_ALLOWED_ERR));
+            }
+
+            // throw Exception if the value string contains an illegal character
+            if (!__isValidString__(value+'')) {
+                throw(new DOMException(DOMException.INVALID_CHARACTER_ERR));
+            }
+        }
+
+        // assign values to properties (and aliases)
+        attr.value     = value + '';
+
+        // add/replace Attribute in NamedNodeMap
+        this.attributes.setNamedItem(attr);
+        //console.log('element setNamedItem %s = %s', attr.name, attr.value);
     },
     removeAttribute : function removeAttribute(name) {
+		log.debug('removing attribute %s for element %s', name, this.nodeName);
         // delegate to NamedNodeMap.removeNamedItem
         return this.attributes.removeNamedItem(name);
     },
@@ -76,10 +77,6 @@ __extend__(Element.prototype, {
         return this.attributes.getNamedItem(name);
     },
     setAttributeNode: function(newAttr) {
-        // if this Attribute is an ID
-        if (__isIdDeclaration__(newAttr.name)) {
-            this.id = newAttr.value;  // cache ID for getElementById()
-        }
         // delegate to NamedNodeMap.setNamedItem
         return this.attributes.setNamedItem(newAttr);
     },
@@ -109,6 +106,7 @@ __extend__(Element.prototype, {
         return ret;  // if Attribute exists, return its value, otherwise return ""
     },
     setAttributeNS : function(namespaceURI, qualifiedName, value) {
+		log.debug('setAttributeNS %s:%s for element %s', namespaceURI, qualifiedName, this.nodeName);
         // call NamedNodeMap.getNamedItem
         //console.log('setAttributeNS %s %s %s', namespaceURI, qualifiedName, value);
         var attr = this.attributes.getNamedItem(namespaceURI, qualifiedName);
@@ -138,11 +136,6 @@ __extend__(Element.prototype, {
             }
         }
 
-        // if this Attribute is an ID
-        //if (__isIdDeclaration__(name)) {
-        //    this.id = value;
-        //}
-
         // assign values to properties (and aliases)
         attr.value     = value;
         attr.nodeValue = value;
@@ -159,11 +152,6 @@ __extend__(Element.prototype, {
         return this.attributes.getNamedItemNS(namespaceURI, localName);
     },
     setAttributeNodeNS : function(newAttr) {
-        // if this Attribute is an ID
-        if ((newAttr.prefix == "") &&  __isIdDeclaration__(newAttr.name)) {
-            this.id = newAttr.value+'';  // cache ID for getElementById()
-        }
-
         // delegate to NamedNodeMap.setNamedItemNS
         return this.attributes.setNamedItemNS(newAttr);
     },
@@ -186,7 +174,7 @@ __extend__(Element.prototype, {
             i;
 
         // serialize namespace declarations
-        if (this.namespaceURI ){
+        if (this.namespaceURI){
             if((this === this.ownerDocument.documentElement) ||
                (!this.parentNode)||
                (this.parentNode && (this.parentNode.namespaceURI !== this.namespaceURI))) {
@@ -194,10 +182,15 @@ __extend__(Element.prototype, {
                     '="' + this.namespaceURI + '"';
             }
         }
+        
+        attrstring = "";
+        if(this._namespaces && this._namespaces.length){
+           attrstring += this._namespaces.xml;
+        }
+        
 
         // serialize Attribute declarations
         attrs = this.attributes;
-        attrstring = "";
         for(i=0;i< attrs.length;i++){
             if(attrs[i].name.match('xmlns:')) {
                 attrstring += " "+attrs[i].name+'="'+attrs[i].xml+'"';
@@ -224,3 +217,6 @@ __extend__(Element.prototype, {
         return '[object Element]';
     }
 });
+
+}(/*Envjs.DOM.Element*/));
+

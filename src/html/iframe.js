@@ -5,7 +5,17 @@
  * HTML5: 4.8.3 The iframe element
  * http://dev.w3.org/html5/spec/Overview.html#the-iframe-element
  */
-HTMLIFrameElement = function(ownerDocument) {
+ 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLIFrameElement').
+		debug('HTMLIFrameElement available');    
+});
+
+exports.HTMLIFrameElement = HTMLIFrameElement = function(ownerDocument) {
     HTMLFrameElement.apply(this, arguments);
 };
 HTMLIFrameElement.prototype = new HTMLFrameElement();
@@ -26,3 +36,5 @@ __extend__(HTMLIFrameElement.prototype, {
         return '[object HTMLIFrameElement]';
     }
 });
+
+}(/*HTMLIFrameElement*/));

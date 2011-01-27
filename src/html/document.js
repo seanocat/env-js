@@ -1,4 +1,9 @@
-
+var __addNamedMap__,
+    __removeNamedMap__,
+    __isNamedElement__,
+    __selectparent__ ,//see option.js
+    __updateoptions__, //see option.js
+    __loadLink__; //see link.js 
 /**
  * @class  HTMLDocument
  *      The Document interface represents the entire HTML or XML document.
@@ -7,7 +12,17 @@
  *
  * @extends Document
  */
-HTMLDocument = function(implementation, ownerWindow, referrer) {
+ 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLDocument').
+        debug('HTMLDocument available');    
+});
+
+exports.HTMLDocument = HTMLDocument = function(implementation, ownerWindow, referrer) {
     Document.apply(this, arguments);
     this.referrer = referrer || '';
     this.baseURI = "about:blank";
@@ -166,8 +181,8 @@ __extend__(HTMLDocument.prototype, {
         } else if ("http://www.w3.org/1998/Math/MathML" == uri) {
             return this.createElement(local);
         } else if ("http://www.w3.org/2000/svg" == uri) {
- 			return this.createElement(local);
-		} else {
+            return this.createElement(local);
+        } else {
             return Document.prototype.createElementNS.apply(this,[uri, local]);
         }
     },
@@ -194,8 +209,8 @@ __extend__(HTMLDocument.prototype, {
             this.appendChild(this.createElement('html'));
         }
         var element = this.documentElement,
-        	length = element.childNodes.length,
-	        i;
+            length = element.childNodes.length,
+            i;
         //check for the presence of the head element in this html doc
         for(i=0;i<length;i++){
             if(element.childNodes[i].nodeType === Node.ELEMENT_NODE){
@@ -214,9 +229,9 @@ __extend__(HTMLDocument.prototype, {
             this.appendChild(this.createElement('html'));
         }
         var title,
-        	head = this.head,
-	        length = head.childNodes.length,
-	        i;
+            head = this.head,
+            length = head.childNodes.length,
+            i;
         //check for the presence of the title element in this head element
         for(i=0;i<length;i++){
             if(head.childNodes[i].nodeType === Node.ELEMENT_NODE){
@@ -245,7 +260,7 @@ __extend__(HTMLDocument.prototype, {
         for (i=0; i<length; i++) {
             if (element.childNodes[i].nodeType === Node.ELEMENT_NODE &&
                 (element.childNodes[i].tagName === 'BODY' || 
-				 element.childNodes[i].tagName === 'FRAMESET')) {
+                 element.childNodes[i].tagName === 'FRAMESET')) {
                 return element.childNodes[i];
             }
         }
@@ -316,17 +331,17 @@ __extend__(HTMLDocument.prototype, {
      *
      */
     get domain(){
-        var HOSTNAME = new RegExp('\/\/([^\:\/]+)'),
-        matches = HOSTNAME.exec(this.baseURI);
+        var HOSTNAME = new RegExp('//([^:/]+)'),
+            matches = HOSTNAME.exec(this.baseURI);
         return matches&&matches.length>1?matches[1]:"";
     },
     set domain(value){
         var i,
-        domainParts = this.domain.split('.').reverse(),
-        newDomainParts = value.split('.').reverse();
+            domainParts = this.domain.split('.').reverse(),
+            newDomainParts = value.split('.').reverse();
         if(newDomainParts.length > 1){
             for(i=0;i<newDomainParts.length;i++){
-                if(!(newDomainParts[i] === domainParts[i])){
+                if(newDomainParts[i] !== domainParts[i]){
                     return;
                 }
             }
@@ -348,19 +363,11 @@ __extend__(HTMLDocument.prototype, {
         return new HTMLCollection(this.getElementsByTagName('a'));
     },
     getElementsByName : function(name){
-        //returns a real Array + the NodeList
-        var retNodes = __extend__([],new NodeList(this, this.documentElement)),
-        node;
-        // loop through all Elements
-        var all = this.getElementsByTagName('*');
-        for (var i=0; i < all.length; i++) {
-            node = all[i];
-            if (node.nodeType === Node.ELEMENT_NODE &&
-                node.getAttribute('name') == name) {
-                retNodes.push(node);
-            }
+        //console.log('getting elements for name %s', name);
+        if(!(this._indexes_['@'+name])){
+            this._indexes_["@"+name] = new NodeList(this, this.documentElement);
         }
-        return retNodes;
+        return this._indexes_["@"+name];
     },
     toString: function(){
         return "[object HTMLDocument]";
@@ -370,7 +377,7 @@ __extend__(HTMLDocument.prototype, {
     }
 });
 
-
+}(/*HTMLDocument*/));
 
 Aspect.around({
     target: Node,
@@ -380,7 +387,7 @@ Aspect.around({
         okay,
         node = invocation.proceed(),
         doc = node.ownerDocument,
-		target;
+        target;
 
     //console.log('element appended: %s %s %s', node+'', node.nodeName, node.namespaceURI);
     if((node.nodeType !== Node.ELEMENT_NODE)){
@@ -389,53 +396,53 @@ Aspect.around({
         //changes to src attributes
         return node;
     }
-	
-	if(node.tagName&&node.tagName.toLowerCase()=="input"){
-		target = node.parentNode;
-		//console.log('adding named map for input');
-		while(target&&target.tagName&&target.tagName.toLowerCase()!="form"){
-			//console.log('possible target for named map for input is %s', target);
-			target = target.parentNode;
-		}
-		if(target){
-			//console.log('target for named map for input is %s', target);
-			__addNamedMap__(target, node);
-		}
-	}
+    
+    if(node.tagName&&node.tagName.toLowerCase()=="input"){
+        target = node.parentNode;
+        //console.log('adding named map for input');
+        while(target&&target.tagName&&target.tagName.toLowerCase()!="form"){
+            //console.log('possible target for named map for input is %s', target);
+            target = target.parentNode;
+        }
+        if(target){
+            //console.log('target for named map for input is %s', target);
+            __addNamedMap__(target, node);
+        }
+    }
     //console.log('appended html element %s %s %s', node.namespaceURI, node.nodeName, node);
     switch(doc.parsing){
         case true:
 
-        /**
-         * Very special case.  While in parsing mode, in head, a
-         * script can add another script tag to the head, and it will
-         * be evaluated.  This is tested in 'ant fulldoc-spec' tests.
-         *
-         * Not quite sure if the require that the new script tag must
-         * be in the head is correct or not.  NamespaceURI == null
-         * might also need to corrected too.
-         */
-        if (node.tagName.toLowerCase() === 'script' && 
-			(node.namespaceURI === "" || 
-			 node.namespaceURI === "http://www.w3.org/1999/xhtml" || 
-			 node.namespaceURI === null) ) {
-            //console.log('appending script while parsing');
-            if((this.nodeName.toLowerCase() === 'head')){
-                try{
-                    okay = Envjs.loadLocalScript(node, null);
-                    //console.log('loaded script? %s %s', node.uuid, okay);
-                    // only fire event if we actually had something to load
-                    if (node.src && node.src.length > 0){
-                        event = doc.createEvent('HTMLEvents');
-                        event.initEvent( okay ? "load" : "error", false, false );
-                        node.dispatchEvent( event, false );
+            /**
+             * Very special case.  While in parsing mode, in head, a
+             * script can add another script tag to the head, and it will
+             * be evaluated.  This is tested in 'ant fulldoc-spec' tests.
+             *
+             * Not quite sure if the require that the new script tag must
+             * be in the head is correct or not.  NamespaceURI == null
+             * might also need to corrected too.
+             */
+            if (node.tagName.toLowerCase() === 'script' && 
+                (node.namespaceURI === "" || 
+                 node.namespaceURI === "http://www.w3.org/1999/xhtml" || 
+                 node.namespaceURI === null) ) {
+                //console.log('appending script while parsing');
+                if((this.nodeName.toLowerCase() === 'head')){
+                    try{
+                        okay = Envjs.loadLocalScript(node, null);
+                        //console.log('loaded script? %s %s', node.uuid, okay);
+                        // only fire event if we actually had something to load
+                        if (node.src && node.src.length > 0){
+                            event = doc.createEvent('HTMLEvents');
+                            event.initEvent( okay ? "load" : "error", false, false );
+                            node.dispatchEvent( event, false );
+                        }
+                    }catch(e){
+                        console.log('error loading html element %s %e', node, e.toString());
                     }
-                }catch(e){
-                    console.log('error loading html element %s %e', node, e.toString());
                 }
             }
-        }
-        break;
+            break;
         case false:
             switch(node.namespaceURI){
                 case null:
@@ -444,83 +451,86 @@ Aspect.around({
                     //fall through
                 case "http://www.w3.org/1999/xhtml":
                     switch(node.tagName.toLowerCase()){
-                    case 'style':
-                        document.styleSheets.push(CSSStyleSheet(node));
-                        break;
-                    case 'script':
-                        //console.log('appending script %s', node.src);
-                        if((this.nodeName.toLowerCase() === 'head')){
-                            try{
-                                okay = Envjs.loadLocalScript(node, null);
-                                //console.log('loaded script? %s %s', node.uuid, okay);
-                                // only fire event if we actually had something to load
-                                if (node.src && node.src.length > 0){
-                                    event = doc.createEvent('HTMLEvents');
-                                    event.initEvent( okay ? "load" : "error", false, false );
-                                    node.dispatchEvent( event, false );
+                        case 'style':
+                            document.styleSheets.push(new CSSStyleSheet(node));
+                            break;
+                        case 'script':
+                            //console.log('appending script %s', node.src);
+                            if((this.nodeName.toLowerCase() === 'head')){
+                                try{
+                                    okay = Envjs.loadLocalScript(node, null);
+                                    //console.log('loaded script? %s %s', node.uuid, okay);
+                                    // only fire event if we actually had something to load
+                                    if (node.src && node.src.length > 0){
+                                        event = doc.createEvent('HTMLEvents');
+                                        event.initEvent( okay ? "load" : "error", false, false );
+                                        node.dispatchEvent( event, false );
+                                    }
+                                }catch(ee){
+                                    console.log('error loading html element %s %e', node, ee.toString());
                                 }
-                            }catch(e){
-                                console.log('error loading html element %s %e', node, e.toString());
                             }
-                        }
-                        break;
-                    case 'frame':
-                    case 'iframe':
-                        node.contentWindow = { };
-                        node.contentDocument = new HTMLDocument(new DOMImplementation(), node.contentWindow);
-                        node.contentWindow.document = node.contentDocument;
-                        try{
-                            Window;
-                        }catch(e){
-                            node.contentDocument.addEventListener('DOMContentLoaded', function(){
-                                event = node.contentDocument.createEvent('HTMLEvents');
-                                event.initEvent("load", false, false);
-                                node.dispatchEvent( event, false );
-                            });
-                            console.log('error loading html element %s %e', node, e.toString());
-                        }
-                        try{
-                            if (node.src && node.src.length > 0){
-                                //console.log("trigger load on frame from appendChild %s", node.src);
-                                Envjs.loadFrame(node, Envjs.uri(node.src, doc.location+''));
-                            }else{
-                                Envjs.loadFrame(node);
+                            break;
+                        case 'frame':
+                        case 'iframe':
+                            node.contentWindow = { };
+                            node.contentDocument = new HTMLDocument(new DOMImplementation(), node.contentWindow);
+                            node.contentWindow.document = node.contentDocument;
+                            try{
+                                if(Window){
+                                    //console.log("iframe appended to document %s", node);
+                                }
+                            }catch(eee){
+                                node.contentDocument.addEventListener('DOMContentLoaded', function(){
+                                    event = node.contentDocument.createEvent('HTMLEvents');
+                                    event.initEvent("load", false, false);
+                                    node.dispatchEvent( event, false );
+                                });
+                                console.log('error loading html element %s %e', node, eee.toString());
                             }
-                        }catch(e){
-                            console.log('error loading html element %s %e', node, e.toString());
-                        }
-                        break;
+                            try{
+                                if (node.src && node.src.length > 0){
+                                    //console.log("trigger load on frame from appendChild %s", node.src);
+                                    Envjs.loadFrame(node, Envjs.uri(node.src, doc.location+''));
+                                }else{
+                                    Envjs.loadFrame(node);
+                                }
+                            }catch(_e){
+                                console.log('error loading html element %s %e', node, _e.toString());
+                            }
+                            break;
 
-                    case 'link':
-                        if (node.href && node.href.length > 0) {
-                            __loadLink__(node, node.href);
-                        }
-                        break;
-                        /*
-                          case 'img':
-                          if (node.src && node.src.length > 0){
-                          // don't actually load anything, so we're "done" immediately:
-                          event = doc.createEvent('HTMLEvents');
-                          event.initEvent("load", false, false);
-                          node.dispatchEvent( event, false );
-                          }
-                          break;
-                        */
-                    case 'option':
-                        node._updateoptions();
-                        break;
-                    default:
-                        if(node.getAttribute('onload')){
-                            //console.log('calling attribute onload %s | %s', node.onload, node.tagName);
-                            node.onload();
-                        }
-                        break;
+                        case 'link':
+                            if (node.href && node.href.length > 0) {
+                                Envjs.loadLink(node, node.href);
+                            }
+                            break;
+                            /*
+                              case 'img':
+                              if (node.src && node.src.length > 0){
+                              // don't actually load anything, so we're "done" immediately:
+                              event = doc.createEvent('HTMLEvents');
+                              event.initEvent("load", false, false);
+                              node.dispatchEvent( event, false );
+                              }
+                              break;
+                            */
+                        case 'option':
+                            __updateoptions__(node);
+                            break;
+                        default:
+                            if(node.getAttribute('onload')){
+                                //console.log('calling attribute onload %s | %s', node.onload, node.tagName);
+                                node.onload();
+                            }
                     }//switch on name
+                    break;
                 default:
                     break;
             }//switch on ns
             break;
         default:
+            break;
             // console.log('element appended: %s %s', node+'', node.namespaceURI);
     }//switch on doc.parsing
     return node;
@@ -533,6 +543,7 @@ Aspect.around({
 }, function(invocation) {
     var event,
         okay,
+        target,
         node = invocation.proceed(),
         doc = node.ownerDocument;
     if((node.nodeType !== Node.ELEMENT_NODE)){
@@ -546,57 +557,56 @@ Aspect.around({
         return node;
     }
     //console.log('appended html element %s %s %s', node.namespaceURI, node.nodeName, node);
-	if(node.tagName&&node.tagName.toLowerCase()=="input"){
-		target = node.parentNode;
-		//console.log('adding named map for input');
-		while(target&&target.tagName&&target.tagName.toLowerCase()!="form"){
-			//console.log('possible target for named map for input is %s', target);
-			target = target.parentNode;
-		}
-		if(target){
-			//console.log('target for named map for input is %s', target);
-			__removeNamedMap__(target, node);
-		}
-	}
+    if(node.tagName&&node.tagName.toLowerCase()=="input"){
+        target = node.parentNode;
+        //console.log('adding named map for input');
+        while(target&&target.tagName&&target.tagName.toLowerCase()!="form"){
+            //console.log('possible target for named map for input is %s', target);
+            target = target.parentNode;
+        }
+        if(target){
+            //console.log('target for named map for input is %s', target);
+            __removeNamedMap__(target, node);
+        }
+    }
     switch(doc.parsing){
         case true:
             //handled by parser if included
             break;
         case false:
             switch(node.namespaceURI){
-            case null:
-                //fall through
-            case "":
-                //fall through
-            case "http://www.w3.org/1999/xhtml":
-                //this is interesting dillema since our event engine is
-                //storing the registered events in an array accessed
-                //by the uuid property of the node.  unforunately this
-                //means listeners hang out way after(forever ;)) the node
-                //has been removed and gone out of scope.
-                //console.log('removing event listeners, %s', node, node.uuid);
-                node.removeEventListener('*', null, null);
-                switch(node.tagName.toLowerCase()){
-                case 'frame':
-                case 'iframe':
-                    try{
-                        //console.log('removing iframe document');
-                        try{
-                            Envjs.unloadFrame(node);
-                        }catch(e){
-                            console.log('error freeing resources from frame %s', e);
-                        }
-                        node.contentWindow = null;
-                        node.contentDocument = null;
-                    }catch(e){
-                        console.log('error unloading html element %s %e', node, e.toString());
-                    }
+                case null:
+                    //fall through
+                case "":
+                    //fall through
+                case "http://www.w3.org/1999/xhtml":
+                    //this is interesting dillema since our event engine is
+                    //storing the registered events in an array accessed
+                    //by the uuid property of the node.  unforunately this
+                    //means listeners hang out way after(forever ;)) the node
+                    //has been removed and gone out of scope.
+                    //console.log('removing event listeners, %s', node, node.uuid);
+                    node.removeEventListener('*', null, null);
+                    switch(node.tagName.toLowerCase()){
+                        case 'frame':
+                        case 'iframe':
+                            try{
+                                //console.log('removing iframe document');
+                                try{
+                                    Envjs.unloadFrame(node);
+                                }catch(ee){
+                                    console.log('error freeing resources from frame %s', ee);
+                                }
+                                node.contentWindow = null;
+                                node.contentDocument = null;
+                            }catch(e){
+                                console.log('error unloading html element %s %e', node, e.toString());
+                            }
+                            break;
+                        default:
+                    }//switch on name
                     break;
                 default:
-                    break;
-                }//switch on name
-            default:
-                break;
             }//switch on ns
             break;
         default:
@@ -620,7 +630,7 @@ Aspect.around({
  *          null if node does not have a name
  */
 
-var __isNamedElement__ = function(node) {
+__isNamedElement__ = function(node) {
     if (node.nodeType !== Node.ELEMENT_NODE) {
         return null;
     }
@@ -631,7 +641,7 @@ var __isNamedElement__ = function(node) {
         case 'embed':
         case 'form':
         case 'iframe':
-		case 'input':
+        case 'input':
             nodename = node.getAttribute('name');
             break;
         case 'applet':
@@ -652,24 +662,26 @@ var __isNamedElement__ = function(node) {
 };
 
 
-var __addNamedMap__ = function(target, node) {
+__addNamedMap__ = function(target, node) {
     var nodename = __isNamedElement__(node);
     if (nodename) {
-       	target.__defineGetter__(nodename, function() {
+        target.__defineGetter__(nodename, function() {
             return node;
-        });	
-		target.__defineSetter__(nodename, function(value) {
-	        return value;
-	    });
+        }); 
+        target.__defineSetter__(nodename, function(value) {
+            return value;
+        });
     }
 };
 
-var __removeNamedMap__ = function(target, node) {
+__removeNamedMap__ = function(target, node) {
     if (!node) {
         return;
     }
     var nodename = __isNamedElement__(node);
     if (nodename) {
-		delete target[nodename];
+        delete target[nodename];
     }
 };
+
+

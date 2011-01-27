@@ -6,11 +6,19 @@
  */
 
 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.CanvasRenderingContext2D').
+		debug('CanvasRenderingContext2D available');    
+});
 /*
  * This is a "non-Abstract Base Class". For an implmentation that actually
  * did something, all these methods would need to over-written
  */
-CanvasRenderingContext2D = function() {
+exports.CanvasRenderingContext2D = CanvasRenderingContext2D = function() {
     // NOP
 };
 
@@ -49,7 +57,19 @@ CanvasRenderingContext2D.prototype = {
     }
 };
 
-HTMLCanvasElement = function(ownerDocument) {
+}(/*Envjs.HTML.CanvasRenderingContext2D*/));
+
+
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLCanvasElement').
+		debug('HTMLCanvasElement available');    
+});
+
+exports.HTMLCanvasElement = HTMLCanvasElement = function(ownerDocument) {
     HTMLElement.apply(this, arguments);
 };
 HTMLCanvasElement.prototype = new HTMLElement();
@@ -81,4 +101,6 @@ __extend__(HTMLCanvasElement.prototype, {
     }
 
 });
+
+}(/*Envjs.HTML.HTMLCanvasElement*/));
 

@@ -87,13 +87,6 @@ public class ServerSingleScriptLinker extends SelectionScriptLinker {
     out.print("var $_window = this;");
     out.newlineOpt();
 
-    // this is a hack to make backwards compatible
-    out.print("var __defineParser__ = function(){};");
-    out.newlineOpt();
-
-    // Emit the module's JS a closure.
-    out.newlineOpt();
-    out.print("(function () {");
     out.newlineOpt();
     out.print("var $gwt_version = \"" + About.getGwtVersionNum() + "\";");
     out.newlineOpt();
@@ -137,8 +130,6 @@ public class ServerSingleScriptLinker extends SelectionScriptLinker {
     // Here we just do it
     out.print("gwtOnLoad();");
 
-    out.newlineOpt();
-    out.print("})();");
     out.newlineOpt();
 
     return emitString(logger, out.toString(), context.getModuleName()

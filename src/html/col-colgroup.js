@@ -5,7 +5,17 @@
 * HTML5: 4.9.3 The colgroup element
 * http://dev.w3.org/html5/spec/Overview.html#the-colgroup-element
 */
-HTMLTableColElement = function(ownerDocument) {
+
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLTableColElement').
+		debug('HTMLTableColElement available');    
+});
+
+exports.HTMLTableColElement = HTMLTableColElement = function(ownerDocument) {
     HTMLElement.apply(this, arguments);
 };
 HTMLTableColElement.prototype = new HTMLElement();
@@ -50,4 +60,6 @@ __extend__(HTMLTableColElement.prototype, {
         return '[object HTMLTableColElement]';
     }
 });
+
+}(/*Envjs.HTML.HTMLTableColElement*/));
 

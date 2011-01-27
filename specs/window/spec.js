@@ -1,3 +1,4 @@
+
 QUnit.module('window');
 
 window.ABC1234567890 = "abc!@#$%^&*()";
@@ -12,12 +13,10 @@ function giveAHoot(){
 }
 
 test('Window Interfaces Available', function(){
-
     ok(Window,      'Window available');
     ok(History,     'History available');
     ok(Navigator,   'Navigator available');
     ok(Screen,      'Screen available');
-
 });
 
 test('window proxy', function(){
@@ -188,6 +187,11 @@ test('window.location', function(){
     // HTML5 March 2010: no one implements resolveURL
     //ok(location.assign,         'location.resolveURL');
 });
+
+function runningUnderEnvjs(){
+    return (typeof navigator === 'object') &&
+        navigator.userAgent.search( /Envjs/ ) > -1;
+}
 
 if (runningUnderEnvjs()){
     /* This test won't run in a browser.  In-browser testing with
@@ -411,18 +415,14 @@ test('HTMLParser.parseDocument / non-polluting script', function(){
     doc = iframe.contentDocument;
     win = iframe.contentWindow;
 
-	//allow anonymous script types
-	if (runningUnderEnvjs())
-		Envjs.scriptTypes[""] = true;
     doc.open();
-    doc.write("<html><head><script>var ABABABABAB = 123;</script></head><body>hello</body></html>");
+    doc.write("<html><head><script>var ABABABABAB = 123; </script></head><body>hello</body></html>");
     doc.close();
-	if (runningUnderEnvjs())
-		Envjs.scriptTypes[""] = false;
 	
     ok(doc, 'frame has contentDocument');
     equals(doc+'', '[object HTMLDocument]', 'doc is HTMLDocument');
     equals(win.ABABABABAB, 123, 'script evaluated in frame context');
+
     try{
         ABABABABAB;
         ok(false, 'script not evaluated top window context: '+ABABABABAB);
@@ -444,14 +444,9 @@ test('HTMLParser.parseDocument / polluting script', function(){
     doc = iframe.contentDocument;
     win = iframe.contentWindow;
 
-	//allow anonymous script types
-	if (runningUnderEnvjs())
-		Envjs.scriptTypes[""] = true;
     doc.open();
     doc.write("<html><head><script>ABABABABAB = 123;</script></head><body>hello</body></html>");
     doc.close();
-	if (runningUnderEnvjs())
-		Envjs.scriptTypes[""] = false;
 	
     ok(doc, 'frame has contentDocument');
     equals(doc+'', '[object HTMLDocument]', 'doc is HTMLDocument');
@@ -476,8 +471,8 @@ test('HTMLParser.parseDocument / empty script', function(){
     //writing the document directly
     expect(1);
     var iframe = document.createElement("iframe"),
-    doc,
-    win;
+    	doc,
+    	win;
     document.body.appendChild(iframe);
     doc = iframe.contentDocument;
     win = iframe.contentWindow;
@@ -517,19 +512,12 @@ test('frame proxy', function(){
 
         ok(frame.contentWindow.Array !== window.Array, '.Array');
         ok(new window.Array(), 'new Array');
-        ok(new frame.contentWindow.Array(), 'new Array');
-
+        ok(frame.contentWindow.Array, 'new Array');
+		
         doc = frame.contentDocument;
         equals(doc.title, 'Envjs Proxy Spec', '.contentDocument.title');
         equals(doc.toString(), '[object HTMLDocument]', '.contentDocument.toString()');
 
-        /**
-         * TODO move this to its own test
-         document.body.removeChild( frame );
-
-         equals(frame.contentWindow, null, '.contentWindow');
-         equals(frame.contentDocument, null, '.contentDocument');
-        */
         start();
     }, false);
 

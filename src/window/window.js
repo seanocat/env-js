@@ -1,3 +1,13 @@
+
+
+(function(){
+
+var log = Envjs.logger('Envjs.Window');
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.Window').
+        debug('window logger available');
+});
+
 //These descriptions of window properties are taken loosely David Flanagan's
 //'JavaScript - The Definitive Guide' (O'Reilly)
 
@@ -19,18 +29,22 @@ var __top__ = function(_scope){
  * @param {Object} parent
  * @param {Object} opener
  */
-Window = function(scope, parent, opener){
+exports.Window = Window = function(scope, parent, opener){
 
+    if(!scope){
+        scope = __this__;
+    }
+    if(!parent){
+        parent = scope;
+    }
     // the window property is identical to the self property and to this obj
-    //var proxy = new Envjs.proxy(scope, parent);
-    //scope.__proxy__ = proxy;
     scope.__defineGetter__('window', function(){
         return scope;
     });
 
     var $uuid = new Date().getTime()+'-'+Math.floor(Math.random()*1000000000000000);
     Envjs.windows($uuid, scope);
-    //console.log('opening window %s', $uuid);
+    //log.debug('opening window %s', $uuid);
 
     // every window has one-and-only-one .document property which is always
     // an [object HTMLDocument].  also, only window.document objects are
@@ -67,14 +81,14 @@ Window = function(scope, parent, opener){
     // a read-only reference to the Location object.  the location object does
     // expose read/write properties
     var $location = new Location('about:blank', $document, $history);
-
+    
     // The name of window/frame. Set directly, when using open(), or in frameset.
     // May be used when specifying the target attribute of links
     var $name = null;
 
     // a read-only reference to the Navigator object
     var $navigator = new Navigator();
-
+    
     // a read/write reference to the Window object that contained the script
     // that called open() to open this browser window.  This property is valid
     // only for top-level window objects.
@@ -110,9 +124,8 @@ Window = function(scope, parent, opener){
 
     // a read/write string that specifies the current status line.
     var $status = '';
-
     __extend__(scope, EventTarget.prototype);
-
+    
     return __extend__( scope, {
         get closed(){
             return $closed;
@@ -136,7 +149,7 @@ Window = function(scope, parent, opener){
         },
         */
         get frames(){
-        return new HTMLCollection($document.getElementsByTagName('frame'));
+            return $document.getElementsByTagName('frame');
         },
         get length(){
             // should be frames.length,
@@ -161,12 +174,12 @@ Window = function(scope, parent, opener){
             return $location;
         },
         set location(url){
-			//very important or you will go into an infinite
-        	//loop when creating a xml document
-			//console.log('setting window location %s', url);
-        	if(url) {
-            	$location.assign(Envjs.uri(url, $location+''));
-			}
+            //very important or you will go into an infinite
+            //loop when creating a xml document
+            log.debug('setting window location %s', url);
+            if(url) {
+                $location.assign(Envjs.uri(url, $location+''));
+            }
         },
         get name(){
             return $name;
@@ -269,7 +282,7 @@ Window = function(scope, parent, opener){
                     }
                 }
             }
-            new Window(_window, _window, this);
+            var w = new Window(_window, _window, this);
             if(name) {
                 _window.name = name;
             }
@@ -278,22 +291,22 @@ Window = function(scope, parent, opener){
             return _window;
         },
         close: function(){
-            //console.log('closing window %s', __windows__[$uuid]);
-			var frames = $document.getElementsByTagName('frame'),
-				iframes = $document.getElementsByTagName('iframe'),
-				i;
-			for(i=0;i<frames.length;i++){
-				Envjs.unloadFrame(frame[i]);
-			}	
-			for(i=0;i<iframes.length;i++){
-				Envjs.unloadFrame(frame[i]);
-			}
-            try{
-				Envjs.windows($uuid, null);
-            }catch(e){
-                console.log('%s',e);
+            log.debug('closing window %s', $uuid);
+            var frames = $document.getElementsByTagName('frame'),
+                iframes = $document.getElementsByTagName('iframe'),
+                i;
+            for(i=0;i<frames.length;i++){
+                Envjs.unloadFrame(frames[i]);
+            }   
+            for(i=0;i<iframes.length;i++){
+                Envjs.unloadFrame(iframes[i]);
             }
-			return null;
+            try{
+                Envjs.windows($uuid, null);
+            }catch(e){
+                log.error('%s',e);
+            }
+            return null;
         },
         alert : function(message){
             Envjs.alert(message);
@@ -310,20 +323,29 @@ Window = function(scope, parent, opener){
         atob: function(ascii){
             return base64.decode(ascii);
         },
-		//these should be undefined on instantiation
+        //these should be undefined on instantiation
         //onload: function(){},
         //onunload: function(){},
-		focus: function(){},
-		blur: function(){},
+        focus: function(){},
+        blur: function(){},
         get guid(){
             return $uuid;
+        },
+        set guid(_guid){
+            $uuid = _guid;
         }
     });
 
 };
 
+//console.log('scheduling default window creation');
+setTimeout(function(){
+    var w = new Window(__this__);
+    log.info('[ %s ]', window.navigator.userAgent);
+},1);
 
-//finally pre-supply the window with the window-like environment
-//console.log('Default Window');
-new Window(__this__, __this__);
-console.log('[ %s ]',window.navigator.userAgent);
+}(/*Window*/));
+
+
+//console.log('starting Envjs.eventLoop');
+Envjs.eventLoop();

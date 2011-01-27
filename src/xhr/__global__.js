@@ -9,6 +9,13 @@
  * This file simply provides the global definitions we need to 
  * be able to correctly implement to core browser (XML)HTTPRequest 
  * interfaces.
- */
+
+This module leaks the following global definitions. 
+
 var Location,
     XMLHttpRequest;
+
+ */
+
+var Envjs = Envjs || require('envjs/platform/core').Envjs,
+	Document = Document || require('envjs/dom').Document;

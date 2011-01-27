@@ -1,5 +1,3 @@
-
-
 var __this__ = this;
 
 window.ABC1234567890 = "abc!@#$%^&*()";

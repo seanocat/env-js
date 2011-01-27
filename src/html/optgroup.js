@@ -4,7 +4,17 @@
  * HTML 5: 4.10.9 The optgroup element
  * http://dev.w3.org/html5/spec/Overview.html#the-optgroup-element
  */
-HTMLOptGroupElement = function(ownerDocument) {
+ 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLOptGroupElement').
+        debug('HTMLOptGroupElement available');    
+});
+
+exports.HTMLOptGroupElement = HTMLOptGroupElement = function(ownerDocument) {
     HTMLElement.apply(this, arguments);
 };
 HTMLOptGroupElement.prototype = new HTMLElement();
@@ -23,8 +33,8 @@ __extend__(HTMLOptGroupElement.prototype, {
     },
     appendChild: function(node){
         var i,
-        length,
-        selected = false;
+            length,
+            selected = false;
         //make sure at least one is selected by default
         if(node.nodeType === Node.ELEMENT_NODE && node.tagName === 'OPTION'){
             length = this.childNodes.length;
@@ -49,3 +59,5 @@ __extend__(HTMLOptGroupElement.prototype, {
         return '[object HTMLOptGroupElement]';
     }
 });
+
+}(/*HTMLOptGroupElement*/));

@@ -11,7 +11,8 @@
  * 
  * This file simply provides the global definitions we need to \
  * be able to correctly implement to core browser DOM interfaces."
- */
+
+The following are leaked globally intentionally
 
 var Attr,
     CDATASection,
@@ -34,6 +35,11 @@ var Attr,
     Text,
     Range,
     XMLSerializer,
-    DOMParser;
+    DOMParser,
+	XPathResult,
+	XPathExpression;
 
+*/
 
+var Envjs = Envjs || require('envjs/platform/core').Envjs,
+	After = After || require('envjs/platform/core').After;

@@ -30,7 +30,7 @@
             location="rhino/js.jar"
             description="Rhino JS Engine"/>
     <property name="PREFIX"
-            location="${basedir}/dist/"
+            location="${basedir}/envjs/"
             description="Target parent folder for built files"   />
     <property name="DOCS_DIR"
             location="${PREFIX}/docs"
@@ -58,26 +58,35 @@
     <echo message="     },"/>
 
 
-    <property name="CORE_DIST"      location="${DIST_DIR}/platform/core.js" />
-    <property name="RHINO_DIST"     location="${DIST_DIR}/platform/rhino.js" />
-    <property name="CONSOLE_DIST"   location="${DIST_DIR}/console.js" />
-    <property name="DOM_DIST"       location="${DIST_DIR}/dom.js" />
-    <property name="EVENT_DIST"     location="${DIST_DIR}/event.js" />
-    <property name="TIMER_DIST"     location="${DIST_DIR}/timer.js" />
-    <property name="HTML_DIST"      location="${DIST_DIR}/html.js" />
-    <property name="PARSER_DIST"    location="${DIST_DIR}/parser.js" />
-    <property name="XHR_DIST"       location="${DIST_DIR}/xhr.js" />
-    <property name="CSS_DIST"       location="${DIST_DIR}/css.js" />
-    <property name="WINDOW_DIST"    location="${DIST_DIR}/window.js" />
-    <property name="ENV_DIST"       location="${DIST_DIR}/env.js" />
-    <property name="ENV_JSLINT"     location="${DIST_DIR}/env.jslint.js" />
-    <property name="ENV_RHINO"      location="${DIST_DIR}/env.rhino.js"/>
+    <property name="CORE_DIST"      	location="${DIST_DIR}/platform/core.js" />
+    <property name="RHINO_DIST"     	location="${DIST_DIR}/platform/rhino.js" />
+    <property name="NODE_DIST"      	location="${DIST_DIR}/platform/node.js" />
+    <property name="SPYDERMONKEY_DIST"	location="${DIST_DIR}/platform/spydermonkey.js" />
+    <property name="RUBYRACER_DIST"		location="${DIST_DIR}/platform/rubyracer.js" />
+    <property name="JOHNSON_DIST"		location="${DIST_DIR}/platform/johnson.js" />
+    <property name="CONSOLE_DIST"   	location="${DIST_DIR}/console.js" />
+    <property name="DOM_DIST"       	location="${DIST_DIR}/dom.js" />
+    <property name="EVENT_DIST"     	location="${DIST_DIR}/event.js" />
+    <property name="TIMER_DIST"     	location="${DIST_DIR}/timer.js" />
+    <property name="HTML_DIST"      	location="${DIST_DIR}/html.js" />
+    <property name="PARSER_DIST"    	location="${DIST_DIR}/parser.js" />
+    <property name="XHR_DIST"       	location="${DIST_DIR}/xhr.js" />
+    <property name="CSS_DIST"       	location="${DIST_DIR}/css.js" />
+    <property name="WINDOW_DIST"    	location="${DIST_DIR}/window.js" />
+    <property name="ENV_DIST"       	location="${DIST_DIR}/env.js" />
+    <property name="ENV_JSLINT"     	location="${DIST_DIR}/env.jslint.js" />
+    <property name="ENV_RHINO"      	location="${DIST_DIR}/env.rhino.js"/>
+    <property name="ENV_NODE"       	location="${DIST_DIR}/env.node.js"/>
+    <property name="ENV_SPYDERMONKEY"	location="${DIST_DIR}/env.spydermonkey.js"/>
+    <property name="ENV_RUBYRACER"   	location="${DIST_DIR}/env.rubyracer.js"/>
+    <property name="ENV_JOHNSON"   		location="${DIST_DIR}/env.johnson.js"/>
 
     <echo message="     'DISTRIBUTABLES': {"/>
     <echo message="         'CORE_DIST':    '${CORE_DIST}',"/>
     <echo message="         'RHINO_DIST':   '${RHINO_DIST}',"/>
-    <echo message="         'CONSOLE_DIST': '${CONSOLE_DIST}'"/>
-    <echo message="         'DOM_DIST':     '${DOM_DIST}'"/>
+    <echo message="         'NODE_DIST':   	'${NODE_DIST}',"/>
+    <echo message="         'CONSOLE_DIST': '${CONSOLE_DIST}',"/>
+    <echo message="         'DOM_DIST':     '${DOM_DIST}',"/>
     <echo message="         'EVENT_DIST':   '${EVENT_DIST}',"/>
     <echo message="         'TIMER_DIST':   '${TIMER_DIST}',"/>
     <echo message="         'HTML_DIST':    '${HTML_DIST}',"/>
@@ -87,6 +96,9 @@
     <echo message="         'WINDOW_DIST':  '${WINDOW_DIST}',"/>
     <echo message="         'ENV_DIST':     '${ENV_DIST}',"/>
     <echo message="         'ENV_RHINO':    '${ENV_RHINO}',"/>
+    <echo message="         'ENV_NODE':     '${ENV_NODE}',"/>
+    <echo message="         'ENV_SPYDERMONKEY':'${ENV_SPYDERMONKEY}',"/>
+    <echo message="         'ENV_RUBYRACER':'${ENV_RUBYRACER}'"/>
     <echo message="     }"/>
     <echo message=" }"/>
 
@@ -123,7 +135,10 @@
             <fileset dir="${SRC_DIR}" includes="common/intro.js" />
             <fileset dir="${SRC_DIR}" includes="common/__extend__.js" />
             <fileset dir="${SRC_DIR}" includes="common/__trim__.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/core/aspect.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/core/config.js" />
             <fileset dir="${SRC_DIR}" includes="platform/core/console.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/core/logging.js" />
             <fileset dir="${SRC_DIR}" includes="platform/core/dom.js" />
             <fileset dir="${SRC_DIR}" includes="platform/core/event.js" />
             <fileset dir="${SRC_DIR}" includes="platform/core/html.js" />
@@ -166,20 +181,22 @@
                     <token key="BUILD_VERSION" value="${BUILD_VERSION}"/>
                 </replacetokens>
             </filterchain>
-            <fileset dir="${SRC_DIR}" includes="platform/rhino/__global__.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/java-rhino/__global__.js" />
             <fileset dir="${SRC_DIR}" includes="common/intro.js" />
             <fileset dir="${SRC_DIR}" includes="common/__extend__.js" />
-            <fileset dir="${SRC_DIR}" includes="platform/rhino/console.js" />
-            <fileset dir="${SRC_DIR}" includes="platform/rhino/dom.js" />
-            <fileset dir="${SRC_DIR}" includes="platform/rhino/event.js" />
-            <fileset dir="${SRC_DIR}" includes="platform/rhino/html.js" />
-            <fileset dir="${SRC_DIR}" includes="platform/rhino/svg.js" />
-            <fileset dir="${SRC_DIR}" includes="platform/rhino/parser.js" />
-            <fileset dir="${SRC_DIR}" includes="platform/rhino/timer.js" />
-            <fileset dir="${SRC_DIR}" includes="platform/rhino/xhr.js" />
-            <fileset dir="${SRC_DIR}" includes="platform/rhino/window.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/java-rhino/console.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/java-rhino/dom.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/java-rhino/event.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/java-rhino/html.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/java-rhino/svg.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/java-rhino/parser.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/java-rhino/timer.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/java-rhino/xhr.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/java-rhino/window.js" />
             <fileset dir="${SRC_DIR}" includes="common/outro.js" />
         </concat>
+		<copy file="${SRC_DIR}/platform/java-rhino/require.js"
+              tofile="${DIST_DIR}/rhino.js" />
         <echo message="Finished Building ${RHINO_DIST}"/>
         <echo message=""/>
     </target>
@@ -197,6 +214,121 @@
             <jvmarg value="-Dfile.encoding=utf-8"/>
             <jvmarg value="-Xmx256m"/>
         </java>
+        <echo message=""/>
+    </target>
+	
+    <target name="node-env">
+        <mkdir dir="${DIST_DIR}/platform" />
+        <echo message=""/>
+        <echo message="Building ${NODE_DIST}" />
+        <concat destfile="${NODE_DIST}">
+            <filterchain>
+                <replacetokens>
+                    <token key="VERSION" value="node-env.${BUILD_VERSION}"/>
+                    <token key="BUILD_VERSION" value="${BUILD_VERSION}"/>
+                </replacetokens>
+            </filterchain>
+            <fileset dir="${SRC_DIR}" includes="platform/node-v8/__global__.js" />
+            <fileset dir="${SRC_DIR}" includes="common/intro.js" />
+            <fileset dir="${SRC_DIR}" includes="common/__extend__.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/node-v8/console.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/node-v8/html.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/node-v8/timer.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/node-v8/window.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/node-v8/xhr.js" />
+            <fileset dir="${SRC_DIR}" includes="common/outro.js" />
+        </concat>
+		<copy file="${SRC_DIR}/platform/node-v8/require.js"
+              tofile="${DIST_DIR}/node.js" />
+        <echo message="Finished Building ${NODE_DIST}"/>
+        <echo message=""/>
+    </target>
+
+	<target name="spydermonkey-env">
+        <mkdir dir="${DIST_DIR}/platform" />
+        <echo message=""/>
+        <echo message="Building ${SPYDERMONKEY_DIST}" />
+        <concat destfile="${SPYDERMONKEY_DIST}">
+            <filterchain>
+                <replacetokens>
+                    <token key="VERSION" value="node-env.${BUILD_VERSION}"/>
+                    <token key="BUILD_VERSION" value="${BUILD_VERSION}"/>
+                </replacetokens>
+            </filterchain>
+            <fileset dir="${SRC_DIR}" includes="platform/python-spidermonkey/__global__.js" />
+            <fileset dir="${SRC_DIR}" includes="common/intro.js" />
+            <fileset dir="${SRC_DIR}" includes="common/__extend__.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/python-spidermonkey/console.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/python-spidermonkey/html.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/python-spidermonkey/timer.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/python-spidermonkey/window.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/python-spidermonkey/xhr.js" />
+            <fileset dir="${SRC_DIR}" includes="common/outro.js" />
+        </concat>
+		<copy file="${SRC_DIR}/platform/python-spidermonkey/require.js"
+              tofile="${DIST_DIR}/spydermonkey.js" />
+			<copy file="${SRC_DIR}/platform/python-spidermonkey/envjs.py"
+	              tofile="${DIST_DIR}/spydermonkey.py" />
+        <echo message="Finished Building ${SPYDERMONKEY_DIST}"/>
+        <echo message=""/>
+    </target>
+
+
+	<target name="rubyracer-env">
+        <mkdir dir="${DIST_DIR}/platform" />
+        <echo message=""/>
+        <echo message="Building ${RUBYRACER_DIST}" />
+        <concat destfile="${RUBYRACER_DIST}">
+            <filterchain>
+                <replacetokens>
+                    <token key="VERSION" value="rubyracer-env.${BUILD_VERSION}"/>
+                    <token key="BUILD_VERSION" value="${BUILD_VERSION}"/>
+                </replacetokens>
+            </filterchain>
+            <fileset dir="${SRC_DIR}" includes="platform/ruby-v8/__global__.js" />
+            <fileset dir="${SRC_DIR}" includes="common/intro.js" />
+            <fileset dir="${SRC_DIR}" includes="common/__extend__.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/ruby-v8/console.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/ruby-v8/html.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/ruby-v8/timer.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/ruby-v8/window.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/ruby-v8/xhr.js" />
+            <fileset dir="${SRC_DIR}" includes="common/outro.js" />
+        </concat>
+		<copy file="${SRC_DIR}/platform/ruby-v8/require.js"
+              tofile="${DIST_DIR}/rubyracer.js" />
+		<copy file="${SRC_DIR}/platform/ruby-v8/envjs.rb"
+              tofile="${DIST_DIR}/rubyracer.rb" />
+        <echo message="Finished Building ${RUBYRACER_DIST}"/>
+        <echo message=""/>
+    </target>
+
+	<target name="johnson-env">
+        <mkdir dir="${DIST_DIR}/platform" />
+        <echo message=""/>
+        <echo message="Building ${JOHNSON_DIST}" />
+        <concat destfile="${JOHNSON_DIST}">
+            <filterchain>
+                <replacetokens>
+                    <token key="VERSION" value="johnson-env.${BUILD_VERSION}"/>
+                    <token key="BUILD_VERSION" value="${BUILD_VERSION}"/>
+                </replacetokens>
+            </filterchain>
+            <fileset dir="${SRC_DIR}" includes="platform/ruby-spidermonkey/__global__.js" />
+            <fileset dir="${SRC_DIR}" includes="common/intro.js" />
+            <fileset dir="${SRC_DIR}" includes="common/__extend__.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/ruby-spidermonkey/console.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/ruby-spidermonkey/html.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/ruby-spidermonkey/timer.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/ruby-spidermonkey/window.js" />
+            <fileset dir="${SRC_DIR}" includes="platform/ruby-spidermonkey/xhr.js" />
+            <fileset dir="${SRC_DIR}" includes="common/outro.js" />
+        </concat>
+		<copy file="${SRC_DIR}/platform/ruby-spidermonkey/require.js"
+              tofile="${DIST_DIR}/johnson.js" />
+		<copy file="${SRC_DIR}/platform/ruby-spidermonkey/envjs.rb"
+              tofile="${DIST_DIR}/johnson.rb" />
+        <echo message="Finished Building ${JOHNSON_DIST}"/>
         <echo message=""/>
     </target>
 
@@ -262,20 +394,21 @@
             <fileset dir="${SRC_DIR}" includes="dom/text.js" />
             <fileset dir="${SRC_DIR}" includes="dom/cdatasection.js" />
             <fileset dir="${SRC_DIR}" includes="dom/comment.js" />
+            <fileset dir="${SRC_DIR}" includes="dom/domimplementation.js" />
+            <fileset dir="${SRC_DIR}" includes="dom/document.js" />
             <fileset dir="${SRC_DIR}" includes="dom/documenttype.js" />
+            <fileset dir="${SRC_DIR}" includes="dom/documentfragment.js" />
+            <fileset dir="${SRC_DIR}" includes="dom/domexception.js" />
+            <fileset dir="${SRC_DIR}" includes="dom/domparser.js" />
             <fileset dir="${SRC_DIR}" includes="dom/attr.js" />
             <fileset dir="${SRC_DIR}" includes="dom/element.js" />
-            <fileset dir="${SRC_DIR}" includes="dom/domexception.js" />
-            <fileset dir="${SRC_DIR}" includes="dom/documentfragment.js" />
             <fileset dir="${SRC_DIR}" includes="dom/processinginstruction.js" />
             <fileset dir="${SRC_DIR}" includes="dom/entity.js" />
             <fileset dir="${SRC_DIR}" includes="dom/entityreference.js" />
-            <fileset dir="${SRC_DIR}" includes="dom/domimplementation.js" />
             <fileset dir="${SRC_DIR}" includes="dom/notation.js" />
             <fileset dir="${SRC_DIR}" includes="dom/range.js" />
-            <fileset dir="${SRC_DIR}" includes="dom/document.js" />
-            <fileset dir="${SRC_DIR}" includes="dom/domparser.js" />
             <fileset dir="${SRC_DIR}" includes="dom/xmlserializer.js" />
+            <fileset dir="${SRC_DIR}" includes="dom/xpath.js" />
             <fileset dir="${SRC_DIR}" includes="common/outro.js" />
         </concat>
         <echo message="Finished Building ${DOM_DIST}"/>
@@ -314,7 +447,6 @@
             <fileset dir="${SRC_DIR}" includes="common/intro.js" />
             <fileset dir="${SRC_DIR}" includes="common/__extend__.js" />
             <fileset dir="${SRC_DIR}" includes="common/__setArray__.js" />
-            <fileset dir="${SRC_DIR}" includes="event/aspect.js" />
             <fileset dir="${SRC_DIR}" includes="event/eventtarget.js" />
             <fileset dir="${SRC_DIR}" includes="event/event.js" />
             <fileset dir="${SRC_DIR}" includes="event/uievent.js" />
@@ -357,8 +489,8 @@
                     <token key="BUILD_VERSION" value="${BUILD_VERSION}"/>
                 </replacetokens>
             </filterchain>
-            <fileset dir="${SRC_DIR}" includes="timer/__global__.js" />
             <fileset dir="${SRC_DIR}" includes="common/intro.js" />
+            <fileset dir="${SRC_DIR}" includes="timer/__global__.js" />
             <fileset dir="${SRC_DIR}" includes="timer/timer.js" />
             <fileset dir="${SRC_DIR}" includes="common/outro.js" />
         </concat>
@@ -578,11 +710,9 @@
                     <token key="BUILD_VERSION" value="${BUILD_VERSION}"/>
                 </replacetokens>
             </filterchain>
-            <fileset dir="${SRC_DIR}" includes="xhr/__global__.js" />
             <fileset dir="${SRC_DIR}" includes="common/intro.js" />
+            <fileset dir="${SRC_DIR}" includes="xhr/__global__.js" />
             <fileset dir="${SRC_DIR}" includes="common/__extend__.js" />
-            <fileset dir="${SRC_DIR}" includes="common/__setArray__.js" />
-            <fileset dir="${SRC_DIR}" includes="common/__trim__.js" />
             <fileset dir="${SRC_DIR}" includes="xhr/document.js" />
             <fileset dir="${SRC_DIR}" includes="xhr/location.js" />
             <fileset dir="${SRC_DIR}" includes="xhr/xmlhttprequest.js" />
@@ -694,19 +824,19 @@
         <echo message="${ENV_JSLINT} built." />
         <exec executable="python"
               input="${ENV_JSLINT}"
-              output="dist/jslint-in.js" >
+              output="envjs/jslint-in.js" >
           <arg value="misc/deaccessor.py" />
         </exec>
         <java fork="true"
               jar="${RHINO_JAR}"
               failonerror="false"
-              output="dist/jslint-out.txt" >
+              output="envjs/jslint-out.txt" >
             <arg value="misc/jslint.js"/>
-            <arg value="dist/jslint-in.js"/>
+            <arg value="envjs/jslint-in.js"/>
             <jvmarg value="-Dfile.encoding=utf-8"/>
             <jvmarg value="-Xmx256m"/>
         </java>
-        <echo message="dist/jslint-out.txt has results" />
+        <echo message="envjs/jslint-out.txt has results" />
     </target>
 
     <!-- TODO: add back core/env-spec.  Right now it breaks -->
@@ -716,7 +846,6 @@
                      dom-spec, event-spec, timer-spec,
                      html-spec, parser-spec, xhr-spec,
                      css-spec,  window-spec">
-      <!-- TODO: nice message saying all worked.  Zap /dist on error? -->
     </target>
 
     <target name="clean" description="Clean up">
@@ -726,54 +855,11 @@
 
     <target description="Main ENV concatenator"
             name="zip"
-            depends="core-env, rhino-env, console,
-                     dom, event, timer,
+            depends="core-env, rhino-env, node-env, spydermonkey-env,
+					 rubyracer-env, johnson-env,
+                     console, dom, event, timer,
                      html, parser, xhr,
                      css,  window">
-        <!-- CORE -->
-        <echo message="Building ${ENV_DIST}" />
-        <concat destfile="${ENV_DIST}">
-            <filterchain>
-                <replacetokens>
-                    <token key="VERSION" value="${BUILD_VERSION}"/>
-                    <token key="BUILD_VERSION" value="${BUILD_VERSION}"/>
-                </replacetokens>
-            </filterchain>
-            <fileset dir="${DIST_DIR}" includes="platform/core.js" />
-            <fileset dir="${DIST_DIR}" includes="console.js" />
-            <fileset dir="${DIST_DIR}" includes="dom.js" />
-            <fileset dir="${DIST_DIR}" includes="event.js" />
-            <fileset dir="${DIST_DIR}" includes="timer.js" />
-            <fileset dir="${DIST_DIR}" includes="html.js" />
-            <fileset dir="${DIST_DIR}" includes="css.js" />
-            <fileset dir="${DIST_DIR}" includes="parser.js" />
-            <fileset dir="${DIST_DIR}" includes="xhr.js" />
-            <fileset dir="${DIST_DIR}" includes="window.js" />
-        </concat>
-        <echo message="${ENV_DIST} built." />
-
-        <!-- RHINO -->
-        <echo message="Building ${ENV_RHINO}" />
-        <concat destfile="${ENV_RHINO}">
-            <filterchain>
-                <replacetokens>
-                    <token key="VERSION" value="env-${BUILD_VERSION}"/>
-                    <token key="BUILD_VERSION" value="${BUILD_VERSION}"/>
-                </replacetokens>
-            </filterchain>
-            <fileset dir="${DIST_DIR}" includes="platform/core.js" />
-            <fileset dir="${DIST_DIR}" includes="platform/rhino.js" />
-            <fileset dir="${DIST_DIR}" includes="console.js" />
-            <fileset dir="${DIST_DIR}" includes="dom.js" />
-            <fileset dir="${DIST_DIR}" includes="event.js" />
-            <fileset dir="${DIST_DIR}" includes="timer.js" />
-            <fileset dir="${DIST_DIR}" includes="html.js" />
-            <fileset dir="${DIST_DIR}" includes="css.js" />
-            <fileset dir="${DIST_DIR}" includes="parser.js" />
-            <fileset dir="${DIST_DIR}" includes="xhr.js" />
-            <fileset dir="${DIST_DIR}" includes="window.js" />
-        </concat>
-        <echo message="${ENV_RHINO} built." />
     </target>
 
 </project>

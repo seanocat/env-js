@@ -4,7 +4,17 @@
  * HTML5 4.10.4 The label element
  * http://dev.w3.org/html5/spec/Overview.html#the-label-element
  */
-HTMLLabelElement = function(ownerDocument) {
+ 
+(function(){
+    
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLLabelElement').
+		debug('HTMLLabelElement available');    
+});
+
+exports.HTMLLabelElement = HTMLLabelElement = function(ownerDocument) {
     HTMLInputCommon.apply(this, arguments);
 };
 HTMLLabelElement.prototype = new HTMLInputCommon();
@@ -26,3 +36,5 @@ __extend__(HTMLLabelElement.prototype, {
         return '[object HTMLLabelElement]';
     }
 });
+
+}(/*HTMLLabelElement*/));

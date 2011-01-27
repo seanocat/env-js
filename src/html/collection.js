@@ -5,30 +5,42 @@
  * http://dev.w3.org/html5/spec/Overview.html#htmlcollection
  * http://dev.w3.org/html5/spec/Overview.html#collections
  */
-HTMLCollection = function(nodelist, type) {
+ 
+(function(){
+    
+var log = Envjs.logger();
 
-    __setArray__(this, []);
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.HTML.HTMLCollection').
+		debug('HTMLCollection available');    
+});
+
+exports.HTMLCollection = HTMLCollection = function(nodelist, type) {
+	__extend__(nodelist,{
+		namedItem: function (name) {
+	        return this[name] || null;
+	    },
+
+	    toString: function() {
+	        return '[object HTMLCollection]';
+	    }
+	});
     var n;
     for (var i=0; i<nodelist.length; i++) {
-        this[i] = nodelist[i];
-        n = nodelist[i].name;
-        if (n) {
-            this[n] = nodelist[i];
-        }
         n = nodelist[i].id;
-        if (n) {
-            this[n] = nodelist[i];
+        if (n && !nodelist[n]) {
+            nodelist[n] = nodelist[i];
+        }
+        n = nodelist[i].name;
+        if (n && !nodelist[n]) {
+            nodelist[n] = nodelist[i];
         }
     }
-
-    this.length = nodelist.length;
+	return nodelist;
 };
 
-HTMLCollection.prototype = {
-
-    item: function (idx) {
-        return  ((idx >= 0) && (idx < this.length)) ? this[idx] : null;
-    },
+HTMLCollection.prototype = new NodeList();
+__extend__(HTMLCollection.prototype, {
 
     namedItem: function (name) {
         return this[name] || null;
@@ -37,4 +49,7 @@ HTMLCollection.prototype = {
     toString: function() {
         return '[object HTMLCollection]';
     }
-};
+});
+
+}(/*Envjs.HTML.HTMLCollection*/));
+

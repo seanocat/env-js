@@ -4,7 +4,17 @@
  *      navigator.js
  *  Browser Navigator
  */
-Navigator = function(){
+
+(function(){
+
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+	log = Envjs.logger('Envjs.Window.Navigator').
+		debug('window navigator logger available');
+});
+
+exports.Navigator = Navigator = function(){
 	var $userAgent;
     return {
         get appCodeName(){
@@ -38,7 +48,9 @@ Navigator = function(){
             return $userAgent||(this.appCodeName + "/" + this.appVersion + " Resig/20070309 PilotFish/@BUILD_VERSION@");
         },
 		set userAgent(agent){
-			$userAgent = agent;
+			if(agent){
+				$userAgent = agent;
+			}
 		},
         javaEnabled : function(){
             return Envjs.javaEnabled;
@@ -46,3 +58,4 @@ Navigator = function(){
     };
 };
 
+}());

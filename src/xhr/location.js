@@ -19,9 +19,17 @@
  *   from accessing most of the 'Location'
  *  Not sure if anyone implements this in HTML4
  */
-
-Location = function(url, doc, history) {
-    //console.log('Location url %s', url);
+(function(){
+    
+var log = Envjs.logger();
+Envjs.once('tick', function(){
+    log = Envjs.logger('Envjs.Location').
+        debug('location logger available');
+});
+    
+exports.Location = Location = function(url, doc, history) {
+    log = log||Envjs.logger('Envjs.Location');
+    log.debug('Location url %s', url);
     var $url = url,
         $document = doc ? doc : null,
         $history = history ? history : null;
@@ -167,59 +175,59 @@ Location = function(url, doc, history) {
             var _this = this,
                 xhr,
                 event;
-			method = method||"GET";
-			data = data||null;
-            //console.log('assigning %s',url);
+            method = method||"GET";
+            data = data||null;
+            log.debug('assigning %s',url);
 
             //we can only assign if this Location is associated with a document
             if ($document) {
-                //console.log('fetching %s (async? %s)', url, $document.async);
+                log.debug('fetching %s (async? %s)', url, $document.async);
                 xhr = new XMLHttpRequest();
-				
-		        xhr.setRequestHeader('Referer', $document.location);
-				//console.log("REFERER: %s", $document.location);
+                
+                xhr.setRequestHeader('Referer', $document.location);
+                log.debug("REFERER: %s", $document.location);
                 // TODO: make async flag a Envjs paramter
                 xhr.open(method, url, false);//$document.async);
 
                 // TODO: is there a better way to test if a node is an HTMLDocument?
                 if ($document.toString() === '[object HTMLDocument]') {
                     //tell the xhr to not parse the document as XML
-                    //console.log('loading html document');
+                    log.debug('loading html document');
                     xhr.onreadystatechange = function() {
-                        //console.log('readyState %s', xhr.readyState);
+                        log.debug('readyState %s', xhr.readyState);
                         if (xhr.readyState === 4) {
-							switch(xhr.status){
-							case 301:
-							case 302:
-							case 303:
-							case 305:
-							case 307:
-								//console.log('status is not good for assignment %s', xhr.status);
-								break;
-                       		default:
-								//console.log('status is good for assignment %s', xhr.status);
-	                        	if (xhr.readyState === 4) {// update closure upvars
-					            	$url = xhr.url;
-						            parts = Envjs.urlsplit($url);
-	                            	//console.log('new document baseURI %s', xhr.url);
-	                            	Envjs.exchangeHTMLDocument($document, xhr.responseText, xhr.url);
-	                        	}
-							}
+                            switch(xhr.status){
+                            case 301:
+                            case 302:
+                            case 303:
+                            case 305:
+                            case 307:
+                                log.debug('status is not good for assignment %s', xhr.status);
+                                break;
+                            default:
+                                log.debug('status is good for assignment %s', xhr.status);
+                                $url = xhr.url;
+                                parts = Envjs.urlsplit($url);
+                                log.debug('new document location %s', xhr.url);
+                                Envjs.exchangeHTMLDocument($document, xhr.responseText, xhr.url);
+                            }
                         }
                     };
-					try{
-                    	xhr.send(data, false);//dont parse html
-					}catch(e){
-						console.log('failed to load content %s', e);
-						Envjs.exchangeHTMLDocument($document, "\
-							<html><head><title>Error Loading</title></head><body>"+e+"</body></html>\
-						", xhr.url);
-					}
+                    try{
+                        xhr.send(data, false);//dont parse html
+                    }catch(e){
+                        log.debug('failed to load content %s', e);
+                        Envjs.exchangeHTMLDocument(
+                            $document, 
+                            "<html><head><title>Error Loading</title></head><body>"+e+"</body></html>",
+                            xhr.url
+                        );
+                    }
                 } else {
                     //Treat as an XMLDocument
                     xhr.onreadystatechange = function() {
                         if (xhr.readyState === 4) {
-							console.log('exchanging xml content %s', e);
+                            log.debug('exchanging xml content %s', e);
                             $document = xhr.responseXML;
                             $document.baseURI = xhr.url;
                             if ($document.createEvent) {
@@ -231,13 +239,11 @@ Location = function(url, doc, history) {
                     };
                     xhr.send();
                 }
-
-            };
-
+            }//end if($document)
         },
         reload: function(forceget) {
             //for now we have no caching so just proxy to assign
-            //console.log('reloading %s',$url);
+            log.debug('reloading %s',$url);
             this.assign($url);
         },
         replace: function(url, /*non-standard*/ method, data) {
@@ -246,3 +252,4 @@ Location = function(url, doc, history) {
     };
 };
 
+}(/*Location*/));

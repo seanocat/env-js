@@ -3,8 +3,16 @@
  * Screen
  * @param {Object} __window__
  */
+(function(){
 
-Screen = function(__window__){
+var log = Envjs.logger();
+
+Envjs.once('tick', function(){
+	log = Envjs.logger('Envjs.Window.Screen').
+		debug('window screen logger available');
+});
+
+exports.Screen = Screen = function(__window__){
 
     var $availHeight  = 600,
         $availWidth   = 800,
@@ -16,7 +24,8 @@ Screen = function(__window__){
         $left         = 0,
         $availTop     = 0,
         $availLeft    = 0;
-
+	
+	log.debug('extending window with screen properties');
     __extend__( __window__, {
         moveBy : function(dx,dy){
             //TODO - modify $locals to reflect change
@@ -28,7 +37,7 @@ Screen = function(__window__){
             //TODO - good global to modify to ensure print is not misused
         };*/
         resizeBy : function(dw, dh){
-            __window__resizeTo($width + dw, $height + dh);
+            __window__.resizeTo($width + dw, $height + dh);
         },
         resizeTo : function(width, height){
             $width = (width <= $availWidth) ? width : $availWidth;
@@ -44,7 +53,8 @@ Screen = function(__window__){
             //TODO - modify $locals to reflect change
         }
     });
-
+	
+	log.debug('creating screen');
     return {
         get top(){
             return $top;
@@ -79,3 +89,4 @@ Screen = function(__window__){
     };
 };
 
+}(/*Screen*/));
