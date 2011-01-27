@@ -1,7 +1,32 @@
 = envjs : pilot fish =
 
 env.js : A pure JavaScript browser environment.
-Developed by John Resig (http://ejohn.org)
+
+h2. The New Envjs Project
+
+*Envjs* has moved! Here! We are currently looking for volunteer team members to help make Envjs the project we know it can be.  We are also moving out ticket tracking and primary documentation here which we'll integrate into our main site at "our site":http://www.envjs.com/ so we can improve our docs rapidly.
+
+h3. Team Volunteers Needed
+
+Envjs needs a small group of dedicated volunteers to help keep this project rolling along smoothly.  If your interested please just send us a message letting us know the role(s) you'ld like to help with.
+
+*Module Managers*
+*Web Designers*
+*Release Manager*
+*Pull Request Manager*
+*Ticket Manager*
+*Email List Manager*
+*Blog Manager*
+*Wiki Manager*
+
+We have a lot of work, but Envjs is an increasingly important project with javascripts place as a language growing and growing.  We also need lots of people contributing examples, patches, new tests etc.
+
+Sincerely,
+Thatcher
+
+
+Originally Developed by
+ John Resig (http://ejohn.org)
 
 Major Contributers:
 Christopher Thatcher
