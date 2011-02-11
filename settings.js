@@ -12,3 +12,28 @@ var SETTINGS = {
     LOCAL_PORT: '8080',
     APP_CONTEXT: '/env-js/'
 }; 
+
+
+Envjs.config('logging',[
+	{category:'Envjs.Core',  				level:'WARN'},
+	{category:'Envjs.Core.REPL',        	level:'WARN'},
+	{category:'Envjs.DOM',  				level:'WARN'},
+	{category:'Envjs.DOM.Node',  			level:'WARN'},
+	{category:'Envjs.DOM.NodeList',  		level:'WARN'},
+	{category:'Envjs.DOM.NamedNodeMap', 	level:'WARN'},
+	{category:'Envjs.DOM.NamespacedNodeMap',level:'WARN'},
+	{category:'Envjs.DOM.Element',  		level:'WARN'},
+	{category:'Envjs.DOM.Document',  		level:'WARN'},
+	{category:'Envjs.DOM2.EventTarget',  	level:'WARN'},
+	{category:'Envjs.Timer',            	level:'WARN'},
+	{category:'Envjs.Location',  			level:'WARN'},
+	{category:'Envjs.XMLHttpRequest',  		level:'DEBUG'},
+	{category:'Envjs.Parser',  	        	level:'WARN'},
+	{category:'Envjs.Parser.HTMLParser',	level:'WARN'},
+	{category:'Envjs.Parser.XMLParser', 	level:'WARN'},
+	{category:'Envjs.HTML.Frame',			level:'WARN'},
+	{category:'Envjs.Window',  				level:'WARN'},
+	{category:'Envjs.Platform',  			level:'WARN'},
+	{category:'Envjs.Platform.Johnson',   	level:'WARN'},
+	{category:'root', 		 				level:'WARN'}
+]);
