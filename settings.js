@@ -27,7 +27,7 @@ Envjs.config('logging',[
 	{category:'Envjs.DOM2.EventTarget',  	level:'WARN'},
 	{category:'Envjs.Timer',            	level:'WARN'},
 	{category:'Envjs.Location',  			level:'WARN'},
-	{category:'Envjs.XMLHttpRequest',  		level:'DEBUG'},
+	{category:'Envjs.XMLHttpRequest',  		level:'INFO'},
 	{category:'Envjs.Parser',  	        	level:'WARN'},
 	{category:'Envjs.Parser.HTMLParser',	level:'WARN'},
 	{category:'Envjs.Parser.XMLParser', 	level:'WARN'},
