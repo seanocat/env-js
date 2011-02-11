@@ -1,4 +1,4 @@
-
+//#!bin/envjs node examples/simple.js
 var testurl = 'http://localhost:8080/';
 
 var check_urls = function(event){

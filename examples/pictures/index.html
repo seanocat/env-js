@@ -13,12 +13,12 @@ jQuery(function($){
     $(['cwp', 'jpd', 'highsm', 'fsa']).each(function(i,collection){
         console.log('loading data from pictures api (%s)', collection);
         loadResults({
-            q:'',
-            sp:1,
-            c:1000,
-            fo:'json',
-            at:'results',
-            co: collection
+            q:'',           //query
+            sp:1,           //start page
+            c:1000,         //count (how many)
+            fo:'json',      //format (html is defaul)
+            at:'results',   //attribute
+            co: collection  //collection code
         });
     });
     
