@@ -74,13 +74,14 @@ Envjs.connection = function(xhr, responseHandler, data){
     if ( /^file\:/.test(url) ) {
         Envjs.localXHR(url, xhr, connection, data);
     } else {
-	
-		connection = http.createClient(urlparts.port, urlparts.host);
+	    //console.log('connecting to %s \n\t port(%s) host(%s) path(%s) query(%s)', 
+	    //    url, urlparts.port, urlparts.hostname, urlparts.path, urlparts.query);
+		connection = http.createClient(urlparts.port||'80', urlparts.hostname);
 		request = connection.request(
 			xhr.method, 
 			urlparts.path+(urlparts.query?"?"+urlparts.query:''),
 			__extend__(xhr.headers,{
-				"Host": urlparts.host,
+				"Host": urlparts.hostname,
 				"Connection":"Keep-Alive"
 				//"Accept-Encoding", 'gzip'
 			})
@@ -89,6 +90,7 @@ Envjs.connection = function(xhr, responseHandler, data){
 
 	    if(connection&&request){
 			request.on('response', function (response) {
+				//console.log('response begin');
 				xhr.readyState = 3;
 				response.on('end', function (chunk) {
 					//console.log('connection complete');

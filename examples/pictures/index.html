@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8'>
+<title>pictures</title>
+<meta name="author" content="Christopher Thatcher">
+<!-- Date: 2011-02-10 -->
+<script src='../../plugins/jquery.js'></script>
+<script>
+
+jQuery(function($){
+    
+    $(['cwp', 'jpd', 'highsm', 'fsa']).each(function(i,collection){
+        console.log('loading data from pictures api (%s)', collection);
+        loadResults({
+            q:'',
+            sp:1,
+            c:1000,
+            fo:'json',
+            at:'results',
+            co: collection
+        });
+    });
+    
+});
+
+function loadResults(options){
+    
+    //load some data from the pictures api
+    $.ajax({
+        async:false,
+        type:'get',
+        dataType:'json',
+        url: 'http://www.loc.gov/pictures/search/',
+        data: options,
+        success: function(response){
+            console.log('got results %s', response);
+            saveResults(options, response.results);
+        },
+        error: function(xhr, status, e){
+            console.log('error %s %s', status, e);
+        }
+    });
+    
+}
+
+function saveResults(options, results){
+    
+    var file = 'data/'+options.co+'-'+options.c+'.json';
+    console.log('saving results to %s', file);
+    jQuery.ajax({
+        url: file,
+        type: 'post',
+        data: JSON.stringify(results),
+        success: function(){
+            console.log('saved results');
+        },
+        error: function(xhr, status, e){
+            console.log('failed to save results %s', e);
+        }
+    });
+    
+}
+</script>
+</head>
+<body>
+
+</body>
+</html>

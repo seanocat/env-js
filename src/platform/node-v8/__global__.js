@@ -15,5 +15,14 @@ Envjs.argv = process.argv;
 Envjs.argv.shift();
 Envjs.argv.shift();//node is argv[0] but we want to start at argv[1]
 
-Envjs.exit = function(){ /*process.exit();*/ };
+Envjs.exit = function(){
+    /*setTimeout(function () {
+        if(!Envjs.timers.length){
+            //console.log('no timers remaining %s', Envjs.timers.length);
+            process.exit();
+        }else{
+            Envjs.exit();
+        }
+    }, 13);*/
+};
 

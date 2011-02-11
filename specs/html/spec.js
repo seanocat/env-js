@@ -353,10 +353,8 @@ test('HTMLDocument.createElement(script)', function(){
 
     element.textContent = 'document.ASDFASDF = "QWERQWER";';
     // TODO: document.ASDFASDF should still be undefined
-    //
-    // this document does not have a head which is a problem in an of itself
-    //document.getElementsByTagName('head')[0].appendChild(element);
-    //equals(document.ASDFASDF, 'QWERQWER', 'script appended to head executes');
+    document.getElementsByTagName('head')[0].appendChild(element);
+    equals(document.ASDFASDF, 'QWERQWER', 'script appended to head executes');
 
     // create setting and getting 'text' property
     element = document.createElement('script');

@@ -15,7 +15,16 @@ Envjs.argv = process.argv;
 Envjs.argv.shift();
 Envjs.argv.shift();//node is argv[0] but we want to start at argv[1]
 
-Envjs.exit = function(){ /*process.exit();*/ };
+Envjs.exit = function(){
+    /*setTimeout(function () {
+        if(!Envjs.timers.length){
+            //console.log('no timers remaining %s', Envjs.timers.length);
+            process.exit();
+        }else{
+            Envjs.exit();
+        }
+    }, 13);*/
+};
 
 
 /*
@@ -129,6 +138,7 @@ Envjs.sleep = function(milliseconds){
     return;
 };
 
+
 //Since we're running in v8 I guess we can safely assume
 //java is not 'enabled'.  I'm sure this requires more thought
 //than I've given it here
@@ -236,13 +246,14 @@ Envjs.connection = function(xhr, responseHandler, data){
     if ( /^file\:/.test(url) ) {
         Envjs.localXHR(url, xhr, connection, data);
     } else {
-	
-		connection = http.createClient(urlparts.port, urlparts.host);
+	    //console.log('connecting to %s \n\t port(%s) host(%s) path(%s) query(%s)', 
+	    //    url, urlparts.port, urlparts.hostname, urlparts.path, urlparts.query);
+		connection = http.createClient(urlparts.port||'80', urlparts.hostname);
 		request = connection.request(
 			xhr.method, 
 			urlparts.path+(urlparts.query?"?"+urlparts.query:''),
 			__extend__(xhr.headers,{
-				"Host": urlparts.host,
+				"Host": urlparts.hostname,
 				"Connection":"Keep-Alive"
 				//"Accept-Encoding", 'gzip'
 			})
@@ -251,6 +262,7 @@ Envjs.connection = function(xhr, responseHandler, data){
 
 	    if(connection&&request){
 			request.on('response', function (response) {
+				//console.log('response begin');
 				xhr.readyState = 3;
 				response.on('end', function (chunk) {
 					//console.log('connection complete');

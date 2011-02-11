@@ -4226,7 +4226,6 @@ function __parseLoop__(impl, doc, p) {
             node.data = nodeData;
         }
     }
-
   }
 }
 
@@ -4292,7 +4291,7 @@ var re_invalidStringChars = /\x01|\x02|\x03|\x04|\x05|\x06|\x07|\x08|\x0B|\x0C|\
     ]
  */
 function __parseNSName__(qualifiedName) {
-  var resultNSName = new Object();
+  var resultNSName = {};
 
   resultNSName.prefix          = qualifiedName;  // unless the qname has a namespaceName, the prefix is the entire String
   resultNSName.namespaceName   = "";
@@ -4315,7 +4314,7 @@ function __parseNSName__(qualifiedName) {
  * @return : QName
  */
 function __parseQName__(qualifiedName) {
-  var resultQName = new Object();
+  var resultQName = {};
 
   resultQName.localName = qualifiedName;  // unless the qname has a prefix, the local name is the entire String
   resultQName.prefix    = "";

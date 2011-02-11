@@ -24,9 +24,8 @@ We have a lot of work, but Envjs is an increasingly important project with javas
 Sincerely,
 Thatcher
 
-
-Originally Developed by
- John Resig (http://ejohn.org)
+Originally Developed by:
+John Resig (http://ejohn.org)
 
 Major Contributers:
 Christopher Thatcher
@@ -43,7 +42,10 @@ Steffen Meschkat (XPath Implementation)
 Henri Sivonen    (HTML5Parser Implementation)
 
 
-GitHub repositories:
+Main GitHub Repository:
+http://github.com/envjs/env-js
+
+Historically Significant GitHub repositories:
 http://github.com/jeresig/env-js/
 http://github.com/thatcher/env-js/
 
