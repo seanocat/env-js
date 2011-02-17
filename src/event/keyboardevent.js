@@ -4,7 +4,7 @@
 var log = Envjs.logger();
 
 Envjs.once('tick', function(){
-   log = Envjs.logger('Envjs.DOM3.KeyboardEvent').
+   log = Envjs.logger('Envjs.DOM.KeyboardEvent').
 		debug('KeyboardEvent available'); 
 });
 

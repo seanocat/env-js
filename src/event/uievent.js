@@ -4,7 +4,7 @@
 var log = Envjs.logger();
 
 Envjs.once('tick', function(){
-   log = Envjs.logger('Envjs.DOM3.UIEvent').debug('available'); 
+   log = Envjs.logger('Envjs.DOM.UIEvent').debug('available'); 
 });
 
 /**
@@ -31,4 +31,4 @@ __extend__(UIEvent.prototype,{
     }
 });
 
-}(/*Envjs.DOM3.UIEvent*/));
+}(/*Envjs.DOM.UIEvent*/));

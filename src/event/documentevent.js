@@ -17,7 +17,7 @@
 var log = Envjs.logger();
 
 Envjs.once('tick', function(){
-   log = Envjs.logger('Envjs.DOM2.DocumentEvent').debug('available'); 
+   log = Envjs.logger('Envjs.DOM.DocumentEvent').debug('available'); 
 });
 
 /**
@@ -63,4 +63,4 @@ DocumentEvent.prototype.createEvent = function(eventType) {
 __extend__(Document.prototype, DocumentEvent.prototype);
 
 
-}(/*Envjs.DOM2.DocumentEvent*/));
+}(/*Envjs.DOM.DocumentEvent*/));

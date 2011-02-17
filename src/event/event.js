@@ -4,7 +4,7 @@
 var log = Envjs.logger();
 
 Envjs.once('tick', function(){
-   log = Envjs.logger('Envjs.DOM2.Event').debug('available'); 
+   log = Envjs.logger('Envjs.DOM.Event').debug('available'); 
 });
 
 /**
@@ -66,6 +66,6 @@ __extend__(Event,{
     BUBBLING_PHASE  : 3
 });
 
-}(/*Envjs.DOM2.Event*/));
+}(/*Envjs.DOM.Event*/));
 
 

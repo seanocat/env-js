@@ -4,7 +4,7 @@
 var log = Envjs.logger();
 
 Envjs.once('tick', function(){
-   log = Envjs.logger('Envjs.DOM2.MouseEvent').debug('available'); 
+   log = Envjs.logger('Envjs.DOM.MouseEvent').debug('available'); 
 });
 
 /**

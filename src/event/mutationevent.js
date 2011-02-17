@@ -41,7 +41,7 @@ var __fireMutationEvents__ = Aspect.before({
 var log = Envjs.logger();
 
 Envjs.once('tick', function(){
-   log = Envjs.logger('Envjs.DOM2.MutationEvent').debug('available'); 
+   log = Envjs.logger('Envjs.DOM.MutationEvent').debug('available'); 
 });
 
 /**
@@ -110,5 +110,5 @@ MutationEvent.ADDITION = 0;
 MutationEvent.MODIFICATION = 1;
 MutationEvent.REMOVAL = 2;
 
-}(/*Envjs.DOM2.MutationEvent*/));
+}(/*Envjs.DOM.MutationEvent*/));
 
