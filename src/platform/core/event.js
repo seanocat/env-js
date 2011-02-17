@@ -58,7 +58,7 @@ Envjs.emit = function(event /*, arg1, arg2, etc*/ ){
 
 setTimeout  = require('envjs/timer').setTimeout;
 
-var $warming = 3;
+var $warming = 10;
 
 Envjs.tick = function(){
     var y, next, fn, arg, file; 
