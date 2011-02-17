@@ -183,7 +183,9 @@ __extend__(Document.prototype,{
 
         return node;
     },
-
+    createEntityReference: function(){
+        log.debug('createEntityReference');
+    },
     createRange: function(){
         log.debug('createRange');
         return new Range();
@@ -191,7 +193,7 @@ __extend__(Document.prototype,{
 
     evaluate: function(xpathText, contextNode, nsuriMapper, resultType, result){
         //return new XPathExpression().evaluate();
-        throw 'Document.evaluate not supported yet!';
+        throw 'Include src/dom/xpath.js for evaluate support.';
     },
 
     getElementById : function(elementId) {

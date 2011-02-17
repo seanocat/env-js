@@ -22,7 +22,7 @@ exports.DOMImplementation = DOMImplementation = function() {
 
 __extend__(DOMImplementation.prototype,{
     // @param  feature : string - The package name of the feature to test.
-    //      the legal only values are "XML" and "CORE" (case-insensitive).
+    //      the legal only values are "XML" and "HTML" (case-insensitive).
     // @param  version : string - This is the version number of the package
     //       name to test. In Level 1, this is the string "1.0".*
     // @return : boolean
@@ -30,6 +30,9 @@ __extend__(DOMImplementation.prototype,{
         var ret = false;
         if (feature.toLowerCase() == "xml") {
             ret = (!version || (version == "1.0") || (version == "2.0"));
+        }
+        else if (feature.toLowerCase() == "html") {
+            ret = (!version || (version == "1.0"));
         }
         else if (feature.toLowerCase() == "core") {
             ret = (!version || (version == "2.0"));

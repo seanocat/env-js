@@ -35,5 +35,8 @@ DOMException.INVALID_MODIFICATION_ERR       = 13;
 DOMException.NAMESPACE_ERR                  = 14;
 DOMException.INVALID_ACCESS_ERR             = 15;
 
+//Introduced in DOM Level 3:
+DOMException.VALIDATION_ERR                 = 16;
+DOMException.TYPE_MISMATCH_ERR              = 17;
 
 }(/*Envjs.DOM.DOMException*/));
