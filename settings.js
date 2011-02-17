@@ -24,7 +24,7 @@ Envjs.config('logging',[
 	{category:'Envjs.DOM.NamespacedNodeMap',level:'WARN'},
 	{category:'Envjs.DOM.Element',  		level:'WARN'},
 	{category:'Envjs.DOM.Document',  		level:'WARN'},
-	{category:'Envjs.DOM2.EventTarget',  	level:'WARN'},
+	{category:'Envjs.DOM.EventTarget',  	level:'WARN'},
 	{category:'Envjs.Timer',            	level:'WARN'},
 	{category:'Envjs.Location',  			level:'WARN'},
 	{category:'Envjs.XMLHttpRequest',  		level:'INFO'},
