@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Env" default="all" basedir=".">
+<project name="Env" default="zip" basedir=".">
 
     <description>Builds, tests, and runs the project Env.</description>
     <tstamp/>
