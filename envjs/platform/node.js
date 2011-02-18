@@ -28,7 +28,7 @@ Envjs.exit = function(){
 
 
 /*
- * Envjs node-env.1.3.pre01 
+ * Envjs node-env.1.3.pre03 
  * Pure JavaScript Browser Environment
  * By John Resig <http://ejohn.org/> and the Envjs Team
  * Copyright 2008-2010 John Resig, under the MIT License
