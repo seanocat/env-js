@@ -254,7 +254,7 @@ Envjs.connection = function(xhr, responseHandler, data){
 			urlparts.path+(urlparts.query?"?"+urlparts.query:''),
 			__extend__(xhr.headers,{
 				"Host": urlparts.hostname,
-				"Connection":"Keep-Alive"
+				//"Connection":"Keep-Alive"
 				//"Accept-Encoding", 'gzip'
 			})
 		);
