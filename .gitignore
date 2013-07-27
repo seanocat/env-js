@@ -11,7 +11,7 @@ htmlparser/gwt2/gwt-*
 htmlparser/gwt2/war
 htmlparser/gwt2/*/*/*/*/*/*.class
 
-local_settings.js
+# local_settings.js
 java_pid*
 
 # gpsee compiled js files

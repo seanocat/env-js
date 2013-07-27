@@ -76,19 +76,23 @@ Envjs.connection = function(xhr, responseHandler, data){
     } else {
 	    //console.log('connecting to %s \n\t port(%s) host(%s) path(%s) query(%s)', 
 	    //    url, urlparts.port, urlparts.hostname, urlparts.path, urlparts.query);
-		connection = http.createClient(urlparts.port||'80', urlparts.hostname);
-		request = connection.request(
-			xhr.method, 
-			urlparts.path+(urlparts.query?"?"+urlparts.query:''),
-			__extend__(xhr.headers,{
+		var _options = {
+			hostname: urlparts.hostname,
+			port: urlparts.port || '80',
+			path: urlparts.path+(urlparts.query?"?"+urlparts.query:''),
+			method: xhr.method,
+			headers: __extend__(xhr.headers,{
 				"Host": urlparts.hostname,
 				//"Connection":"Keep-Alive"
 				//"Accept-Encoding", 'gzip'
 			})
-		);
+		};
+
+		var request = http.request(_options, function(res) {});
+
 		xhr.statusText = "";
 
-	    if(connection&&request){
+	    if(request){
 			request.on('response', function (response) {
 				//console.log('response begin');
 				xhr.readyState = 3;

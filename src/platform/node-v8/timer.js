@@ -1,7 +1,7 @@
 Envjs.wait = function(){ return; }
 
 var $tick = function(){
-    process.nextTick(function () {
+    setImmediate(function () {
         //console.log('node tick');
         Envjs.tick();
         $tick();

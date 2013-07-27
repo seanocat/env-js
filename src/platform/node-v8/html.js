@@ -1,4 +1,4 @@
-var Script = process.binding('evals').Script;
+var Script = require('vm');
 
 Envjs.eval = function(context, source, name, warming){
 	if(context === global){
